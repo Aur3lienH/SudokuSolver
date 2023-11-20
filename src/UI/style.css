@@ -1,0 +1,90 @@
+window {
+    background-color: #1d1d1d;
+    color: #EAEAEA;
+    font-family: 'Roboto', sans-serif;
+}
+
+#vbox {
+    background-color: #333333;
+    padding: 20px;
+}
+
+#hbox_train_buttons {
+    background-color: #333333;
+    padding: 20px;
+}
+
+button {
+    background-image: none;
+    background-color: #444444;
+    color: #FFFFFF;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background-color: #555555;
+}
+
+button:disabled {
+    background-color: #2E2E2E;
+    color: #707070;
+}
+
+button:focus {
+    outline: none;
+}
+
+#progress_container {
+    background-color: #333333;
+    padding: 20px;
+    margin-top: 300px;
+    margin-bottom: 20px;
+    min-height: 10px;
+}
+
+progressbar {
+    border-radius: 10px;
+    min-height: 5px;
+}
+
+progressbar label {
+    color: #FFFFFF;
+    font-size: 12px;
+}
+
+#original_number {
+    background-color: #292929;
+    font-weight: bold;
+    border-radius: 0px;
+    color: #FFFFFF;
+}
+
+#new_number {
+    background-color: #555555;
+    font-weight: normal;
+    border-radius: 0px;
+    color: #ffffff;
+}
+
+#empty_cell {
+    background-color: #ffffff;
+    border-radius: 0px;
+    color: #1d1d1d;
+}
+
+progressbar trough {
+    background-color: #444444;
+    border-radius: 10px;
+    min-height: 5px;
+}
+
+progressbar progress {
+    background-color: #76c7c0;
+    border-radius: 10px;
+    min-height: 5px;
+}

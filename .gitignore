@@ -50,3 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+.vscode/
+.DS_Store
+src/.DS_Store
+images/cells/*.jpg
+images/export/*.jpg
+build/solver
+src/.DS_Store
+datasets/datasets_creation/processed/*.jpg
+./build/solver
