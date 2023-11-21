@@ -1,16 +1,16 @@
 #include <stdio.h>
-#include "DeepLearning/Mnist.h"
-#include "DeepLearning/MatrixTests.h"
+#include "deepLearning/Mnist.h"
+#include "deepLearning/MatrixTests.h"
 #include "UI/App.h"
 #include "UI/DrawDigit.h"
-#include "DeepLearning/NetworkTest.h"
+#include "deepLearning/NetworkTest.h"
 #include "Tools.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "SudokuSolver/Solver.h"
-#include "DeepLearning/Sudoku.h"
+#include "sudokuSolver/Solver.h"
+#include "deepLearning/Sudoku.h"
 #include "Sudoku.h"
-#include "ImageProcessing/Preprocessing.h"
+#include "imageProcessing/Preprocessing.h"
 
 
 void HandleFlags(int argc, char* argv[])
@@ -104,7 +104,8 @@ void HandleFlags(int argc, char* argv[])
                 SDL_Surface* img = IMG_Load(argv[i+1]);
 
                 img = preprocess(img,1.2);
-                IMG_SaveJPG(img,"images/preprocessed/IMG1.jpg",100);
+                int result = IMG_SaveJPG(img,"./images/export/canny.jpg",100);
+                printf("Result : %d\n",result);
                 SDL_FreeSurface(img);
             }
             else

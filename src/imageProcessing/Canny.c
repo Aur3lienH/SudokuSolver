@@ -1,7 +1,7 @@
 #include "Canny.h"
-#include "../DeepLearning/Matrix.h"
-#include "../Geometry/Square.h"
-#include "../Geometry/Point.h"
+#include "../deepLearning/Matrix.h"
+#include "../geometry/Square.h"
+#include "../geometry/Point.h"
 #include <math.h>
 
 #define M_PI 3.14159265358979323846
@@ -63,11 +63,99 @@ Matrix* canny(Matrix* input, float sigma)
             float gx = gradientX->data[i * gradientX->cols + j];
             float gy = gradientY->data[i * gradientY->cols + j];
             float value = sqrt(gx * gx + gy * gy);
-            gradient->data[i * gradient->cols + j] = value > thresold ? 1.0 : 0.0;
+            gradient->data[i * gradient->cols + j] = value;
         }
     }
 
-    return getSquare(gradient);
+    Matrix* nonMaxSuppression = M_Create_2D(gradient->rows, gradient->cols);
+    for (size_t i = 0; i < nonMaxSuppression->rows; i++)
+    {
+        for (size_t j = 0; j < nonMaxSuppression->cols; j++)
+        {
+            float value = gradient->data[i * gradient->cols + j];
+            if(value == 0)
+            {
+                nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = 0;
+            }
+            else
+            {
+                float angle = atan2(gradientY->data[i * gradientY->cols + j], gradientX->data[i * gradientX->cols + j]);
+                if(angle < 0)
+                {
+                    angle += M_PI;
+                }
+                if(angle >= 0 && angle < M_PI / 8.0f)
+                {
+                    float value1 = gradient->data[i * gradient->cols + j + 1];
+                    float value2 = gradient->data[i * gradient->cols + j - 1];
+                    if(value > value1 && value > value2)
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = value;
+                    }
+                    else
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = 0;
+                    }
+                }
+                else if(angle >= M_PI / 8.0f && angle < 3.0f * M_PI / 8.0f)
+                {
+                    float value1 = gradient->data[(i + 1) * gradient->cols + j + 1];
+                    float value2 = gradient->data[(i - 1) * gradient->cols + j - 1];
+                    if(value > value1 && value > value2)
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = value;
+                    }
+                    else
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = 0;
+                    }
+                }
+                else if(angle >= 3.0f * M_PI / 8.0f && angle < 5.0f * M_PI / 8.0f)
+                {
+                    float value1 = gradient->data[(i + 1) * gradient->cols + j];
+                    float value2 = gradient->data[(i - 1) * gradient->cols + j];
+                    if(value > value1 && value > value2)
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = value;
+                    }
+                    else
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = 0;
+                    }
+                }
+                else if(angle >= 5.0f * M_PI / 8.0f && angle < 7.0f * M_PI / 8.0f)
+                {
+                    float value1 = gradient->data[(i + 1) * gradient->cols + j - 1];
+                    float value2 = gradient->data[(i - 1) * gradient->cols + j + 1];
+                    if(value > value1 && value > value2)
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = value;
+                    }
+                    else
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = 0;
+                    }
+                }
+                else if(angle >= 7.0f * M_PI / 8.0f && angle < M_PI)
+                {
+                    float value1 = gradient->data[i * gradient->cols + j + 1];
+                    float value2 = gradient->data[i * gradient->cols + j - 1];
+                    if(value > value1 && value > value2)
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = value;
+                    }
+                    else
+                    {
+                        nonMaxSuppression->data[i * nonMaxSuppression->cols + j] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    return nonMaxSuppression;
 }
 
 float sumOfDistance(Point* p, Point* other, int nbPoints)

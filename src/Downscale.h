@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL2/SDL_image.h>
-#include "./DeepLearning/Matrix.h"
+#include "./deepLearning/Matrix.h"
 
 
 Matrix* SurfaceToDigit(SDL_Surface* surface, int* isBlank);

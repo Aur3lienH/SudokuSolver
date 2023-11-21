@@ -1,6 +1,6 @@
 #include "Point.h"
 #include <math.h>
-#include "../DeepLearning/Matrix.h"
+#include "../deepLearning/Matrix.h"
 
 
 Point* P_Create(int x, int y)

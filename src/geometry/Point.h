@@ -1,5 +1,5 @@
 #pragma once
-#include "../DeepLearning/Matrix.h"
+#include "../deepLearning/Matrix.h"
 
 typedef struct Point
 {

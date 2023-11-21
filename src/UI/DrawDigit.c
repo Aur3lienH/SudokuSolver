@@ -1,11 +1,11 @@
 #include <cairo.h>
 #include <gtk/gtk.h>
 #include <math.h>
-#include "../DeepLearning/Mnist.h"
-#include "../DeepLearning/Matrix.h"
-#include "../DeepLearning/Network.h"
-#include "../DeepLearning/Dataset.h"
-#include "../DeepLearning/ImageProcessing.h"
+#include "../deepLearning/Mnist.h"
+#include "../deepLearning/Matrix.h"
+#include "../deepLearning/Network.h"
+#include "../deepLearning/Dataset.h"
+#include "../deepLearning/ImageProcessing.h"
 #include "../Tools.h"
 #include "../Downscale.h"
 

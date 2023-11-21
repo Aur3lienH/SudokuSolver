@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include "solver_ui.h"
-#include "../SudokuSolver/Solver.h"
+#include "../sudokuSolver/Solver.h"
 #include "../Sudoku.h"
 #include <pthread.h>
 #include <unistd.h>

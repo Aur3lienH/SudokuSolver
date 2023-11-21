@@ -1,9 +1,9 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include "training_ui.h"
-#include "../DeepLearning/Network.h"
-#include "../DeepLearning/Mnist.h"
-#include "../DeepLearning/Loss.h"
+#include "../deepLearning/Network.h"
+#include "../deepLearning/Mnist.h"
+#include "../deepLearning/Loss.h"
 #include "DrawDigit.h"
 
 // Global variables

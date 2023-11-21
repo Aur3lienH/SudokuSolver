@@ -1,5 +1,5 @@
 #include "Square.h"
-#include "../DeepLearning/Matrix.h"
+#include "../deepLearning/Matrix.h"
 #include "Point.h"
 #include <math.h>
 #include <stdlib.h>

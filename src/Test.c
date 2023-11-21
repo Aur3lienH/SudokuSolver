@@ -1,5 +1,5 @@
 #include "Test.h"
-#include "DeepLearning/Sudoku.h"
+#include "deepLearning/Sudoku.h"
 
 void LoadAndPrintSudoku()
 {

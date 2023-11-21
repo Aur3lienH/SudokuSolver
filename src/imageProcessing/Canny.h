@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include "../DeepLearning/Matrix.h"
+#include "../deepLearning/Matrix.h"
 
 
 Matrix* canny(Matrix* input, float sigma);

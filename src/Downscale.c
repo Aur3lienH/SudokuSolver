@@ -1,8 +1,8 @@
 #include "Downscale.h"
-#include "./DeepLearning/Matrix.h"
+#include "./deepLearning/Matrix.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "./DeepLearning/ImageProcessing.h"
+#include "./deepLearning/ImageProcessing.h"
 
 //const size_t REMOVE_CORNER_WIDTH = 4;
 const float REMOVE_CORNER_RATIO = 0.20f;

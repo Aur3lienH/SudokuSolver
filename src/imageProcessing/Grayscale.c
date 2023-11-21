@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "../DeepLearning/Matrix.h"
+#include "../deepLearning/Matrix.h"
 
 
 Matrix* GrayscaleToMatrix(SDL_Surface* image)

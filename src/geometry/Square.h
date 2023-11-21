@@ -1,6 +1,6 @@
 #pragma once
 #include "Point.h"
-#include "../DeepLearning/Matrix.h"
+#include "../deepLearning/Matrix.h"
 
 
 typedef struct Square

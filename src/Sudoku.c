@@ -1,10 +1,10 @@
 #include "Sudoku.h"
-#include "DeepLearning/Network.h"
-#include "DeepLearning/Sudoku.h"
+#include "deepLearning/Network.h"
+#include "deepLearning/Sudoku.h"
 #include "Downscale.h"
-#include "SudokuSolver/Solver.h"
-#include "DeepLearning/Mnist.h"
-#include "ImageProcessing/Preprocessing.h"
+#include "sudokuSolver/Solver.h"
+#include "deepLearning/Mnist.h"
+#include "imageProcessing/Preprocessing.h"
 #include <time.h>
 
 
