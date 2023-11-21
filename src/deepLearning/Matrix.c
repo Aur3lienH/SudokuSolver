@@ -766,3 +766,8 @@ void M_AddBiasReLU(Matrix* input, float bias, Matrix* deltaActivation, Matrix* o
         output->data[i] = res > 0 ? res : 0;
     }
 }
+
+float two_by_two_det(Matrix* m)
+{
+    return m->data[0] * m->data[3] - m->data[1] * m->data[2];
+}

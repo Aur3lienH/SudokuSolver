@@ -8,6 +8,7 @@ typedef struct Point
 } Point;
 
 
+
 Point* P_Create(int x, int y);
 
 float P_Distance(Point* p, Point* other);

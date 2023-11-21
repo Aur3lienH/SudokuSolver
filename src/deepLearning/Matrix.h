@@ -143,6 +143,8 @@ void M_MaxPool3D(Matrix* m, Matrix* output, size_t* maxIndexes, size_t size);
 
 void M_AddBiasReLU(Matrix* input, float bias, Matrix* deltaActivation, Matrix* output);
 
+float two_by_two_det(Matrix* m);
+
 
 
 

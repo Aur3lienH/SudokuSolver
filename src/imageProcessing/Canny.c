@@ -153,202 +153,31 @@ Matrix* canny(Matrix* input, float sigma)
         }
     }
 
-
-
-    return nonMaxSuppression;
-}
-
-float sumOfDistance(Point* p, Point* other, int nbPoints)
-{
-    float sum = 0;
-    for (size_t i = 0; i < nbPoints; i++)
+    Matrix* thresholded = M_Create_2D(nonMaxSuppression->rows, nonMaxSuppression->cols);
+    for (size_t i = 0; i < nonMaxSuppression->rows; i++)
     {
-        sum += P_Distance(p, &other[i]);
-    }
-    if(nbPoints == 0)
-    {
-        Point initialPoint = {0,0};
-        return P_Distance(p, &initialPoint);
-    }
-    return sum;
-}
-
-
-Square* contourToSquare(Matrix* contour)
-{
-    Square* square = malloc(sizeof(Square));
-    Point* finalPoints = (Point*)malloc(sizeof(Point) * 4);
-    int nbPoints = 0;
-    Point maxPoint = {0,0};
-
-
-    for (size_t i = 0; i < 4; i++)
-    {
-        float maxDist = 0;
-        for (size_t i = 0; i < contour->rows; i++)
+        for (size_t j = 0; j < nonMaxSuppression->cols; j++)
         {
-            for (size_t j = 0; j < contour->cols; j++)
+            float value = nonMaxSuppression->data[i * nonMaxSuppression->cols + j];
+            if(value > thresold)
             {
-                
-                if(contour->data[i * contour->cols + j] >= 0.9)
-                {
-                    Point p = {i, j};
-                    float dist = sumOfDistance(&p, finalPoints, nbPoints);
-                    if(dist > maxDist)
-                    {
-                        maxDist = dist;
-                        maxPoint.x = i;
-                        maxPoint.y = j;
-                    }
-                }
+                thresholded->data[i * thresholded->cols + j] = 1.0f;
             }
-        }
-        finalPoints[nbPoints] = maxPoint;
-        nbPoints++;
-    }
-    square->points[0] = finalPoints[0];
-    square->points[1] = finalPoints[2];
-    square->points[2] = finalPoints[1];
-    square->points[3] = finalPoints[3];
-
-
-    free(finalPoints);
-    return square;
-}
-
-void RotateOrientation(Point* p)
-{
-    if(p->x == 1 && p->y > -1)
-    {
-        p->y -= 1;
-    }
-    else if(p->x == -1 && p->y < 1)
-    {
-        p->y += 1;
-    }
-    else if(p->y == 1 && p->x < 1)
-    {
-        p->x += 1;
-    }
-    else if(p->y == -1 && p->x > -1)
-    {
-        p->x -= 1;
-    }
-    
-}
-
-void fill(Matrix* matrix, Point p)
-{
-    for (size_t i = 0; i < matrix->rows; i++)
-    {
-        int j = 0;
-        int jPrevious = -1;
-        while(j < matrix->cols)
-        {
-            if(matrix->data[j + i * matrix->cols] >= 0.9)
+            else
             {
-                if(jPrevious == -1)
-                {
-                    jPrevious = j;
-                }
-                else
-                {
-                    for (int k = jPrevious; k < j; k++)
-                    {
-                        matrix->data[j + i * matrix->cols] = 1.0f;
-                    }
-                    jPrevious = -1;
-                }
-
+                thresholded->data[i * thresholded->cols + j] = 0.0f;
             }
-            j++;
         }
     }
     
+
+
+
+    return thresholded;
 }
 
-Point contourDetection(Matrix* canny,Matrix* output,Matrix* flag, Point actual,Point initialPoint, Point direction)
-{
-    size_t loopCounter = 0;
-    int isInitialPointVisited = 0;
-    Point emptyPoint = {-1,-1};
-    while (!isInitialPointVisited || loopCounter == 0) {
-        for (size_t i = 0; i < 7; i++) {
-            RotateOrientation(&direction);
-            Point next = P_Add(&actual, &direction);
-            
-            if (next.x >= 0 && next.x < canny->rows && next.y >= 0 && next.y < canny->cols) {
-                if(flag->data[next.x * output->cols + next.y] >= 0.4)
-                {
-                    return;
-                }
-                if (canny->data[next.x * canny->cols + next.y] >= 0.4) {
-                    output->data[actual.x * output->cols + actual.y] = 1.0;
-                    //printf("actual : %d, %d\n",actual.x,actual.y);
-                    flag->data[actual.x * output->cols + actual.y] = 1.0;
 
-                    // Reverse the direction
-                    direction.x = -direction.x;
-                    direction.y = -direction.y;
-                    
-                    {
-                        Point temp = {-direction.x,-direction.y};
-                        RotateOrientation(&temp);
-                        if(!P_Equals(&next,&temp) && temp.x >= 0 && temp.x < canny->rows && temp.y >= 0 && temp.y < canny->cols && flag->data[temp.x * canny->cols + temp.y] < 0.1f)
-                        {
-                            emptyPoint = temp;
-                        }
-                    }
-                    actual = next;
-                    break;
-                }
-            }
-        }
 
-        // Check if the initial point is revisited
-        if (P_Equals(&actual, &initialPoint)) {
-            if (loopCounter > 0) {
-                isInitialPointVisited = 1;
-            }
-        }
 
-        loopCounter++;
-    }
-    return emptyPoint;
-}
 
-void basicContourDetection(Matrix* input, Matrix* output, Point p)
-{
 
-}
-
-// Get the square of the sudoku
-Matrix* getSquare(Matrix* canny)
-{
-    return canny;
-    Matrix* contour = M_Create_2D(canny->rows, canny->cols);
-    Matrix* squareMatrix = M_Create_2D(canny->rows, canny->cols);
-    Matrix* flag = M_Create_2D(canny->rows, canny->cols);
-    size_t squareCount = 0;
-    for (size_t i = 0; i < canny->rows; i++)
-    {
-        for (size_t j = 0; j < canny->cols; j++)
-        {
-            if(canny->data[i * canny->cols + j] >= 0.8 && flag->data[i * contour->cols + j] < 0.1)
-            {
-                printf("here\n");
-                //Point emptyPoint = contourDetection(canny, contour,flag, (Point){i,j}, (Point){i,j}, (Point){0,1});
-                //fill(flag,emptyPoint);
-                //fill(canny,emptyPoint);
-                //Square* square = contourToSquare(contour);
-                //printf("Square found \n");
-                //S_Draw(squareMatrix, square, 1.0);
-                //S_Draw(squareMatrix, square, 1.0);
-                squareCount++;
-                if(squareCount == 100)
-                    return flag;
-            }
-        }
-    }
-    return contour;
-}
