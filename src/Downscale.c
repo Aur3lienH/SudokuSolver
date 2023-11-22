@@ -79,7 +79,7 @@ Matrix* Downsize(const Matrix* input, size_t width, size_t height)
     Matrix* res = M_Create_2D(width,height);
     float x_ratio = (float)input->cols / (float)width;
     float y_ratio = (float)input->rows / (float)height;
-    float px, py;
+    size_t px, py;
 
     for (size_t i = 0; i < height; i++)
     {
@@ -87,7 +87,7 @@ Matrix* Downsize(const Matrix* input, size_t width, size_t height)
         {   
             px = floor(j * x_ratio);
             py = floor(i * y_ratio);
-            res->data[j + i * width] = input->data[(size_t)(px + py * input->cols)];
+            res->data[j + i * width] = input->data[px + py * input->cols];
         }
     }
     return res;

@@ -18,5 +18,7 @@ void M_MinTransformation(Matrix* input, Matrix* output, size_t width);
 
 Matrix* M_IMinTransformation(Matrix* input, size_t width);
 
+Matrix* DownScale(const Matrix* input, float ratio);
+
 
 

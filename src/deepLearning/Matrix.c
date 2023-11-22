@@ -165,6 +165,21 @@ void M_Dim(const Matrix* m)
     printf("Matrix: %li x %li x %li\n",m->rows,m->cols,m->dims); 
 }
 
+
+Matrix* M_FillMatrixZero(const Matrix* input,size_t rowsToFill,size_t colsToFill)
+{
+
+    Matrix* res = M_Create_2D(input->rows + rowsToFill * 2, input->cols + colsToFill * 2);
+    for (size_t i = 0; i < input->rows; i++)
+    {   
+        for (size_t j = 0; j < input->cols; j++)
+        {
+            res->data[(i + rowsToFill) * res->cols + (j + colsToFill)] = input->data[i * input->cols + j];
+        }
+    }
+    return res;
+}
+
  
 //Multily the first two matrices and put the ouptut in the third parameter
 void M_Mul(const Matrix* a,const Matrix* b, Matrix* output)
@@ -475,6 +490,22 @@ void M_Convolution(const Matrix* a, const Matrix* b, Matrix* output)
     }
 }
 
+void M_Convolution_ZeroPad(const Matrix* a, const Matrix* b, Matrix* output)
+{
+#if DEBUG
+    if(a->rows != output->rows || a->cols != output->cols)
+    {
+        errx(-1,"M_Convolution_RepPad(): Matrix dimensions do not match\n");
+        return;
+    }
+#endif
+    size_t rowsToFill = b->rows / 2;
+    size_t colsToFill = b->cols / 2;
+    Matrix* filled = M_FillMatrixZero(a,rowsToFill,colsToFill);
+    M_Convolution(filled,b,output);
+    M_Free(filled);
+}
+
 void M_Convolution_Add(const Matrix* a, const Matrix* b, Matrix* output)
 {
 #if DEBUG
@@ -771,3 +802,4 @@ float two_by_two_det(Matrix* m)
 {
     return m->data[0] * m->data[3] - m->data[1] * m->data[2];
 }
+

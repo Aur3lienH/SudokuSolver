@@ -44,6 +44,8 @@ Matrix* M_Create_3D_Data(size_t rows, size_t cols, size_t dims, float* data);
 
 Matrix* M_Create_2D_Data(size_t rows, size_t cols, float* data);
 
+Matrix* M_FillMatrixZero(const Matrix* input,size_t rowsFill,size_t colsFill);
+
 Matrix* M_Init(size_t rows,size_t cols, size_t dims, size_t effectiveRows, size_t effectiveCols);
 
 //Free the memory of the matrix
@@ -108,6 +110,9 @@ float SM_GetValue(const Matrix* m,size_t index);
 //Convolution of the first two matrices and put the ouptut in the third parameter
 void M_Convolution(const Matrix* input, const Matrix* filter, Matrix* output);
 
+//Apply a convolution with zero padding on one dimension of the matrix
+void M_Convolution_ZeroPad(const Matrix* a, const Matrix* b, Matrix* output);
+
 //Convolution and add the result to the third parameter
 void M_Convolution_Add(const Matrix* input, const Matrix* filter, Matrix* output);
 
@@ -128,6 +133,7 @@ void M_FullConvolution(Matrix* input, Matrix* filter, Matrix* output);
 
 //Apply full convolution on all dimensions of the matrix
 void M_FullConvolution3D(Matrix* a, Matrix* filter, Matrix* output);
+
 
 void M_Rotate180(Matrix* m ,Matrix* output);
 

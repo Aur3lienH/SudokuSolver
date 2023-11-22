@@ -5,7 +5,57 @@
 #include <math.h>
 
 
+const float drawThreshold = 0.99f;
+const size_t houghThreshold = 135;
+const float angleAverageThreshold = 10.0f;
+const float distanceAverageThreshold = 20.0f;
+size_t batchSize = 5;
 
+void drawLine(Matrix* image, Line line, size_t rhoSize)
+{
+    for (size_t x = 0; x < image->rows; x++)
+    {
+        for (size_t y = 0; y < image->cols; y++)
+        {
+            float theta = line.a * M_PI / 180;
+            float rho = line.b - rhoSize / 2;
+            if (fabsf(rho - (x * cos(theta) + y * sin(theta))) < drawThreshold)
+            {
+                image->data[y + x * image->cols] = 1;
+            }
+        }
+    }
+}
+
+void averageLines(Line* lines, size_t* linesCount)
+{
+    for (size_t i = 0; i < *linesCount; i++)
+    {
+        for (size_t j = 0; j < *linesCount; j++)
+        {
+            if(i == j)
+            {
+                continue;
+            }
+            if (fabsf(lines[i].a - lines[j].a) < angleAverageThreshold && fabsf(lines[i].b - lines[j].b) < distanceAverageThreshold)
+            {
+                lines[i].a = (lines[i].a + lines[j].a) / 2;
+                lines[i].b = (lines[i].b + lines[j].b) / 2;
+                lines[j] = lines[(*linesCount) - 1];
+                (*linesCount)--;
+            }
+        }
+    }
+}
+
+
+void drawLines(Matrix* image, Line* lines, size_t linesCount, size_t rhoSize)
+{
+    for (size_t i = 0; i < linesCount; i++)
+    {
+        drawLine(image, lines[i], rhoSize);
+    }
+}
 
 int IsSquare(Square square, float threshold)
 {
@@ -85,8 +135,6 @@ Line* GetLines(unsigned int** accumulator, size_t thetaSize, size_t rhoSize, siz
             if (accumulator[theta][rho] >= threshold)
             {
                 lines[index] = (Line) {theta, rho};
-                printf("Line found\n");
-                printf("Theta: %zu, rho: %zu\n", theta, rho);
                 index++;
                 if(index == linesSize)
                 {
@@ -133,15 +181,20 @@ Square Hough(Matrix* img)
     size_t rhoSize = (size_t) (sqrt(img->cols*img->cols + img->rows*img->rows) * 2);
     unsigned int** accumulator = AccumulatorArray(img, thetaSize, rhoSize);
     printf("Accumulator created\n");
-    size_t threshold = 200;
     size_t linesCount = 0;
-    Line* lines = GetLines(accumulator, thetaSize, rhoSize, threshold, &linesCount);
+    Line* lines = GetLines(accumulator, thetaSize, rhoSize, houghThreshold, &linesCount);
+    
+    averageLines(lines, &linesCount);
+    averageLines(lines, &linesCount);
     printf("Lines count: %zu\n", linesCount);
+    drawLines(img, lines, linesCount, rhoSize);
     size_t intersectionsCount = 0;
     Point* intersections = GetIntersectionPoints(lines, linesCount, &intersectionsCount, img->cols, img->rows);
-    size_t squaresCount = 0;
+    printf("Intersections count: %zu\n", intersectionsCount);
+    //size_t squaresCount = 0;
     
-    Square* squares = GetSquares(intersections, intersectionsCount, &squaresCount);
-    return squares[6534];
+    //Square* squares = GetSquares(intersections, intersectionsCount, &squaresCount);
+    Square square;
+    return square;
     
 }

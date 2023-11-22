@@ -18,7 +18,7 @@ void rotatePoint(float* pointX, float* pointY, const float centerX, const float 
     *pointY = rotatedY + centerY;
 }
 
-float GetSurrondingAverage(Matrix* image, size_t x, size_t y, size_t width) {
+float GetSurrondingAverage(Matrix* image, size_t x, size_t y, size_t width, size_t height) {
     float sum = 0;
     size_t count = 0;
     for (int i = -1; i < 2; i++) {
@@ -26,7 +26,7 @@ float GetSurrondingAverage(Matrix* image, size_t x, size_t y, size_t width) {
             continue;
         }
         for (int j = -1; j < 2; j++) {
-            if (y + j < 0 || y + j >= width) {
+            if (y + j < 0 || y + j >= height) {
                 continue;
             }
             sum += image->data[(int)(x + i) + (int)(y + j) * width];
@@ -197,6 +197,23 @@ Matrix* M_IMinTransformation(Matrix* input, size_t width)
 {
     Matrix* res = M_Create_2D(width * width, 1);
     M_MinTransformation(input, res, width);
+    return res;
+}
+
+//Reduce the resolution of the image by a ratio
+Matrix* DownScale(const Matrix* input, float ratio)
+{
+    size_t newWidth = (size_t)(input->cols * ratio);
+    size_t newHeight = (size_t)(input->rows * ratio);
+    Matrix* res = M_Create_2D(newHeight, newWidth);
+
+    for (size_t i = 0; i < newHeight; i++)
+    {
+        for (size_t j = 0; j < newWidth; j++)
+        {
+            res->data[i * newWidth + j] = GetSurrondingAverage(input, j / ratio, i / ratio, input->cols, input->rows);
+        }
+    }
     return res;
 }
 
