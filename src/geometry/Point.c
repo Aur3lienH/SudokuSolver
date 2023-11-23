@@ -11,7 +11,7 @@ Point* P_Create(int x, int y)
     return point;
 }
 
-void DrawSegment(Matrix* matrix, Point* p1, Point* p2, float value)
+void P_DrawSegment(Matrix* matrix, Point* p1, Point* p2, float value)
 {
     float dx = p2->x - p1->x;
     float dy = p2->y - p1->y;
@@ -32,13 +32,61 @@ void DrawSegment(Matrix* matrix, Point* p1, Point* p2, float value)
     {
         size_t x_int = (int)x;
         size_t y_int = (int)y;
-        if(x_int >= 0 && x_int < matrix->rows && y_int >= 0 && y_int < matrix->cols)
+        if(x_int >= 0 && x_int < matrix->cols && y_int >= 0 && y_int < matrix->rows)
         {
-            matrix->data[x_int * matrix->cols + y_int] = value;
+            matrix->data[y_int * matrix->cols + x_int] = value;
         }
         x += xInc;
         y += yInc;
     }
+}
+
+int P_IsSegmentComplete(const Matrix* m, Point* a, Point* b, int searchRadius)
+{
+    float dx = b->x - a->x;
+    float dy = b->y - a->y;
+    float steps = 0;
+    if(abs(dx) > abs(dy))
+    {
+        steps = abs(dx);
+    }
+    else
+    {
+        steps = abs(dy);
+    }
+    float xInc = dx / steps;
+    float yInc = dy / steps;
+    float x = a->x;
+    float y = a->y;
+    for (size_t i = 0; i < steps; i++)
+    {
+        int found = 0;
+        for (int xRadius = -searchRadius; xRadius < searchRadius && !found; xRadius++)
+        {
+            for (int yRadius = -searchRadius; yRadius < searchRadius && !found; yRadius++)
+            {
+                size_t x_int = (int)x + xRadius;
+                size_t y_int = (int)y + yRadius;
+                if(x_int >= 0 && x_int < m->cols && y_int >= 0 && y_int < m->rows)
+                {
+                    if(m->data[y_int * m->cols + x_int] >= 0.9)
+                    {
+                        found = 1;
+                        break;
+                    }
+                }
+            }
+        }
+        if(!found)
+        {
+            return 0;
+        }
+        
+        x += xInc;
+        y += yInc;
+    }
+    return 1;
+
 }
 
 float P_Distance(Point* p, Point* other)

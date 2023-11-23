@@ -17,10 +17,10 @@ Square* S_Create(Point* points)
 
 void S_Draw(Matrix* matrix, Square* square, float value)
 {
-    DrawSegment(matrix, &square->points[0], &square->points[1], value);
-    DrawSegment(matrix, &square->points[1], &square->points[2], value);
-    DrawSegment(matrix, &square->points[2], &square->points[3], value);
-    DrawSegment(matrix, &square->points[3], &square->points[0], value);
+    P_DrawSegment(matrix, &square->points[0], &square->points[1], value);
+    P_DrawSegment(matrix, &square->points[1], &square->points[2], value);
+    P_DrawSegment(matrix, &square->points[2], &square->points[3], value);
+    P_DrawSegment(matrix, &square->points[3], &square->points[0], value);
 }
 
 int S_IsSquare(Square* square, float threshold)

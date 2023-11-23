@@ -2,6 +2,7 @@
 #include "../geometry/Line.h"
 #include "../geometry/Point.h"
 #include "../geometry/Square.h"
+#include <err.h>
 #include <math.h>
 
 
@@ -9,7 +10,8 @@ const float drawThreshold = 0.99f;
 const size_t houghThreshold = 135;
 const float angleAverageThreshold = 10.0f;
 const float distanceAverageThreshold = 20.0f;
-size_t batchSize = 5;
+const int searchRadiusThreshold = 3;
+size_t batchSize = 1;
 
 void drawLine(Matrix* image, Line line, size_t rhoSize)
 {
@@ -77,44 +79,158 @@ int IsSquare(Square square, float threshold)
            (distance5 - distance6 < threshold && distance5 - distance6 > -threshold);
 }
 
-Square* GetSquares(Point* intersections, size_t intersectionsCount, size_t* squaresCount)
+int isQuadrilateral(const Matrix* m,Square square, size_t searchRadius)
 {
-    size_t iterations = 0;
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        Point a = square.points[i];
+        Point b = square.points[(i + 1) % 4];
+        if(!P_IsSegmentComplete(m, &a, &b, searchRadius))
+        {
+            printf("Segment not complete\n");
+            return 0;
+        }
+    }
+    return 1;
+}
+
+Point* SortPointByDistance(Point* intersections, size_t intersection_count, Point distancePoint)
+{
+    Point* sortedPoints = (Point*)malloc(sizeof(Point) * intersection_count);
+    if (!sortedPoints) return NULL; // Check for malloc failure
+
+    for (size_t i = 0; i < intersection_count; i++) {
+        sortedPoints[i] = intersections[i];
+    }
+
+    for (size_t i = 1; i < intersection_count; i++) {
+        Point key = sortedPoints[i];
+        int j = i - 1;
+
+        // Move elements that are greater than the key to one position ahead
+        while (j >= 0 && P_Distance(&sortedPoints[j], &distancePoint) > P_Distance(&key, &distancePoint)) {
+            sortedPoints[j + 1] = sortedPoints[j];
+            j--;
+        }
+        sortedPoints[j + 1] = key;
+    }
+
+    return sortedPoints;
+}
+
+Square GetSquare(Point* intersections,size_t intersectionsCount, Matrix* input)
+{
+    //Sorted by upper left corner
+    Point* sortedUpLeft = SortPointByDistance(intersections,intersectionsCount,(Point){.x = 0, .y = 0});
+    Point* sortedUpRigth = SortPointByDistance(intersections,intersectionsCount,(Point){.x = input->cols, .y = 0});
+    Point* sortedDownLeft = SortPointByDistance(intersections,intersectionsCount,(Point){.x = 0, .y = input->rows});
+    Point* sortedDownRight = SortPointByDistance(intersections,intersectionsCount,(Point){.x = input->cols, .y = input->rows});
+
+    printf("Sorted points\n");
+    printf("first point : %d, %d\n", sortedUpLeft[0].x, sortedUpLeft[0].y);
+    printf("second point : %d, %d\n", sortedUpRigth[0].x, sortedUpRigth[0].y);
+    printf("third point : %d, %d\n", sortedDownLeft[0].x, sortedDownLeft[0].y);
+    printf("fourth point : %d, %d\n", sortedDownRight[0].x, sortedDownRight[0].y);
+
+    size_t tempBatchSize = batchSize;
+    while(tempBatchSize < intersectionsCount)
+    {
+        for (size_t i = 0; i < tempBatchSize; i++)
+        {
+            Point upLeft = sortedUpLeft[i];
+            for (size_t j = 0; j < tempBatchSize; j++)
+            {
+                if(P_Equals(&upLeft, &sortedUpRigth[j]))
+                {
+                    continue;
+                }
+                Point upRight = sortedUpRigth[j];
+                for (size_t k = 0; k < tempBatchSize; k++)
+                {
+                    if(P_Equals(&upLeft, &sortedDownLeft[k]) || P_Equals(&upRight, &sortedDownLeft[k]))
+                    {
+                        continue;
+                    }
+                    Point downLeft = sortedDownLeft[k];
+                    for (size_t l = 0; l < tempBatchSize; l++)
+                    {
+                        if(P_Equals(&upLeft, &sortedDownRight[l]) || P_Equals(&upRight, &sortedDownRight[l]) || P_Equals(&downLeft, &sortedDownRight[l]))
+                        {
+                            continue;
+                        }
+                        Point downRight = sortedDownRight[l];
+
+                        Square square;
+                        square.points[0] = upLeft;
+                        square.points[1] = upRight;
+                        square.points[2] = downRight;
+                        square.points[3] = downLeft;
+                        if(isQuadrilateral(input, square, searchRadiusThreshold))
+                        {
+                            return square;
+                        }
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        tempBatchSize = tempBatchSize + 2 > intersectionsCount ? intersectionsCount : tempBatchSize + 2;
+    }
+    
+    errx(1,"No square found");
     
 }
 
-Point GetIntersection(Line line1, Line line2)
+Point GetIntersection(Line line1, Line line2, size_t rhoSize)
 {
-    float det = cos(line1.a) * sin(line2.b) - cos(line2.b) * sin(line1.a);
-    if (det == 0)
+    line1.a = line1.a * M_PI / 180;
+    line2.a = line2.a * M_PI / 180;
+    line1.b -= rhoSize / 2;
+    line2.b -= rhoSize / 2;
+    float det = cos(line1.a) * sin(line2.a) - sin(line1.a) * cos(line2.a);
+    if (fabs(det) < 1e-6) // Check for zero with a small threshold
     {
-        return (Point) {-1, -1};
+        return (Point) {-1, -1}; // No intersection
     }
-    float x = (line2.b * sin(line1.a) - line1.b * sin(line2.a)) / det;
-    float y = (line1.a * cos(line2.b) - line2.a * cos(line1.b)) / det;
-    return (Point) {x, y};
+    float x = (line1.b * sin(line2.a) - line2.b * sin(line1.a)) / det;
+    float y = (-line1.b * cos(line2.a) + line2.b * cos(line1.a)) / det;
+    return (Point) {y, x};
 }
 
 
-Point* GetIntersectionPoints(Line* lines, size_t linesCount, size_t* interSectionsCount, size_t width, size_t height)
+Point* GetIntersectionPoints(Line* lines, size_t linesCount, size_t* interSectionsCount, const Matrix* img, size_t rhoSize)
 {
     size_t pointIndex = 0;
-    size_t pointSize = 1;
-    Point* points = (Point*) malloc(sizeof(Point));
+    size_t pointSize = 10; // Initial allocation size
+    Point* points = (Point*) malloc(pointSize * sizeof(Point));
+    if (!points) return NULL; // Check for malloc failure
+
     for (size_t i = 0; i < linesCount; i++)
     {
-        for (size_t j = 0; j < linesCount; j++)
+        for (size_t j = 0; j < linesCount; j++) // Avoid duplicate calculations
         {
-            Point point = GetIntersection(lines[i], lines[j]);
-            if (point.x >= 0 && point.y >= 0 && point.x < width && point.y < height)
+            if(i == j)
             {
-                points[pointIndex] = point;
-                pointIndex++;
+                continue;
+            }
+            Point point = GetIntersection(lines[i], lines[j],rhoSize);
+            if (point.x >= 0 && point.y >= 0 && point.x < img->cols && point.y < img->rows)
+            {
                 if (pointIndex == pointSize)
                 {
                     pointSize *= 2;
-                    points = (Point*) realloc(points, pointSize * sizeof(Point));
+                    Point* tempPoints = (Point*) realloc(points, pointSize * sizeof(Point));
+                    if (!tempPoints) 
+                    {
+                        free(points); // Free memory on error
+                        return NULL;
+                    }
+                    points = tempPoints;
                 }
+                points[pointIndex++] = point;
             }
         }
     }
@@ -187,14 +303,20 @@ Square Hough(Matrix* img)
     averageLines(lines, &linesCount);
     averageLines(lines, &linesCount);
     printf("Lines count: %zu\n", linesCount);
-    drawLines(img, lines, linesCount, rhoSize);
+    //drawLines(img, lines, linesCount, rhoSize);
     size_t intersectionsCount = 0;
-    Point* intersections = GetIntersectionPoints(lines, linesCount, &intersectionsCount, img->cols, img->rows);
+    Point* intersections = GetIntersectionPoints(lines, linesCount, &intersectionsCount, img, rhoSize);
+    
     printf("Intersections count: %zu\n", intersectionsCount);
     //size_t squaresCount = 0;
     
-    //Square* squares = GetSquares(intersections, intersectionsCount, &squaresCount);
-    Square square;
+    Square square = GetSquare(intersections, intersectionsCount, img);
+    M_Zero(img);
+    for (size_t i = 0; i < intersectionsCount; i++)
+    {
+        img->data[(size_t)intersections[i].x + (size_t)intersections[i].y * img->cols] = 1;
+    }
+    S_Draw(img, &square,1);
     return square;
     
 }
