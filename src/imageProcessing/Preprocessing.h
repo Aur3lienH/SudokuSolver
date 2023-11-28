@@ -1,4 +1,8 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include "../deepLearning/Matrix.h"
 
-SDL_Surface* preprocess(SDL_Surface* image, double factor_size);
+Matrix* preprocess(SDL_Surface* image, double factor_size);
+
+
+Matrix* resize(const Matrix* input);

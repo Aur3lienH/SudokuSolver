@@ -2,6 +2,8 @@
 #include <math.h>
 #include "../deepLearning/Matrix.h"
 
+const size_t POINT_RADIUS = 3;
+
 
 Point* P_Create(int x, int y)
 {
@@ -103,6 +105,33 @@ Point P_Add(Point* p1, Point* p2)
 int P_Equals(Point* p1, Point* p2)
 {
     return p1->x == p2->x && p1->y == p2->y;
+}
+
+void P_DrawSDL(SDL_Surface* surface, Point* p, Uint32 color)
+{
+    //Lock surface
+    if( SDL_MUSTLOCK( surface ) )
+    {
+        SDL_LockSurface( surface );
+    }
+    Uint32* pixels = (Uint32*)surface->pixels;
+    
+    for (int x = p->x - POINT_RADIUS; x < p->x + POINT_RADIUS; x++)
+    {
+        for (int y = p->y - POINT_RADIUS; y < p->y + POINT_RADIUS; y++)
+        {
+            if(x >= 0 && x < surface->w && y >= 0 && y < surface->h)
+            {
+                pixels[y * surface->w + x] = color;
+            }
+        }
+    }
+
+    //Unlock surface
+    if( SDL_MUSTLOCK( surface ) )
+    {
+        SDL_UnlockSurface( surface );
+    }
 }
 
 

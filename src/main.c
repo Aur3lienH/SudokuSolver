@@ -11,7 +11,10 @@
 #include "deepLearning/Sudoku.h"
 #include "Sudoku.h"
 #include "imageProcessing/Preprocessing.h"
-
+#include "imageProcessing/ImageProcessing.h"
+#include "Downscale.h"
+#include "imageProcessing/Grayscale.h"
+#include "imageProcessing/DatasetCreation.h"
 
 void HandleFlags(int argc, char* argv[])
 {
@@ -103,15 +106,47 @@ void HandleFlags(int argc, char* argv[])
             {
                 SDL_Surface* img = IMG_Load(argv[i+1]);
 
-                img = preprocess(img,1.2);
-                int result = IMG_SaveJPG(img,"./images/export/canny.jpg",100);
+                Matrix* res = preprocess(img,1.2);
+                SDL_Surface* surface = MatrixToSurface(res);
+                int result = IMG_SaveJPG(surface,"./images/export/export.jpg",100);
                 printf("Result : %d\n",result);
+                SDL_FreeSurface(img);
+                SDL_FreeSurface(surface);
+            }
+            else
+            {
+                printf("No file provided\n");
+            }
+            return;
+        }
+
+        if(CompareStrings(argv[i], "--process"))
+        {
+            if(argc >= 3)
+            {
+                SDL_Surface* img = IMG_Load(argv[i+1]);
+                SDL_Surface* res = SudokuImgProcessing(img);
+                int result = IMG_SaveJPG(res,"./images/export/export.jpg",100);
                 SDL_FreeSurface(img);
             }
             else
             {
                 printf("No file provided\n");
             }
+            return;
+        }
+
+        if(CompareStrings(argv[i],"--dataset"))
+        {
+            if(argc >= 4)
+            {
+                CreateDataset(argv[i+1],argv[i+2]);
+            }
+            else
+            {
+                printf("No folder provided\n");
+            }
+            return;
         }
 
         

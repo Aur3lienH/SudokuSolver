@@ -63,6 +63,8 @@ void M_ScalarMul(const Matrix* m, const float scalar, Matrix* output);
 //Multiplay all the elements of the matrix by all the elements of the second matrix and put the ouptut in the third parameter
 void M_LinearMul(const Matrix* a,const Matrix* b, Matrix* output);
 
+float M_GetMax(const Matrix* m);
+
 //Add the first two matrices and put the ouptut in the third parameter
 void M_Add(const Matrix* a,const Matrix* b, Matrix* output);
 
@@ -134,6 +136,7 @@ void M_FullConvolution(Matrix* input, Matrix* filter, Matrix* output);
 //Apply full convolution on all dimensions of the matrix
 void M_FullConvolution3D(Matrix* a, Matrix* filter, Matrix* output);
 
+Matrix* M_Complete(const Matrix* m, size_t rows, size_t cols);
 
 void M_Rotate180(Matrix* m ,Matrix* output);
 

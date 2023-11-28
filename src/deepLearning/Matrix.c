@@ -238,6 +238,21 @@ void M_Add(const Matrix* a,const Matrix* b, Matrix* output)
 }
 
 
+float M_GetMax(const Matrix* m)
+{
+    float max = FLT_MIN;
+    size_t matrixSize = M_GetSize3D(m);
+    for (size_t i = 0; i < matrixSize; i++)
+    {
+        if(m->data[i] > max)
+        {
+            max = m->data[i];
+        }
+    }
+    return max;
+}
+
+
 //Apply function to all the elements of the matrix
 void M_Apply(float (*func)(float),const Matrix* m, Matrix* output)
 {
@@ -803,3 +818,18 @@ float two_by_two_det(Matrix* m)
     return m->data[0] * m->data[3] - m->data[1] * m->data[2];
 }
 
+
+Matrix* M_Complete(const Matrix* m, size_t rows, size_t cols)
+{
+    size_t rowsToAdd = rows - m->rows;
+    size_t colsToAdd = cols - m->cols;
+    Matrix* res = M_Create_2D(rows,cols);
+    for (size_t i = 0; i < m->rows; i++)
+    {
+        for (size_t j = 0; j < m->cols; j++)
+        {
+            res->data[(i + rowsToAdd / 2) * res->cols + (j + colsToAdd / 2)] = m->data[i * m->cols + j];
+        }
+    }
+    return res;
+}

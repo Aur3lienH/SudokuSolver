@@ -10,7 +10,7 @@ const float drawThreshold = 0.99f;
 const size_t houghThreshold = 135;
 const float angleAverageThreshold = 10.0f;
 const float distanceAverageThreshold = 20.0f;
-const int searchRadiusThreshold = 3;
+const int searchRadiusThreshold = 5;
 size_t batchSize = 1;
 
 void drawLine(Matrix* image, Line line, size_t rhoSize)
@@ -88,7 +88,6 @@ int isQuadrilateral(const Matrix* m,Square square, size_t searchRadius)
         Point b = square.points[(i + 1) % 4];
         if(!P_IsSegmentComplete(m, &a, &b, searchRadius))
         {
-            printf("Segment not complete\n");
             return 0;
         }
     }
@@ -302,6 +301,9 @@ Square Hough(Matrix* img)
     
     averageLines(lines, &linesCount);
     averageLines(lines, &linesCount);
+    
+
+
     printf("Lines count: %zu\n", linesCount);
     //drawLines(img, lines, linesCount, rhoSize);
     size_t intersectionsCount = 0;
@@ -311,12 +313,10 @@ Square Hough(Matrix* img)
     //size_t squaresCount = 0;
     
     Square square = GetSquare(intersections, intersectionsCount, img);
-    M_Zero(img);
-    for (size_t i = 0; i < intersectionsCount; i++)
-    {
-        img->data[(size_t)intersections[i].x + (size_t)intersections[i].y * img->cols] = 1;
-    }
+    //M_Zero(img);
+    drawLines(img, lines, linesCount, rhoSize);
     S_Draw(img, &square,1);
     return square;
     
 }
+

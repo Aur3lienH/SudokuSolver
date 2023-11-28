@@ -34,7 +34,7 @@ void MaxPool_AverageDeltas(void* layerPtr, const size_t size);
 
 void MaxPool_Free(void* layerPtr);
 
-void MaxPool_AddDelta(void* layerPtr, const Matrix* delta);
+void MaxPool_AddDelta(void* layerPtr, void* layer2);
 
 Layer* MaxPool_Copy(void* layerPtr);
 

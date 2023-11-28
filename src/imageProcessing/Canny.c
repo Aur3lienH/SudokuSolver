@@ -5,8 +5,6 @@
 #include <math.h>
 #include <err.h>
 
-const float lowThresold = 0.025f;
-const float highThresold = 0.1f;
 
 
 
@@ -279,6 +277,11 @@ Matrix* canny(Matrix* input, float sigma)
             }
         }
     }
+
+    float maxGradient = M_GetMax(nonMaxSuppression);
+    float highThresold = 0.2 * maxGradient; 
+    float lowThresold = 0.1 * maxGradient;
+
 
     Matrix* thresholded = M_Create_2D(nonMaxSuppression->rows, nonMaxSuppression->cols);
     for (size_t i = 0; i < nonMaxSuppression->rows; i++)

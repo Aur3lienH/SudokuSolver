@@ -99,7 +99,7 @@ void MaxPool_AverageDeltas(void* layerPtr, const size_t size)
     return;
 }
 
-void MaxPool_AddDelta(void* layerPtr, const Matrix* delta)
+void MaxPool_AddDelta(void* layerPtr, void* layer2)
 {
     return ;
 }

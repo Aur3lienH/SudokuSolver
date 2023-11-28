@@ -16,14 +16,13 @@ const size_t DownsizeWidth = 500;
 Matrix* resize(const Matrix* input)
 {
 	size_t maximum = input->cols > input->rows ? input->cols : input->rows;
+	printf("Maximum : %ld\n", maximum);
 	float ratio = (float)DownsizeWidth / (float)maximum;
 	printf("Ratio : %f\n", ratio);
-	size_t newWidth = (size_t)(input->cols * ratio);
-	size_t newHeight = (size_t)(input->rows * ratio);
 	return DownScale(input,ratio);
 }
 
-SDL_Surface* preprocess(SDL_Surface* image, double factor_size)
+Matrix* preprocess(SDL_Surface* image, double factor_size)
 {
 	
 	
@@ -34,15 +33,13 @@ SDL_Surface* preprocess(SDL_Surface* image, double factor_size)
 	clock_t time2 = clock();
 	printf("Time to canny : %fs\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
 	
-	Square square = Hough(cannied);
+	//Square square = Hough(cannied);
 	printf("Square found\n");
 	//printf("Point 1: %d, %d\n", square.points[0].x, square.points[0].y);
 	//printf("Point 2: %d, %d\n", square.points[1].x, square.points[1].y);
 	//printf("Point 3: %d, %d\n", square.points[2].x, square.points[2].y);
 	//printf("Point 4: %d, %d\n", square.points[3].x, square.points[3].y);
 
-	SDL_Surface* res = MatrixToSurface(cannied);
-	return res;
-
+	return cannied;
 }
 
