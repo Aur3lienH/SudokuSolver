@@ -25,7 +25,7 @@ int filterImage(const struct dirent* name)
     return 0;
 }
 
-void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile)
+void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, const char* filename)
 {
     SDL_Surface* image = IMG_Load(path);
     if(image == NULL)
@@ -50,7 +50,7 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile)
     P_DrawSDL(surface,&square.points[2],0xFF0000);
     P_DrawSDL(surface,&square.points[3],0xFF0000);
     char* savePath = malloc(sizeof(char) * 100);
-    sprintf(savePath,"%s.jpg",outputPath);
+    sprintf(savePath,"%s/%s",outputPath,filename);
     printf("Saving %s\n",savePath);
     IMG_SaveJPG(surface,savePath,100);
 
@@ -73,6 +73,8 @@ void CreateDataset(const char* inputFolder, const char* outputFolder)
         printf("No model found !\n");
         exit(-1);
     }
+    char* outputFolderCopy = malloc(sizeof(char) * 100);
+    strcpy(outputFolderCopy,outputFolder);
     strcat(outputFolder,"/dataset.dat");
     FILE* datasetFile = fopen(outputFolder,"wb");
     if(datasetFile == NULL)
@@ -91,7 +93,7 @@ void CreateDataset(const char* inputFolder, const char* outputFolder)
         char* path = malloc(sizeof(char) * 100);
         sprintf(path,"%s/%s",inputFolder,namelist[i]->d_name);
         printf("Processing %s\n",path);
-        ImageProcess(path,datasetFile);
+        ImageProcess(path,outputFolderCopy,datasetFile,namelist[i]->d_name);  
         free(path);
     }
 }

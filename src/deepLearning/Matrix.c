@@ -828,7 +828,7 @@ Matrix* M_Complete(const Matrix* m, size_t rows, size_t cols)
     {
         for (size_t j = 0; j < m->cols; j++)
         {
-            res->data[(i + rowsToAdd / 2) * res->cols + (j + colsToAdd / 2)] = m->data[i * m->cols + j];
+            res->data[i*cols+j] = m->data[i * m->cols + j];
         }
     }
     return res;

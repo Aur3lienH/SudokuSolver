@@ -7,9 +7,9 @@
 
 
 const float drawThreshold = 0.99f;
-const size_t houghThreshold = 135;
+const size_t houghThreshold = 150;
 const float angleAverageThreshold = 10.0f;
-const float distanceAverageThreshold = 20.0f;
+const float distanceAverageThreshold = 10.0f;
 const int searchRadiusThreshold = 5;
 size_t batchSize = 1;
 
@@ -29,25 +29,76 @@ void drawLine(Matrix* image, Line line, size_t rhoSize)
     }
 }
 
-void averageLines(Line* lines, size_t* linesCount)
-{
-    for (size_t i = 0; i < *linesCount; i++)
-    {
-        for (size_t j = 0; j < *linesCount; j++)
-        {
-            if(i == j)
-            {
-                continue;
-            }
-            if (fabsf(lines[i].a - lines[j].a) < angleAverageThreshold && fabsf(lines[i].b - lines[j].b) < distanceAverageThreshold)
-            {
-                lines[i].a = (lines[i].a + lines[j].a) / 2;
-                lines[i].b = (lines[i].b + lines[j].b) / 2;
-                lines[j] = lines[(*linesCount) - 1];
-                (*linesCount)--;
+float normalizeAngleDifference(float angle) {
+    angle = fmodf(angle, 360.0f);
+    if (angle < 0) angle += 360.0f;
+    if (angle > 180) angle = 360.0f - angle;
+    return angle;
+}
+
+int find(int parent[], int i) {
+    if (parent[i] == -1)
+        return i;
+    return find(parent, parent[i]);
+}
+
+void Union(int parent[], int x, int y) {
+    int xset = find(parent, x);
+    int yset = find(parent, y);
+    if(xset != yset)
+        parent[xset] = yset;
+}
+
+
+int isSimilar(Line line1, Line line2, ) {
+    
+}
+
+void averageLines(Line** lines, size_t* linesCount) {
+    if(*linesCount == 0) return;
+
+    int parent[*linesCount];
+    for (size_t i = 0; i < *linesCount; i++) {
+        parent[i] = -1;
+    }
+
+    // Grouping lines
+    for (size_t i = 0; i < *linesCount; i++) {
+        for (size_t j = i + 1; j < *linesCount; j++) {
+            float angleDiff = normalizeAngleDifference(fabsf((*lines)[i].a - (*lines)[j].a));
+            printf("Angle diff: %f\n", angleDiff);
+            float distanceDiff = fabsf((*lines)[i].b - (*lines)[j].b);
+            
+            if (angleDiff < angleAverageThreshold && distanceDiff < distanceAverageThreshold) {
+                Union(parent, i, j);
             }
         }
     }
+
+    Line* tempLines = (Line*) calloc(*linesCount, sizeof(Line));
+    int count[*linesCount];
+    memset(count, 0, sizeof(count));
+
+    for (size_t i = 0; i < *linesCount; i++) {
+        int root = find(parent, i);
+        tempLines[root].a += (*lines)[i].a;
+        tempLines[root].b += (*lines)[i].b;
+        count[root]++;
+    }
+
+    int newCount = 0;
+    for (size_t i = 0; i < *linesCount; i++) {
+        if (count[i] > 0) {
+            tempLines[newCount].a = normalizeAngleDifference(tempLines[i].a / count[i]);
+            tempLines[newCount].b = tempLines[i].b / count[i];
+            newCount++;
+        }
+    }
+
+    // Updating the original lines array
+    free(*lines);
+    *lines = (Line*) realloc(tempLines, newCount * sizeof(Line));
+    *linesCount = newCount;
 }
 
 
@@ -135,6 +186,7 @@ Square GetSquare(Point* intersections,size_t intersectionsCount, Matrix* input)
     size_t tempBatchSize = batchSize;
     while(tempBatchSize < intersectionsCount)
     {
+        printf("Batch size: %zu\n", tempBatchSize);
         for (size_t i = 0; i < tempBatchSize; i++)
         {
             Point upLeft = sortedUpLeft[i];
@@ -297,10 +349,12 @@ Square Hough(Matrix* img)
     unsigned int** accumulator = AccumulatorArray(img, thetaSize, rhoSize);
     printf("Accumulator created\n");
     size_t linesCount = 0;
-    Line* lines = GetLines(accumulator, thetaSize, rhoSize, houghThreshold, &linesCount);
+    size_t houghThresholdAdjust = houghThreshold * ((img->cols * img->rows) / (500.0f * 500.0f));
+    printf("Threshold: %zu\n", houghThresholdAdjust);
+
+    Line* lines = GetLines(accumulator, thetaSize, rhoSize, houghThresholdAdjust, &linesCount);
     
-    averageLines(lines, &linesCount);
-    averageLines(lines, &linesCount);
+    averageLines(&lines, &linesCount);
     
 
 
@@ -312,11 +366,11 @@ Square Hough(Matrix* img)
     printf("Intersections count: %zu\n", intersectionsCount);
     //size_t squaresCount = 0;
     
-    Square square = GetSquare(intersections, intersectionsCount, img);
+    //Square square = GetSquare(intersections, intersectionsCount, img);
     //M_Zero(img);
     drawLines(img, lines, linesCount, rhoSize);
-    S_Draw(img, &square,1);
-    return square;
+    //S_Draw(img, &square,1);
+    //return square;
     
 }
 
