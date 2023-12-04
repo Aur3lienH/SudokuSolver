@@ -9,7 +9,7 @@
 const float drawThreshold = 0.99f;
 const size_t houghThreshold = 150;
 const float angleAverageThreshold = 10.0f;
-const float distanceAverageThreshold = 10.0f;
+const float distanceAverageThreshold = 5.0f;
 const int searchRadiusThreshold = 5;
 size_t batchSize = 1;
 
@@ -50,9 +50,6 @@ void Union(int parent[], int x, int y) {
 }
 
 
-int isSimilar(Line line1, Line line2, ) {
-    
-}
 
 void averageLines(Line** lines, size_t* linesCount) {
     if(*linesCount == 0) return;
@@ -353,24 +350,23 @@ Square Hough(Matrix* img)
     printf("Threshold: %zu\n", houghThresholdAdjust);
 
     Line* lines = GetLines(accumulator, thetaSize, rhoSize, houghThresholdAdjust, &linesCount);
-    
     averageLines(&lines, &linesCount);
+        drawLines(img, lines, linesCount, rhoSize);
     
 
 
     printf("Lines count: %zu\n", linesCount);
-    //drawLines(img, lines, linesCount, rhoSize);
     size_t intersectionsCount = 0;
     Point* intersections = GetIntersectionPoints(lines, linesCount, &intersectionsCount, img, rhoSize);
     
     printf("Intersections count: %zu\n", intersectionsCount);
     //size_t squaresCount = 0;
     
-    //Square square = GetSquare(intersections, intersectionsCount, img);
+    Square square = GetSquare(intersections, intersectionsCount, img);
     //M_Zero(img);
-    drawLines(img, lines, linesCount, rhoSize);
+    //drawLines(img, lines, linesCount, rhoSize);
     //S_Draw(img, &square,1);
-    //return square;
+    return square;
     
 }
 

@@ -253,6 +253,12 @@ float M_GetMax(const Matrix* m)
 }
 
 
+float M_Get(const Matrix* m, size_t rows, size_t cols)
+{
+    return m->data[rows * m->cols + cols];
+}
+
+
 //Apply function to all the elements of the matrix
 void M_Apply(float (*func)(float),const Matrix* m, Matrix* output)
 {

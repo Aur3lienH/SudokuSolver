@@ -34,7 +34,7 @@ int S_IsSquare(Square* square, float threshold)
     float diff1 = fabs(dist1 - dist2);
     float diff2 = fabs(dist3 - dist4);
     float diff3 = fabs(diag1 - diag2);
-    if(diff1 < threshold && diff2 < threshold && diff3 < threshold)
+    if(diff1 < threshold && diff2 < threshold && diff3 < threshold && dist1 > 5)
     {
         return 1;
     }

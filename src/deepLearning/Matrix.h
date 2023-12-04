@@ -65,6 +65,8 @@ void M_LinearMul(const Matrix* a,const Matrix* b, Matrix* output);
 
 float M_GetMax(const Matrix* m);
 
+float M_Get(const Matrix* m, size_t rows, size_t cols);
+
 //Add the first two matrices and put the ouptut in the third parameter
 void M_Add(const Matrix* a,const Matrix* b, Matrix* output);
 

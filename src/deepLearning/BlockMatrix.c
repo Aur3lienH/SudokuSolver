@@ -66,8 +66,7 @@ void BM_Mul(const Matrix* a, const Matrix* b, Matrix* c)
     const size_t colsRightBlockCount = b->cols / BLOCK_SIZE;
     const size_t rowsLeftBlockCount = a->rows / BLOCK_SIZE;
     M_Zero(c);
-    //Set output to 0
-    //The two loops are used to go through the blocks of the matrices
+
     for (size_t f = 0; f < rowsLeftBlockCount; f++)
     {
         right = b->data;
@@ -76,12 +75,6 @@ void BM_Mul(const Matrix* a, const Matrix* b, Matrix* c)
             
             for (size_t j = 0; j < colsRightBlockCount; j++)
             {
-                /*
-                std::cout << "left : " << left - this->GetData() << "\n";
-                std::cout << "rigth : " << right - b->GetData() << "\n";
-                std::cout << "out : " << out - output->GetData() << "\n";
-                std::cout << "\n";
-                */
                 for (size_t ii = 0; ii < BLOCK_SIZE; ii++)
                 {
                     //Go to the next row in this matrix and go to the next column in the other matrix
