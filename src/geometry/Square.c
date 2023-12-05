@@ -25,20 +25,37 @@ void S_Draw(Matrix* matrix, Square* square, float value)
 
 int S_IsSquare(Square* square, float threshold)
 {
-    float dist1 = P_Distance(&square->points[0], &square->points[1]);
-    float dist2 = P_Distance(&square->points[1], &square->points[2]);
-    float dist3 = P_Distance(&square->points[2], &square->points[3]);
-    float dist4 = P_Distance(&square->points[3], &square->points[0]);
+    if (square == NULL || square->points == NULL) {
+        return 0; // Invalid input
+    }
+
+    float dist[4];
+    for (int i = 0; i < 4; i++) {
+        dist[i] = P_Distance(&square->points[i], &square->points[(i + 1) % 4]);
+        if (dist[i] <= 10) {
+            return 0; // Side too short to be considered a square
+        }
+    }
+
+    // Check if all sides are almost equal
+    for (int i = 0; i < 4; i++) {
+        if (fabs(dist[i] - dist[(i + 1) % 4]) > threshold) {
+            return 0;
+        }
+    }
+
     float diag1 = P_Distance(&square->points[0], &square->points[2]);
     float diag2 = P_Distance(&square->points[1], &square->points[3]);
-    float diff1 = fabs(dist1 - dist2);
-    float diff2 = fabs(dist3 - dist4);
-    float diff3 = fabs(diag1 - diag2);
-    if(diff1 < threshold && diff2 < threshold && diff3 < threshold && dist1 > 5)
-    {
-        return 1;
+
+    // Check if diagonals are almost equal
+    if (fabs(diag1 - diag2) > threshold) {
+        return 0;
     }
-    return 0;
+
+    // Optional: Check for right angles and diagonal bisection at 90 degrees
+    // This requires implementing an angle calculation function
+
+    return 1; // Passed all checks
 }
 
 void S_Print(Square* square)
@@ -53,4 +70,20 @@ void S_Print(Square* square)
 void S_Free(Square* square)
 {
     free(square);
+}
+
+float S_Area(Square* square)
+{
+    float dist1 = P_Distance(&square->points[0], &square->points[1]);
+    float dist2 = P_Distance(&square->points[1], &square->points[2]);
+    return dist1 * dist2;
+}
+
+float S_Perimeter(Square* square)
+{
+    float dist1 = P_Distance(&square->points[0], &square->points[1]);
+    float dist2 = P_Distance(&square->points[1], &square->points[2]);
+    float dist3 = P_Distance(&square->points[2], &square->points[3]);
+    float dist4 = P_Distance(&square->points[3], &square->points[0]);
+    return dist1 + dist2 + dist3 + dist4;
 }

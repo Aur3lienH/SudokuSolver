@@ -12,6 +12,10 @@ Square* S_Create(Point* points);
 
 void S_Draw(Matrix* matrix, Square* square, float value);
 
+float S_Area(Square* square);
+
+float S_Perimeter(Square* square);
+
 int S_IsSquare(Square* square, float threshold);
 
 void S_Print(Square* square);

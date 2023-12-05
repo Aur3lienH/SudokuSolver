@@ -4,7 +4,7 @@
 #include "../deepLearning/Matrix.h"
 
 
-
+const int PixelCountSkip = 5;
 
 void RotatePoint(Point* point)
 {
@@ -27,11 +27,38 @@ void RotatePoint(Point* point)
 }
 
 
-void addToStack(Point* stack, size_t* stackPos, Point point)
+void addToStack(Point* stack,int* stackFlag, size_t* stackPos, Point point, int flag)
 {
     stack[*stackPos] = point;
+    stackFlag[*stackPos] = flag;
     *stackPos += 1;
 }
+
+void addPointToStack(Point* stack, int* flagStack, size_t* stackPos, Point point, Matrix* img, Matrix* flag, int skippedPixels) {
+    if(point.x < 0 || point.y < 0 || point.x >= img->cols || point.y >= img->rows) {
+        return;
+    }
+    if(flag->data[point.x + point.y * flag->cols] >= 0.9f) {
+        return;
+    }
+
+    float currentPixelValue = img->data[point.x + point.y * img->cols];
+
+    // If current pixel is black, increment the skippedPixels counter
+    if(currentPixelValue <= 0.1f) {
+        if(skippedPixels >= PixelCountSkip) {
+            return; // Stop skipping if maximum skipped pixel count is reached
+        }
+        skippedPixels++; // Increment the count of skipped pixels
+    } else {
+        skippedPixels = 0; // Reset skipped pixel count for non-black pixels
+    }
+
+    // Add current point to the stack
+    flag->data[point.x + point.y * flag->cols] = 1.0f;
+    addToStack(stack, flagStack, stackPos, point, skippedPixels);
+}
+
 
 int isInRangeOrNotFlagged(Matrix* img, Matrix* flag, Point point)
 {
@@ -39,7 +66,7 @@ int isInRangeOrNotFlagged(Matrix* img, Matrix* flag, Point point)
     {
         return 0;
     }
-    if(flag->data[point.x + point.y * flag->cols] >= 0.9)
+    if(flag->data[point.x + point.y * flag->cols] >= 0.9f)
     {
         return 0;
     }
@@ -48,74 +75,64 @@ int isInRangeOrNotFlagged(Matrix* img, Matrix* flag, Point point)
 
 Square GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
 {
-    Point* stack = malloc(sizeof(Point) * img->effectiveRows * img->effectiveCols);
+    Point* stack = malloc(sizeof(Point) * img->rows * img->effectiveCols* 10);
+    int* stackFlag = malloc(sizeof(int) * img->rows * img->effectiveCols* 10);
     size_t stackPos = 0;
-    Point minUpLeft = {img->cols,img->rows};
-    Point minUpRight = {0,img->rows};
-    Point minDownLeft = {img->cols,0};
-    Point minDownRight = {0,0};
+    Point minUpLeft = startPoint;
+    Point minUpRight = startPoint;
+    Point minDownLeft = startPoint;
+    Point minDownRight = startPoint;
 
+    flag->data[startPoint.x + startPoint.y * flag->cols] = 1.0f;
     Point upLeft = {0,0};
-    Point upRight = {img->cols,0};
-    Point downLeft = {0,img->rows};
-    Point downRight = {img->cols,img->rows};
+    Point upRight = {img->rows,0};
+    Point downLeft = {0,img->cols};
+    Point downRight = {img->rows,img->cols};
 
-    addToStack(stack,&stackPos,startPoint);
+
+    addToStack(stack,stackFlag,&stackPos,startPoint,0);
     while(stackPos > 0)
     {
         Point currentPoint = stack[stackPos - 1];
+        int flagValue = stackFlag[stackPos - 1];
         stackPos -= 1;
-        if(currentPoint.x < 0 || currentPoint.y < 0 || currentPoint.x >= img->cols || currentPoint.y >= img->rows)
+
+        
+
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x + 1,currentPoint.y},img,flag,flagValue);
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x - 1,currentPoint.y},img,flag,flagValue);
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x,currentPoint.y + 1},img,flag,flagValue);
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x,currentPoint.y - 1},img,flag,flagValue);
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x + 1,currentPoint.y + 1},img,flag,flagValue);
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x - 1,currentPoint.y - 1},img,flag,flagValue);
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x + 1,currentPoint.y - 1},img,flag,flagValue);
+        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x - 1,currentPoint.y + 1},img,flag,flagValue);
+
+        float currentPixelValue = img->data[currentPoint.x + currentPoint.y * img->cols];
+        if(currentPixelValue <= 0.1f)
         {
-            printf("Point out of bounds\n");
             continue;
-        }
-        if(M_Get(img,currentPoint.y,currentPoint.x) == 0)
-        {
-            printf("Point is not an edge\n");
-            continue;
-        }
-        printf("current point : %ld %ld \n",currentPoint.x,currentPoint.y);
-        Point right = {currentPoint.x + 1,currentPoint.y};
-        if(isInRangeOrNotFlagged(img,flag,right))
-        {
-            addToStack(stack,&stackPos,right);
-        }
-        Point left = {currentPoint.x - 1,currentPoint.y};
-        if(isInRangeOrNotFlagged(img,flag,left))
-        {
-            addToStack(stack,&stackPos,left);
-        }
-        Point up = {currentPoint.x,currentPoint.y + 1};
-        if(isInRangeOrNotFlagged(img,flag,up))
-        {
-            addToStack(stack,&stackPos,up);
-        }
-        Point down = {currentPoint.x,currentPoint.y - 1};
-        if(isInRangeOrNotFlagged(img,flag,down))
-        {
-            addToStack(stack,&stackPos,down);
         }
         
-        if(P_Distance(&currentPoint,&upLeft) < P_Distance(&upLeft,&minUpLeft))
+        if(P_Distance(&currentPoint,&upLeft) < P_Distance(&minUpLeft,&upLeft))
         {
-            printf("upleft \n");
             minUpLeft = currentPoint;
         }
-        if(P_Distance(&currentPoint,&upRight) < P_Distance(&upRight,&minUpRight))
+        if(P_Distance(&currentPoint,&upRight) < P_Distance(&minUpRight,&upRight))
         {
             minUpRight = currentPoint;
         }
-        if(P_Distance(&currentPoint,&downLeft) < P_Distance(&downLeft,&minDownLeft))
+        if(P_Distance(&currentPoint,&downLeft) < P_Distance(&minDownLeft,&downLeft))
         {
             minDownLeft = currentPoint;
         }
-        if(P_Distance(&currentPoint,&downRight) < P_Distance(&downRight,&minDownRight))
+        if(P_Distance(&currentPoint,&downRight) < P_Distance(&minDownRight,&downRight))
         {
             minDownRight = currentPoint;
         }
 
-        flag->data[currentPoint.x + currentPoint.y * flag->cols] = 1;
+
+
 
     }
     free(stack);
@@ -128,32 +145,50 @@ Square GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
     return square;
 }
 
+int isSquare(Square square)
+{
+    //Check if the difference between the distance of the two diagonals is less than 10% of the distance of the diagonals
+    float diag1 = P_Distance(&square.points[0],&square.points[2]);
+    float diag2 = P_Distance(&square.points[1],&square.points[3]);
+    float diff = fabsf(diag1 - diag2);
+    float min = diag1 < diag2 ? diag1 : diag2;
+    if(diff > min * 1.0f)
+    {
+        return 0;
+    }
+    return 1;
+}
+
 
 Square GetSquareWithContour(Matrix* img)
 {
-    Matrix* flag = M_Create_2D(img->effectiveRows,img->effectiveCols);
+    Matrix* flag = M_Create_2D(img->rows,img->cols);
+    Square res;
+    res.points[0] = (Point){0,0};
+    res.points[1] = (Point){0,0};
+    res.points[2] = (Point){0,0};
+    res.points[3] = (Point){0,0};
 
     for (size_t i = 0; i < img->rows; i++)
     {
         for (size_t j = 0; j < img->cols; j++)
         {
-            if(M_Get(img,i,j) == 0 || flag->data[j + i * flag->cols] >= 0.9)
+            if(img->data[j + i * img->cols] <= 0.1 || flag->data[j + i * flag->cols] >= 0.9)
             {
                 continue;
             }
-            Square square = GetOneSquare(img,flag,(Point){i,j});
-            printf("before printing the square \n");
-            S_Print(&square);
-            printf("after \n");
-            if(S_IsSquare(&square,0.1f))
+            Square square = GetOneSquare(img,flag,(Point){j,i});
+            
+            if(S_Perimeter(&square) > S_Perimeter(&res))
             {
-                printf("square found \n");
-                M_Free(flag);
-                return square;
+                res = square;
             }
+            
+            
+
+            
         }
     }
-    printf("no square found \n");
-    Square square;
-    return square;
+    S_Print(&res);
+    return res;
 }

@@ -2,7 +2,7 @@
 #include <math.h>
 #include "../deepLearning/Matrix.h"
 
-const size_t POINT_RADIUS = 1;
+const size_t POINT_RADIUS = 3;
 
 
 Point* P_Create(int x, int y)

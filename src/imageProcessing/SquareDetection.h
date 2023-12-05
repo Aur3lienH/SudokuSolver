@@ -1,5 +1,5 @@
 #pragma once
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
 #include "../geometry/Square.h"
 #include "../geometry/Point.h"
 

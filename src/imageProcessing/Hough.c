@@ -63,7 +63,6 @@ void averageLines(Line** lines, size_t* linesCount) {
     for (size_t i = 0; i < *linesCount; i++) {
         for (size_t j = i + 1; j < *linesCount; j++) {
             float angleDiff = normalizeAngleDifference(fabsf((*lines)[i].a - (*lines)[j].a));
-            printf("Angle diff: %f\n", angleDiff);
             float distanceDiff = fabsf((*lines)[i].b - (*lines)[j].b);
             
             if (angleDiff < angleAverageThreshold && distanceDiff < distanceAverageThreshold) {
@@ -351,7 +350,7 @@ Square Hough(Matrix* img)
 
     Line* lines = GetLines(accumulator, thetaSize, rhoSize, houghThresholdAdjust, &linesCount);
     averageLines(&lines, &linesCount);
-        drawLines(img, lines, linesCount, rhoSize);
+        //drawLines(img, lines, linesCount, rhoSize);
     
 
 
