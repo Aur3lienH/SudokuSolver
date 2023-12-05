@@ -13,6 +13,7 @@
 #include "Grayscale.h"
 #include "Preprocessing.h"
 #include "Canny.h"
+#include "SquareDetection.h"
 
 
 
@@ -36,7 +37,7 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
     Matrix* grayscaled = GrayscaleToMatrix(image);
 	Matrix* resized = resize(grayscaled);
     Matrix* cannied = canny(resized, 2);
-    Square square = Hough(cannied);
+    Square square = GetSquareWithContoura(cannied);
     //Write the points in the file
     for (size_t i = 0; i < 4; i++)
     {

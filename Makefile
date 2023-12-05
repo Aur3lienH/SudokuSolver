@@ -4,7 +4,7 @@ TARGET_EXEC ?= solver
 BUILD_DIR ?= ./build
 SRC_DIR ?= ./src
 
-CFLAGS := -O3 -mavx2 -march=native `pkg-config --cflags --libs gtk+-3.0 sdl2 SDL2_image` -ffast-math -lSDL2 -fsanitize=address 
+CFLAGS := -Ofast -mavx2 -march=native `pkg-config --cflags --libs gtk+-3.0 sdl2 SDL2_image` -ffast-math -lSDL2 -fsanitize=address 
 LDFLAGS := -lm `pkg-config --cflags --libs gtk+-3.0 sdl2 SDL2_image` -lSDL2 -fsanitize=address
 SRCS := $(shell find $(SRC_DIR) -name *.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)

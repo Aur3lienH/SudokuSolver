@@ -39,7 +39,7 @@ int S_IsSquare(Square* square, float threshold)
 
     // Check if all sides are almost equal
     for (int i = 0; i < 4; i++) {
-        if (fabs(dist[i] - dist[(i + 1) % 4]) > threshold) {
+        if (dist[i] / dist[(i + 1) % 4] > 1 + threshold || dist[(i + 1) % 4] / dist[i] > 1 + threshold) {
             return 0;
         }
     }
@@ -48,7 +48,7 @@ int S_IsSquare(Square* square, float threshold)
     float diag2 = P_Distance(&square->points[1], &square->points[3]);
 
     // Check if diagonals are almost equal
-    if (fabs(diag1 - diag2) > threshold) {
+    if (diag1 / diag2 > 1 + threshold || diag2 / diag1 > 1 + threshold) {
         return 0;
     }
 

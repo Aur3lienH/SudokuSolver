@@ -7,7 +7,7 @@
 
 
 const float drawThreshold = 0.99f;
-const size_t houghThreshold = 150;
+const size_t houghThreshold = 130;
 const float angleAverageThreshold = 10.0f;
 const float distanceAverageThreshold = 5.0f;
 const int searchRadiusThreshold = 5;

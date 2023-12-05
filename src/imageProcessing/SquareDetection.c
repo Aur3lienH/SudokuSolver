@@ -4,7 +4,7 @@
 #include "../deepLearning/Matrix.h"
 
 
-const int PixelCountSkip = 5;
+const int PixelCountSkip = 0;
 
 void RotatePoint(Point* point)
 {
@@ -73,10 +73,14 @@ int isInRangeOrNotFlagged(Matrix* img, Matrix* flag, Point point)
     return 1;
 }
 
-Square GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
+PointSet* GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
 {
     Point* stack = malloc(sizeof(Point) * img->rows * img->effectiveCols* 10);
     int* stackFlag = malloc(sizeof(int) * img->rows * img->effectiveCols* 10);
+    PointSet* pointSet = malloc(sizeof(PointSet));
+    size_t pointSetPos = 0;
+    pointSet->points = malloc(sizeof(Point) * 5);
+    pointSet->size = 5;
     size_t stackPos = 0;
     Point minUpLeft = startPoint;
     Point minUpRight = startPoint;
@@ -113,22 +117,15 @@ Square GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
         {
             continue;
         }
-        
-        if(P_Distance(&currentPoint,&upLeft) < P_Distance(&minUpLeft,&upLeft))
+        else
         {
-            minUpLeft = currentPoint;
-        }
-        if(P_Distance(&currentPoint,&upRight) < P_Distance(&minUpRight,&upRight))
-        {
-            minUpRight = currentPoint;
-        }
-        if(P_Distance(&currentPoint,&downLeft) < P_Distance(&minDownLeft,&downLeft))
-        {
-            minDownLeft = currentPoint;
-        }
-        if(P_Distance(&currentPoint,&downRight) < P_Distance(&minDownRight,&downRight))
-        {
-            minDownRight = currentPoint;
+            pointSet->points[pointSetPos] = currentPoint;
+            pointSetPos += 1;
+            if(pointSetPos >= pointSet->size)
+            {
+                pointSet->size *= 2;
+                pointSet->points = realloc(pointSet->points,sizeof(Point) * pointSet->size);
+            }
         }
 
 
@@ -136,13 +133,9 @@ Square GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
 
     }
     free(stack);
-
-    Square square;
-    square.points[0] = minUpLeft;
-    square.points[1] = minUpRight;
-    square.points[2] = minDownRight;
-    square.points[3] = minDownLeft;
-    return square;
+    free(stackFlag);
+    pointSet->size = pointSetPos;
+    return pointSet;
 }
 
 int isSquare(Square square)
@@ -157,6 +150,48 @@ int isSquare(Square square)
         return 0;
     }
     return 1;
+}
+
+float distanceFromPoints(Point* points, size_t size, Point point)
+{
+    if(size == 0)
+    {
+        Point p = {0,0};
+        return P_Distance(&p,&point);
+    }
+    float sum = 0;
+    for (size_t i = 0; i < size; i++)
+    {
+        float dist = P_Distance(&points[i],&point);
+        sum += dist;
+    }
+    return sum;
+}
+
+Square getSquareFromPointSet(PointSet* pointSet, Matrix* img)
+{
+    Point* points = malloc(sizeof(Point) * 4);
+    for (size_t i = 0; i < 4; i++)
+    {
+        Point newPoint = pointSet->points[0];
+        for (size_t j = 0; j < pointSet->size; j++)
+        {
+            float dist = distanceFromPoints(points,i,pointSet->points[j]);
+            if(dist > distanceFromPoints(points,i,newPoint))
+            {
+                newPoint = pointSet->points[j];
+            }
+        }
+        points[i] = newPoint;
+    }
+    Square square;
+    square.points[0] = points[0];
+    square.points[1] = points[1];
+    square.points[2] = points[2];
+    square.points[3] = points[3];
+    free(points); 
+    return square;
+    
 }
 
 
@@ -177,8 +212,12 @@ Square GetSquareWithContour(Matrix* img)
             {
                 continue;
             }
-            Square square = GetOneSquare(img,flag,(Point){j,i});
-            
+            PointSet* pointSet = GetOneSquare(img,flag,(Point){j,i});
+            Square square = getSquareFromPointSet(pointSet,img);
+            if(S_IsSquare(&square,1.0f) == 0)
+            {
+                continue;
+            }
             if(S_Perimeter(&square) > S_Perimeter(&res))
             {
                 res = square;
