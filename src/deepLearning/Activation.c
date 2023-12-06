@@ -104,3 +104,22 @@ Activation* Softmax()
     res->activationType = 2;
     return res;
 }
+
+void linear(Matrix* m, Matrix* output)
+{
+    M_Copy(m, output);
+}
+
+void linearDerivative(Matrix* m, Matrix* output)
+{
+    M_Set(output, 1);
+}
+
+Activation* Linear()
+{
+    Activation* res = (Activation*)malloc(sizeof(Activation));
+    res->Compute = linear;
+    res->ComputeDerivative = linearDerivative;
+    res->activationType = 3;
+    return res;
+}

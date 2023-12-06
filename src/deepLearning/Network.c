@@ -255,7 +255,7 @@ void N_AddLayer(Network* n, Layer* l)
     
 }
 
-void N_Save(Network* n, char* path)
+void N_Save(Network* n, const char* path)
 {
     FILE* file = fopen(path,"wb");
     if(file == NULL)

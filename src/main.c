@@ -138,9 +138,9 @@ void HandleFlags(int argc, char* argv[])
 
         if(CompareStrings(argv[i],"--dataset"))
         {
-            if(argc >= 4)
+            if(argc >= 5)
             {
-                CreateDataset(argv[i+1],argv[i+2]);
+                CreateDataset(argv[i+1],argv[i+2],atoi(argv[i+3]));
             }
             else
             {

@@ -23,7 +23,7 @@ const char* MNIST_DATA_PATH = "datasets/train-images.idx3-ubyte";
 const char* MNIST_LABEL_PATH = "datasets/train-labels.idx1-ubyte";
 const char* MNIST_TEST_DATA_PATH = "datasets/t10k-images.idx3-ubyte";
 const char* MNIST_TEST_LABEL_PATH = "datasets/t10k-labels.idx1-ubyte";
-const char* SUDOKU_DATA_PATH = "datasets/dataset_creation/processed/all_digits_images.bin";
+const char* SUDOKU_DATA_PATH = "datasets/datasetCreation/processed/all_digits_images.bin";
 
 Matrix* temp = NULL;
 
@@ -38,7 +38,7 @@ void AddNoise(const Matrix* input, Matrix* output)
 void Mnist_Train_ConvLayers()
 {
     printf("Strating training ...\n");
-    Dataset* trainDataset = LoadSudokuDigitDataset();
+    Dataset* trainDataset = LoadCombinedTrainDataset();
 
 
     for (size_t i = 0; i < trainDataset->size; i++)
@@ -51,7 +51,7 @@ void Mnist_Train_ConvLayers()
 
     Network* network = N_CreateNetwork();
     N_AddLayer(network, I_Create_2D(LS_Create3D(28,28,1)));
-    N_AddLayer(network, Conv_Create(LS_Create3D(3,3,128)));
+    N_AddLayer(network, Conv_Create(LS_Create3D(3,3,32)));
     N_AddLayer(network, MaxPool_Create(2));
     N_AddLayer(network, Flatten_Create());
     N_AddLayer(network, FCL_Create(128, ReLU()));

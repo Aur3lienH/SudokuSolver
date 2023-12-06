@@ -49,16 +49,11 @@ void Conv_Free(void* layer)
 
 void Conv_Compile(void* layer,LayerShape* previousLayerShape)
 {
-        printf("bruh\n");
     ConvLayer* convLayer = (ConvLayer*)layer;
-        printf("bruh\n");
     size_t dataFilterSize = convLayer->filterShape->x * convLayer->filterShape->y * convLayer->filterShape->z;
-        printf("bruh\n");
     convLayer->layer->layerShape = LS_Create3D(previousLayerShape->x - convLayer->filterShape->x + 1,previousLayerShape->y - convLayer->filterShape->y + 1,convLayer->filterShape->z);
-    printf("bruh\n");
     convLayer->adam = Adam_Create_D(dataFilterSize);
     convLayer->adamBias = Adam_Create_D(convLayer->layer->layerShape->z);
-    printf("Conv Layer: %d x %d x %d\n",convLayer->layer->layerShape->x,convLayer->layer->layerShape->y,convLayer->layer->layerShape->z);
     if(convLayer->filters == NULL)
     {
         convLayer->filters = M_Create_3D(convLayer->filterShape->x,convLayer->filterShape->y,convLayer->filterShape->z);

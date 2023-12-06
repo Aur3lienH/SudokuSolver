@@ -87,8 +87,8 @@ def main(all_images_folder, output_file):
     print(f'Saved all images to {output_file}')
 
 # The folder that contains subfolders for each digit
-all_images_folder = './datasets/dataset_creation'
+all_images_folder = './datasets/datasetCreation'
 # The output file where all images will be stored
-output_file = './datasets/dataset_creation/processed/all_digits_images.bin'
+output_file = './datasets/datasetCreation/processed/all_digits_images.bin'
 
 main(all_images_folder, output_file)

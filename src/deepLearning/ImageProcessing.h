@@ -20,5 +20,11 @@ Matrix* M_IMinTransformation(Matrix* input, size_t width);
 
 Matrix* DownScale(const Matrix* input, float ratio);
 
+Matrix* M_Stretch(const Matrix* input, size_t width, size_t height);
+
+Matrix* M_Blur(const Matrix* input);
+
+
+
 
 

@@ -26,7 +26,22 @@ int filterImage(const struct dirent* name)
     return 0;
 }
 
-void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, const char* filename)
+Matrix* SquareToMatrix(Square square)
+{
+    Matrix* res = M_Create_2D(8,1);
+    res->data[0] = square.points[0].x;
+    res->data[1] = square.points[0].y;
+    res->data[2] = square.points[1].x;
+    res->data[3] = square.points[1].y;
+    res->data[4] = square.points[2].x;
+    res->data[5] = square.points[2].y;
+    res->data[6] = square.points[3].x;
+    res->data[7] = square.points[3].y;
+    return res;
+}
+
+
+void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, const char* filename, size_t width)
 {
     SDL_Surface* image = IMG_Load(path);
     if(image == NULL)
@@ -35,15 +50,15 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
         exit(-1);
     }
     Matrix* grayscaled = GrayscaleToMatrix(image);
-	Matrix* resized = resize(grayscaled);
+	Matrix* resized = resize(grayscaled,width);
     Matrix* cannied = canny(resized, 2);
-    Square square = GetSquareWithContoura(cannied);
+    Square square = GetSquareWithContour(cannied);
     //Write the points in the file
     for (size_t i = 0; i < 4; i++)
     {
         fwrite(&square.points[i].x,sizeof(int),1,datasetFile);
     }
-    Matrix* saveMatrix = M_Complete(resized,500,500);
+    Matrix* saveMatrix = M_Complete(resized,width,width);
 
     SDL_Surface* surface = MatrixToSurface(saveMatrix);
     P_DrawSDL(surface,&square.points[0],0xFF0000);
@@ -57,11 +72,14 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
 
     //Write the matrix after it has been resized
     M_Save(saveMatrix,datasetFile);
+    Matrix* squareMatrix = SquareToMatrix(square);
+    M_Save(squareMatrix,datasetFile);
+    M_Free(squareMatrix);
     
 }
 
 
-void CreateDataset(const char* inputFolder, const char* outputFolder)
+void CreateDataset(const char* inputFolder, const char* outputFolder, size_t width)
 {
     struct dirent **namelist;
     int n = scandir(inputFolder, &namelist, filterImage, alphasort);
@@ -89,12 +107,18 @@ void CreateDataset(const char* inputFolder, const char* outputFolder)
         printf("Error while writing the number of images\n");
         exit(-1);
     }
+    res = fwrite(&width,sizeof(int),1,datasetFile);
+    if(res != 1)
+    {
+        printf("Error while writing the width\n");
+        exit(-1);
+    }
     for (int i = 0; i < n; i++)
     {
         char* path = malloc(sizeof(char) * 100);
         sprintf(path,"%s/%s",inputFolder,namelist[i]->d_name);
         printf("Processing %s\n",path);
-        ImageProcess(path,outputFolderCopy,datasetFile,namelist[i]->d_name);  
+        ImageProcess(path,outputFolderCopy,datasetFile,namelist[i]->d_name,width);  
         free(path);
     }
 }

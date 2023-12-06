@@ -11,14 +11,11 @@
 #include "../deepLearning/ImageProcessing.h"
 #include <math.h>
 
-const size_t DownsizeWidth = 500;
 
-Matrix* resize(const Matrix* input)
+Matrix* resize(const Matrix* input, size_t downSizeWidth)
 {
 	size_t maximum = input->cols > input->rows ? input->cols : input->rows;
-	printf("Maximum : %ld\n", maximum);
-	float ratio = (float)DownsizeWidth / (float)maximum;
-	printf("Ratio : %f\n", ratio);
+	float ratio = (float)downSizeWidth / (float)maximum;
 	return DownScale(input,ratio);
 }
 
@@ -27,7 +24,7 @@ Matrix* preprocess(SDL_Surface* image, double factor_size)
 	
 	
 	Matrix* grayscaled = GrayscaleToMatrix(image);
-	Matrix* resized = resize(grayscaled);
+	Matrix* resized = resize(grayscaled, 500);
 	clock_t time1 = clock();
 	Matrix* cannied = canny(resized, 2);
 	clock_t time2 = clock();

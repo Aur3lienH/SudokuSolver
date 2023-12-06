@@ -96,7 +96,7 @@ void N_AddLayer(Network* n, Layer* layer);
 /// @brief Save a network
 /// @param n the network
 /// @param path the path of the network
-void N_Save(Network* n, char* path);
+void N_Save(Network* n, const char* path);
 
 /// @brief Load a network
 /// @param path the path of the network

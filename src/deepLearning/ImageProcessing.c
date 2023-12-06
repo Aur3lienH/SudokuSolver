@@ -217,3 +217,37 @@ Matrix* DownScale(const Matrix* input, float ratio)
     return res;
 }
 
+Matrix* M_Stretch(const Matrix* input, size_t width, size_t height)
+{
+    Matrix* res = M_Create_2D(width, height);
+    float x_ratio = (float)input->cols / (float)width;
+    float y_ratio = (float)input->rows / (float)height;
+    size_t px, py;
+
+    for (size_t i = 0; i < height; i++)
+    {
+        for (size_t j = 0; j < width; j++)
+        {   
+            px = floor(j * x_ratio);
+            py = floor(i * y_ratio);
+            res->data[j + i * width] = input->data[px + py * input->cols];
+        }
+    }
+    return res;
+}
+
+
+Matrix* M_Blur(const Matrix* input)
+{
+    Matrix* res = M_Create_2D(input->rows, input->cols);
+    for (size_t i = 0; i < input->rows; i++)
+    {
+        for (size_t j = 0; j < input->cols; j++)
+        {
+            res->data[i * input->cols + j] = GetSurrondingAverage(input, j, i, input->cols, input->rows);
+        }
+    }
+    return res;
+}
+
+
