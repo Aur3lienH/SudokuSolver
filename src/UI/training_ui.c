@@ -200,8 +200,7 @@ void training_update_progress(float value)
     }
     else
     {
-        progress_text = g_strdup_printf("Training done, model saved",
-        model);
+        progress_text = g_strdup_printf("Training done, model saved");
     }
 
     // Update progress bar fraction

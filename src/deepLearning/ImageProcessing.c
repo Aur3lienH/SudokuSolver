@@ -211,7 +211,7 @@ Matrix* DownScale(const Matrix* input, float ratio)
     {
         for (size_t j = 0; j < newWidth; j++)
         {
-            res->data[i * newWidth + j] = GetSurrondingAverage(input, j / ratio, i / ratio, input->cols, input->rows);
+            res->data[i * newWidth + j] = GetSurrondingAverage((Matrix *)input, j / ratio, i / ratio, input->cols, input->rows);
         }
     }
     return res;
@@ -244,7 +244,7 @@ Matrix* M_Blur(const Matrix* input)
     {
         for (size_t j = 0; j < input->cols; j++)
         {
-            res->data[i * input->cols + j] = GetSurrondingAverage(input, j, i, input->cols, input->rows);
+            res->data[i * input->cols + j] = GetSurrondingAverage((Matrix *)input, j, i, input->cols, input->rows);
         }
     }
     return res;

@@ -20,7 +20,7 @@ int GetNumber(Network* n,Matrix* matrix)
     Matrix* preprocessed = M_OptimalBinarisation(matrix);
     Matrix* final = MatrixToDigit(preprocessed,&isBlank);
     char path [1024];
-    sprintf(path,"images/cell_%li.jpg",rand());
+    snprintf(path, sizeof(path), "images/cell_%i.jpg",rand());
     IMG_SaveJPG(MatrixToSurface(preprocessed),path,100);
     final->rows = 784;
     final->cols = 1;
@@ -60,7 +60,7 @@ int** GetSudokuNumbers_File(Network* n)
     for (size_t i = 0; i < 81; i++)
     {
         path = (char*)malloc(sizeof(char) * 1024);
-        sprintf(path, "images/cells/cell_%li.jpg", i);
+        snprintf(path, sizeof(path), "images/cells/cell_%li.jpg", i);
         SDL_Surface* surface = IMG_Load(path);
         img[i] = GrayscaleToMatrix(surface);
         free(path);

@@ -443,7 +443,7 @@ void on_sudoku_button_clicked(GtkButton *button, gpointer user_data)
             sudoku_grid[row][col] = text[0] - '0'; // Convert char to int
 
             // Change the name of the button
-            gtk_widget_set_name(button, "original_number");
+            gtk_widget_set_name(GTK_WIDGET(button), "original_number");
         }
         else if (text[0] == '0') // Check if input is 0
         {
@@ -452,7 +452,7 @@ void on_sudoku_button_clicked(GtkButton *button, gpointer user_data)
             sudoku_grid[row][col] = 0;
 
             // Change the name of the button
-            gtk_widget_set_name(button, "empty_cell");
+            gtk_widget_set_name(GTK_WIDGET(button), "empty_cell");
         }
     }
 
@@ -472,11 +472,11 @@ void solver_button_next_image(GtkButton* button)
     {
         if (i == 1)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_previous_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_previous_image), TRUE);
         }
         if (i == 7)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         // Show next image
         gtk_widget_destroy(image);
@@ -492,11 +492,11 @@ void solver_button_next_image(GtkButton* button)
     {
         if (i == 2)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_previous_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_previous_image), TRUE);
         }
         if (i == 6)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         // Show next image
         gtk_widget_destroy(image);
@@ -523,11 +523,11 @@ void solver_button_previous_image(GtkButton* button)
     {
         if (i == 0)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         if (i == 6)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_next_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_next_image), TRUE);
         }
         // Show previous image
         gtk_widget_destroy(image);
@@ -551,11 +551,11 @@ void solver_button_previous_image(GtkButton* button)
     {
         if (i == 1)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         if (i == 5)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_next_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_next_image), TRUE);
         }
         // Show previous image
         gtk_widget_destroy(image);

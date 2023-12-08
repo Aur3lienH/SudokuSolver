@@ -70,7 +70,7 @@ void ConvertDelta(Matrix* delta, size_t* maxIndexes, Matrix* newDelta, size_t si
 }
 
 
-Matrix* MaxPool_BackPropagate(void* layerPtr, const Matrix* input, Matrix* delta)
+Matrix* MaxPool_BackPropagate(void* layerPtr, Matrix* input, Matrix* delta)
 {
     MaxPoolLayer* maxPoolLayer = (MaxPoolLayer*)layerPtr;
     M_Zero(maxPoolLayer->newDelta);

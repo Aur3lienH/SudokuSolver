@@ -107,7 +107,7 @@ void HandleFlags(int argc, char* argv[])
             {
                 SDL_Surface* img = IMG_Load(argv[i+1]);
 
-                Matrix* res = PreprocessToCanny(img,1.2);
+                Matrix* res = PreprocessToCanny(img,1);
                 SDL_Surface* surface = MatrixToSurface(res);
                 int result = IMG_SaveJPG(surface,"./images/export/export.jpg",100);
                 printf("Result : %d\n",result);

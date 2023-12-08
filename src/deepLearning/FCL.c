@@ -134,7 +134,7 @@ Matrix* FCL_Process(void* layerPtr, Matrix* input)
 /// @param input Is the input of the layer in the feed forward pass, so the output of the previous layer
 /// @param delta is the delta of the next layer, calculated just before
 /// @return It returns the delta for the previous layer
-Matrix* FCL_Backpropagation(void* layerPtr, const Matrix* input, Matrix* delta)
+Matrix* FCL_Backpropagation(void* layerPtr, Matrix* input, Matrix* delta)
 {
     
     FCL* fcl = (FCL*)layerPtr;
@@ -257,7 +257,7 @@ void FCL_Print(void* layerPtr, int* parametersCount)
         break;
     }
 
-    printf("Parameters Count : %d\n",fclParametersCount);
+    printf("Parameters Count : %zu\n",fclParametersCount);
     *parametersCount += fclParametersCount;
 }
 

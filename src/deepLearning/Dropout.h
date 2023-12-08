@@ -17,8 +17,8 @@ typedef struct
 Layer* Drop_Create(double dropout_rate);
 
 void Drop_Compile(void* drop, LayerShape* layerShape);
-
-const Matrix* Drop_FeedForward(void* drop, const Matrix* input);
+ 
+Matrix* Drop_FeedForward(void* drop, Matrix* input);
 
 Layer* Drop_Copy(void* drop);
 

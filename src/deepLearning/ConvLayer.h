@@ -28,10 +28,10 @@ Matrix* Conv_FeedForward(void* layerPtr, Matrix* input);
 Matrix* Conv_Process(void* layerPtr, Matrix* input);
 
 //Compute the gradient of the layer and compute the delta for the previous layer
-Matrix* Conv_BackPropagateFully(void* layerPtr, const Matrix* input, Matrix* delta);
+Matrix* Conv_BackPropagateFully(void* layerPtr, Matrix* input, Matrix* delta);
 
 //Compute the gradient of the layer 
-Matrix* Conv_BackPropagateGradient(void* layerPtr, const Matrix* input, Matrix* delta);
+Matrix* Conv_BackPropagateGradient(void* layerPtr, Matrix* input, Matrix* delta);
 
 
 void Conv_UpdateWeights(void* layerPtr,float learningRate, float* accumulator, float lambda);

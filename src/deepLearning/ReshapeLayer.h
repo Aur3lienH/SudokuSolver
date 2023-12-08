@@ -23,7 +23,7 @@ Matrix* ReshapeLayer_FeedForward(void* reshapeLayer, Matrix* input);
 
 Matrix* ReshapeLayer_Process(void* reshapeLayer, Matrix* input);
 
-Matrix* ReshapeLayer_BackPropagate(void* reshapeLayer, const Matrix* input, Matrix* delta);
+Matrix* ReshapeLayer_BackPropagate(void* reshapeLayer, Matrix* input, Matrix* delta);
 
 void ReshapeLayer_UpdateWeights(void* reshapeLayer,float learningRate, float* accumulator, float lambda);
 

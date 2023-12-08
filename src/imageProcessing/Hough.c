@@ -21,7 +21,7 @@ void drawLine(Matrix* image, Line line, size_t rhoSize)
         {
             float theta = line.a * M_PI / 180;
             float rho = line.b - rhoSize / 2;
-            if (fabsf(rho - (x * cos(theta) + y * sin(theta))) < drawThreshold)
+            if (fabsf((float)(rho - (x * cos(theta) + y * sin(theta)))) < drawThreshold)
             {
                 image->data[y + x * image->cols] = 1;
             }

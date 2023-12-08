@@ -8,7 +8,7 @@
 
 SDL_Surface* SudokuImgProcessing(SDL_Surface* image)
 {
-    Matrix* res = PreprocessToCanny(image, 0.5);
+    Matrix* res = PreprocessToCanny(image, 1);
     Square square = GetSquareWithContour(res);
     //Square square2 = Hough(res);
     SDL_Surface* surface = MatrixToSurface(res);

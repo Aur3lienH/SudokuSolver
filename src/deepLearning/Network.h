@@ -62,12 +62,12 @@ void N_Compile_L2(Network* n, Loss* loss, float lambda);
 void N_Compile(Network* n, Loss* loss);
 
 //Feed forward the input through the network and put the output in the output parameter
-float N_FeedForward(Network* n, const Matrix* input, const Matrix* desiredOutput);
+float N_FeedForward(Network* n, Matrix* input, Matrix* desiredOutput);
 
 /// @brief Process the input through the network and return the result
 /// @param n a network
 /// @return the output of the network
-const Matrix* N_Process(Network* n, const Matrix* input);
+Matrix* N_Process(Network* n, Matrix* input);
 
 
 //Back propagate the error through the network and put the output in the output parameter
@@ -75,7 +75,7 @@ void N_BackPropagate(Network* n, Matrix* delta);
 
 
 //Back propagate the error through the network and return the error of the network
-double N_Backpropagation(Network* n, const Matrix* input, const Matrix* desiredOutput);
+double N_Backpropagation(Network* n, Matrix* input, Matrix* desiredOutput);
 
 
 void* N_BackpropagationThread(void* args);

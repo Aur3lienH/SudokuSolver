@@ -39,7 +39,7 @@ void Drop_Compile(void* layerPtr, LayerShape* layerShape)
     drop->layer->layerShape = LS_Create1D(layerShape->x);
 }
 
-const Matrix* Drop_FeedForward(void* layerPtr, const Matrix* input)
+Matrix* Drop_FeedForward(void* layerPtr, Matrix* input)
 {
     Dropout* drop = (Dropout*)layerPtr;
     size_t size = M_GetSize3D(input);
@@ -50,7 +50,7 @@ const Matrix* Drop_FeedForward(void* layerPtr, const Matrix* input)
             input->data[i] = 0;
         }
     }
-    drop->layer->outputs = input;
+    drop->layer->outputs = (Matrix *)input;
     return input;
 }
 

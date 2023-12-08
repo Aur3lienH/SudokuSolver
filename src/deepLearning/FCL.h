@@ -65,7 +65,7 @@ Matrix* FCL_Process(void* layerPtr, Matrix* input);
 /// @param input The output of the previous layer
 /// @param delta The delta of the next layer, or the derivative of the cost function if it is the last layer
 /// @return The gradient depending on the previous layer
-Matrix* FCL_Backpropagation(void* layerPtr, const Matrix* input, Matrix* delta);
+Matrix* FCL_Backpropagation(void* layerPtr, Matrix* input, Matrix* delta);
 
 /// @brief Update the weights of the layer
 void FCL_UpdateWeights(void* layerPtr,float learningRate, float* accumulator, float lambda);

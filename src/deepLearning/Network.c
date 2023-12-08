@@ -67,9 +67,9 @@ void N_Compile(Network* n, Loss* loss)
     N_Compile_L2(n,loss,0);
 }
 
-const Matrix* N_Process(Network* n, const Matrix* i)
+Matrix* N_Process(Network* n, Matrix* i)
 {
-    const Matrix* input = i;
+    Matrix* input = i;
     for (size_t i = 0; i < n->layersCount; i++)
     {
         input = n->layers[i]->Process((n->layers[i])->layerPtr,input);
@@ -79,7 +79,7 @@ const Matrix* N_Process(Network* n, const Matrix* i)
     return input;
 }
 
-float N_FeedForward(Network* n, const Matrix* input,const Matrix* desiredOutput)
+float N_FeedForward(Network* n, Matrix* input, Matrix* desiredOutput)
 {
     for (size_t i = 0; i < n->layersCount; i++)
     {
@@ -109,7 +109,7 @@ void* N_BackpropagationThread(void* ptr)
     return NULL;
 }
 
-double N_Backpropagation(Network* n, const Matrix* input, const Matrix* desiredOutput)
+double N_Backpropagation(Network* n, Matrix* input, Matrix* desiredOutput)
 {
     double loss = N_FeedForward(n,input,desiredOutput);
     n->loss->ComputeDerivative(n->layers[n->layersCount - 1]->outputs,desiredOutput,n->lossDerivative);
@@ -266,7 +266,7 @@ void N_Save(Network* n, const char* path)
     fwrite(&n->layersCount,sizeof(size_t),1,file);
     for (size_t i = 0; i < n->layersCount; i++)
     {
-        printf("Saving layer %i\n",i);
+        printf("Saving layer %zu\n",i);
         fwrite(&n->layers[i]->layerType,sizeof(unsigned char),1,file);
         n->layers[i]->Save(n->layers[i]->layerPtr,file);
     }
@@ -369,7 +369,7 @@ void N_Print(Network* n)
     }
     PrintLine();
     char buffer[1024];
-    sprintf(buffer,"Total parameters : %i",parametersCount);
+    snprintf(buffer, sizeof(buffer),"Total parameters : %i",parametersCount);
     PrintCentered(buffer);
     PrintLine();
     

@@ -238,7 +238,7 @@ SDL_Surface** extract_Squares(SDL_Surface *surface, Square s)
             Squares[cpt] = cell;
 
             char filename[100];
-            sprintf(filename, "images/cells/cell_%d.jpg", cpt);
+            snprintf(filename, sizeof(filename), "images/cells/cell_%d.jpg", cpt);
             cpt++;
             save_image(cell, filename);
         }
