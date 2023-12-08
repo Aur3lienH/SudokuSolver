@@ -48,10 +48,6 @@ int** GetSudokuNumbers(Network* n, Matrix **img)
         res[i] = (int*)malloc(sizeof(int) * 9);
         for (size_t j = 0; j < 9; j++)
         {
-            char* path = (char*)malloc(sizeof(char) * 1024);
-            snprintf(path, 1024, "./images/cell_%li.jpg", i * 9 + j);
-            IMG_SaveJPG(MatrixToSurface(img[i * 9 + j]), path, 100);
-            SDL_Surface* surface = IMG_Load(path);
             res[i][j] = GetNumber(n, img[i * 9 + j]);
         }
     }
