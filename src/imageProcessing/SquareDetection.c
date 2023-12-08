@@ -2,9 +2,19 @@
 #include "../geometry/Point.h"
 #include "../geometry/Square.h"
 #include "../deepLearning/Matrix.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <math.h>
+#include "Grayscale.h"
 
+typedef struct {
+    Point point;
+    Point direction;
+    int skippedPixels;
+} StackElement;
 
-const int PixelCountSkip = 0;
+const int PixelCountSkip = 5;
+const int PixelCheckLength = 10;
 
 void RotatePoint(Point* point)
 {
@@ -27,14 +37,19 @@ void RotatePoint(Point* point)
 }
 
 
-void addToStack(Point* stack,int* stackFlag, size_t* stackPos, Point point, int flag)
+void addToStack(StackElement* stack,StackElement stackElement, size_t* stackPos)
 {
-    stack[*stackPos] = point;
-    stackFlag[*stackPos] = flag;
+    stack[*stackPos] = stackElement;
     *stackPos += 1;
 }
 
-void addPointToStack(Point* stack, int* flagStack, size_t* stackPos, Point point, Matrix* img, Matrix* flag, int skippedPixels) {
+
+
+void addPointToStack(StackElement* stack, StackElement stackElement, size_t* stackPos, Matrix* flag, Matrix* img) {
+
+    Point point = stackElement.point;
+    Point direction = stackElement.direction;
+    int skippedPixels = stackElement.skippedPixels;
     if(point.x < 0 || point.y < 0 || point.x >= img->cols || point.y >= img->rows) {
         return;
     }
@@ -43,11 +58,30 @@ void addPointToStack(Point* stack, int* flagStack, size_t* stackPos, Point point
     }
 
     float currentPixelValue = img->data[point.x + point.y * img->cols];
-
+    Point inverseDirection = {direction.x * -1, direction.y * -1};
+    int isStraightLineBehind = 1;
+    for (size_t i = 1; i < PixelCheckLength + 1 ;i++)
+    {
+        Point nextPoint = {point.x + inverseDirection.x * i, point.y + inverseDirection.y * i};
+        if(nextPoint.x < 0 || nextPoint.y < 0 || nextPoint.x >= img->cols || nextPoint.y >= img->rows) {
+            return;
+        }
+        if(img->data[nextPoint.x + nextPoint.y * img->cols] <= 0.1f && flag->data[nextPoint.x + nextPoint.y * flag->cols] <= 0.1f) {
+            isStraightLineBehind = 0;
+            break;
+        }
+    }
+    
+    
     // If current pixel is black, increment the skippedPixels counter
     if(currentPixelValue <= 0.1f) {
+        //Return if the direction is not the same as the previous one
         if(skippedPixels >= PixelCountSkip) {
             return; // Stop skipping if maximum skipped pixel count is reached
+        }
+        if(isStraightLineBehind == 0)
+        {
+            return; //
         }
         skippedPixels++; // Increment the count of skipped pixels
     } else {
@@ -56,7 +90,7 @@ void addPointToStack(Point* stack, int* flagStack, size_t* stackPos, Point point
 
     // Add current point to the stack
     flag->data[point.x + point.y * flag->cols] = 1.0f;
-    addToStack(stack, flagStack, stackPos, point, skippedPixels);
+    addToStack(stack, (StackElement){point, direction, skippedPixels}, stackPos);
 }
 
 
@@ -75,44 +109,44 @@ int isInRangeOrNotFlagged(Matrix* img, Matrix* flag, Point point)
 
 PointSet* GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
 {
-    Point* stack = malloc(sizeof(Point) * img->rows * img->effectiveCols* 10);
-    int* stackFlag = malloc(sizeof(int) * img->rows * img->effectiveCols* 10);
+    StackElement* stack = malloc(sizeof(StackElement) * img->cols * img->rows);
+
+    //Init the point set for the result
     PointSet* pointSet = malloc(sizeof(PointSet));
     size_t pointSetPos = 0;
     pointSet->points = malloc(sizeof(Point) * 5);
     pointSet->size = 5;
+
     size_t stackPos = 0;
-    Point minUpLeft = startPoint;
-    Point minUpRight = startPoint;
-    Point minDownLeft = startPoint;
-    Point minDownRight = startPoint;
 
     flag->data[startPoint.x + startPoint.y * flag->cols] = 1.0f;
+
     Point upLeft = {0,0};
     Point upRight = {img->rows,0};
     Point downLeft = {0,img->cols};
     Point downRight = {img->rows,img->cols};
 
 
-    addToStack(stack,stackFlag,&stackPos,startPoint,0);
+    addToStack(stack,(StackElement){startPoint,(Point){1,0},0},&stackPos);
     while(stackPos > 0)
     {
-        Point currentPoint = stack[stackPos - 1];
-        int flagValue = stackFlag[stackPos - 1];
+        StackElement currentStackElement = stack[stackPos - 1];
         stackPos -= 1;
 
-        
-
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x + 1,currentPoint.y},img,flag,flagValue);
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x - 1,currentPoint.y},img,flag,flagValue);
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x,currentPoint.y + 1},img,flag,flagValue);
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x,currentPoint.y - 1},img,flag,flagValue);
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x + 1,currentPoint.y + 1},img,flag,flagValue);
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x - 1,currentPoint.y - 1},img,flag,flagValue);
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x + 1,currentPoint.y - 1},img,flag,flagValue);
-        addPointToStack(stack,stackFlag,&stackPos,(Point){currentPoint.x - 1,currentPoint.y + 1},img,flag,flagValue);
-
+        Point currentPoint = currentStackElement.point;
         float currentPixelValue = img->data[currentPoint.x + currentPoint.y * img->cols];
+    
+
+        Point direction = currentStackElement.direction;
+        Point currentDirection = currentStackElement.direction;
+        Point nextPoint;
+        for (size_t l = 0; l < 8; l++)
+        {
+            Point nextPoint = {currentPoint.x + currentDirection.x, currentPoint.y + currentDirection.y};
+            addPointToStack(stack, (StackElement){nextPoint, currentDirection, currentStackElement.skippedPixels}, &stackPos, flag, img);
+            RotatePoint(&currentDirection);
+        }
+
         if(currentPixelValue <= 0.1f)
         {
             continue;
@@ -127,13 +161,16 @@ PointSet* GetOneSquare(Matrix* img, Matrix* flag, Point startPoint)
                 pointSet->points = realloc(pointSet->points,sizeof(Point) * pointSet->size);
             }
         }
+        
+
+        
+
 
 
 
 
     }
     free(stack);
-    free(stackFlag);
     pointSet->size = pointSetPos;
     return pointSet;
 }
@@ -214,20 +251,23 @@ Square GetSquareWithContour(Matrix* img)
             }
             PointSet* pointSet = GetOneSquare(img,flag,(Point){j,i});
             Square square = getSquareFromPointSet(pointSet,img);
-            if(S_IsSquare(&square,1.0f) == 0)
+            S_Sort(&square,img);
+            S_Print(&square);
+            if(S_IsSquareComplete(img,&square,5))
             {
-                continue;
+                if(S_Perimeter(&square) > S_Perimeter(&res))
+                {
+                    res = square;
+                }
             }
-            if(S_Perimeter(&square) > S_Perimeter(&res))
-            {
-                res = square;
-            }
+
             
             
 
             
         }
     }
+    IMG_SaveJPG(MatrixToSurface(flag),"images/contour.jpg",100);
     S_Print(&res);
     return res;
 }

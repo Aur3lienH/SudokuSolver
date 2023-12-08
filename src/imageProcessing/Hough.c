@@ -337,10 +337,8 @@ Square Hough(Matrix* img)
     size_t thetaSize = 180;
     size_t rhoSize = (size_t) (sqrt(img->cols*img->cols + img->rows*img->rows) * 2);
     unsigned int** accumulator = AccumulatorArray(img, thetaSize, rhoSize);
-    printf("Accumulator created\n");
     size_t linesCount = 0;
     size_t houghThresholdAdjust = houghThreshold * ((img->cols * img->rows) / (500.0f * 500.0f));
-    printf("Threshold: %zu\n", houghThresholdAdjust);
 
     Line* lines = GetLines(accumulator, thetaSize, rhoSize, houghThresholdAdjust, &linesCount);
     averageLines(&lines, &linesCount);

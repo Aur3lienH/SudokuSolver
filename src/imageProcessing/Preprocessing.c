@@ -9,6 +9,7 @@
 #include "../geometry/Point.h"
 #include "../Downscale.h"
 #include "../deepLearning/ImageProcessing.h"
+#include "../deepLearning/Matrix.h"
 #include <math.h>
 
 
@@ -35,4 +36,36 @@ Matrix* PreprocessToCanny(SDL_Surface* input, size_t downSizeWidth)
 Matrix* PreprocessSquare(Matrix* input)
 {
 	
+}
+
+
+Matrix* GaussianBlur(Matrix* input,float sigma)
+{
+    printf("GaussianBlur\n");
+	Matrix* kernel = M_Create_2D(5,5);
+
+    float factor = 1.0f / (2.0f * M_PI * sigma * sigma);
+    for (size_t i = 0; i < kernel->rows; i++)
+    {
+        for (size_t j = 0; j < kernel->cols; j++)
+        {
+            int distCenterX = abs((int)i - 2);
+            int distCenterY = abs((int)j - 2);
+            kernel->data[i * kernel->cols + j] = factor * exp(-(distCenterX * distCenterX + distCenterY * distCenterY) / (2.0f * sigma * sigma));
+        }
+    }
+    float sum = M_GetSum(kernel);
+    M_ScalarMul(kernel, 1.0f / sum, kernel);
+    printf("GaussianBlur\n");
+
+    //Perform the convolution with valid padding
+    printf("input rows: %d\n",input->rows);
+    printf("input cols: %d\n",input->cols);
+    Matrix* blurred = M_Create_2D(input->rows, input->cols);
+
+        printf("GaussianBlur\n");
+
+	M_Convolution_ZeroPad(input, kernel, blurred);
+    printf("GaussianBlur\n");
+	return blurred;
 }

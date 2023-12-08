@@ -423,8 +423,11 @@ int isInsideSquare(point p, Square s)
 Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
 {
     Matrix* out = M_Create_2D(newWidth, newWidth);
-    printf("Transforming perspective...\n");
-    printf("new width: %ld\n", newWidth);
+
+    printf("from point 0: %i, %i\n", grid.points[0].x, grid.points[0].y);
+    printf("from point 1: %i, %i\n", grid.points[1].x, grid.points[1].y);
+    printf("from point 2: %i, %i\n", grid.points[2].x, grid.points[2].y);
+    printf("from point 3: %i, %i\n", grid.points[3].x, grid.points[3].y);
     Square from;
     //Top left corner
     from.points[0].x = grid.points[0].x;
@@ -433,26 +436,26 @@ Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
     from.points[1].x = grid.points[1].x;
     from.points[1].y = grid.points[1].y;
     //Bottom left corner
-    from.points[2].x = grid.points[2].x;
-    from.points[2].y = grid.points[2].y;
+    from.points[2].x = grid.points[3].x;
+    from.points[2].y = grid.points[3].y;
     //Bottom right corner
-    from.points[3].x = grid.points[3].x;
-    from.points[3].y = grid.points[3].y;
+    from.points[3].x = grid.points[2].x;
+    from.points[3].y = grid.points[2].y;
 
     // DEFINE OUTPUT CORNER COORDINATES
     Square to;
         //Top left corner
-        to.points[0].x = 0;
-        to.points[0].y = 0;
-        //Top right corner
-        to.points[1].x = newWidth;
-        to.points[1].y = 0;
-        //Bottom left corner
-        to.points[2].x = 0;
-        to.points[2].y = newWidth;
-        //Bottom right corner
-        to.points[3].x = newWidth;
-        to.points[3].y = newWidth;
+    to.points[0].x = 0;
+    to.points[0].y = 0;
+    //Top right corner
+    to.points[1].x = newWidth;
+    to.points[1].y = 0;
+    //Bottom left corner
+    to.points[2].x = 0;
+    to.points[2].y = newWidth;
+    //Bottom right corner
+    to.points[3].x = newWidth;
+    to.points[3].y = newWidth;
 
     // OTHER WAY TO REPRESENT THE COORDS
     int x1 = from.points[0].x, y1 = from.points[0].y;
@@ -517,7 +520,6 @@ Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
             OUT[1] /= OUT[2];
             size_t x_int = (int)OUT[0];
             size_t y_int = (int)OUT[1];
-            printf("x_int: %ld, y_int: %ld\n", x_int, y_int);
             if(x_int >= 0 && x_int < in->cols && y_int>= 0 && y_int < in->rows)
             {
                 float val = in->data[y_int * in->cols + x_int];

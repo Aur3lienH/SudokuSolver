@@ -9,3 +9,5 @@ Matrix* resize(const Matrix* input, size_t downSizeWidth);
 Matrix* PreprocessToCanny(SDL_Surface* input, size_t downSizeWidth);
 
 Matrix* PreprocessSquare(Matrix* input);
+
+Matrix* GaussianBlur(Matrix* input,float sigma);

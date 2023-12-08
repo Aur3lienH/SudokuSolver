@@ -18,6 +18,8 @@ float S_Perimeter(Square* square);
 
 int S_IsSquare(Square* square, float threshold);
 
+int S_IsSquareComplete(Matrix* matrix, Square* square, int searchRadius);
+
 void S_Print(Square* square);
 
 void S_Sort(Square* square, Matrix* img);

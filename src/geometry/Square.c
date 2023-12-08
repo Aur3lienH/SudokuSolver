@@ -32,14 +32,14 @@ int S_IsSquare(Square* square, float threshold)
     float dist[4];
     for (int i = 0; i < 4; i++) {
         dist[i] = P_Distance(&square->points[i], &square->points[(i + 1) % 4]);
-        if (dist[i] <= 10) {
+        if (dist[i] <= 10.0f) {
             return 0; // Side too short to be considered a square
         }
     }
 
     // Check if all sides are almost equal
     for (int i = 0; i < 4; i++) {
-        if (dist[i] / dist[(i + 1) % 4] > 1 + threshold || dist[(i + 1) % 4] / dist[i] > 1 + threshold) {
+        if (dist[i] / dist[(i + 1) % 4] > 1.0f + threshold || dist[(i + 1) % 4] / dist[i] > 1.0f + threshold) {
             return 0;
         }
     }
@@ -48,7 +48,7 @@ int S_IsSquare(Square* square, float threshold)
     float diag2 = P_Distance(&square->points[1], &square->points[3]);
 
     // Check if diagonals are almost equal
-    if (diag1 / diag2 > 1 + threshold || diag2 / diag1 > 1 + threshold) {
+    if (diag1 / diag2 > 1.0f + threshold || diag2 / diag1 > 1.0f + threshold) {
         return 0;
     }
 
@@ -88,20 +88,37 @@ float S_Perimeter(Square* square)
     return dist1 + dist2 + dist3 + dist4;
 }
 
-
-
-Point GetClosestPoint(Point* points, size_t size, Point point, size_t* index)
+int S_IsSquareComplete(Matrix* matrix, Square* square, int searchRadius)
 {
-    Point closestPoint = points[0];
-    float closestDistance = P_Distance(&closestPoint, &point);
-    for (size_t i = 1; i < size; i++)
+    if (square == NULL || square->points == NULL) {
+        return 0; // Invalid input
+    }
+
+    // Check if all sides are complete
+    for (int i = 0; i < 4; i++) {
+        if (!P_IsSegmentComplete(matrix, &square->points[i], &square->points[(i + 1) % 4], searchRadius)) {
+            return 0;
+        }
+    }
+    printf("All sides are complete\n");
+    return 1; // Passed all checks
+}
+
+
+Point GetClosestUnusedPoint(Point* points, size_t size, Point point, int* used, size_t* index)
+{
+    Point closestPoint;
+    float closestDistance = FLT_MAX;
+    for (size_t i = 0; i < size; i++)
     {
-        float distance = P_Distance(&points[i], &point);
-        if (distance < closestDistance)
-        {
-            closestPoint = points[i];
-            *index = i;
-            closestDistance = distance;
+        if (!used[i]) {
+            float distance = P_Distance(&points[i], &point);
+            if (distance < closestDistance)
+            {
+                closestPoint = points[i];
+                *index = i;
+                closestDistance = distance;
+            }
         }
     }
     return closestPoint;
@@ -109,26 +126,45 @@ Point GetClosestPoint(Point* points, size_t size, Point point, size_t* index)
 
 void S_Sort(Square* square, Matrix* img)
 {
-    //To get the top left, we need to find the point with the smallest distance from the top left corner of the image
+    // Define the corners of the image
     Point topLeft = {0, 0};
     Point topRight = {img->cols - 1, 0};
     Point bottomLeft = {0, img->rows - 1};
     Point bottomRight = {img->cols - 1, img->rows - 1};
 
-    size_t topLeftIndex = 0;
-    Point topLeftSquare = GetClosestPoint(square->points, 4, topLeft, &topLeftIndex);
-    printf("Top left index: %ld\n", topLeftIndex);
-    square->points[topLeftIndex] = square->points[(topLeftIndex + 1) % 4];
-    Point topRightSquare = GetClosestPoint(square->points, 4, topRight, &topLeftIndex);
-    square->points[topLeftIndex] = square->points[(topLeftIndex + 1) % 4];
-    Point bottomLeftSquare = GetClosestPoint(square->points, 4, bottomLeft, &topLeftIndex);
-    square->points[topLeftIndex] = square->points[(topLeftIndex + 1) % 4];
+    // Array to keep track of which points have been used
+    int used[4] = {0, 0, 0, 0}; // Initialize all to 0 (not used)
 
-    Point bootomRightSquare = square->points[0];
+    // Find the closest points to each corner of the image
+    size_t index;
+    Point closestPoints[4];
 
-    square->points[0] = topLeftSquare;
-    square->points[1] = topRightSquare;
-    square->points[2] = bottomLeftSquare;
-    square->points[3] = bootomRightSquare;
+    closestPoints[0] = GetClosestUnusedPoint(square->points, 4, topLeft,used, &index);
+    used[index] = 1; // Mark this point as used
 
+    closestPoints[1] = GetClosestUnusedPoint(square->points, 4, topRight, used, &index);
+    used[index] = 1; // Mark this point as used
+
+    closestPoints[2] = GetClosestUnusedPoint(square->points, 4, bottomRight, used, &index);
+    used[index] = 1; // Mark this point as used
+
+    // The last point is the one not used
+    for (size_t i = 0; i < 4; i++) {
+        if (!used[i]) {
+            closestPoints[3] = square->points[i];
+            break;
+        }
+    }
+
+    // Reassign the points in the correct order
+    for (size_t i = 0; i < 4; i++) {
+        square->points[i] = closestPoints[i];
+    }
+
+    // Print the sorted points
+    printf("Top left: %d, %d\n", closestPoints[0].x, closestPoints[0].y);
+    printf("Top right: %d, %d\n", closestPoints[1].x, closestPoints[1].y);
+    printf("Bottom left: %d, %d\n", closestPoints[2].x, closestPoints[2].y);
+    printf("Bottom right: %d, %d\n", closestPoints[3].x, closestPoints[3].y);
 }
+

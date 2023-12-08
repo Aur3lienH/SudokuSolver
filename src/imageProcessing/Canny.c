@@ -280,7 +280,7 @@ Matrix* Canny(Matrix* input, float sigma)
 
     float maxGradient = M_GetMax(nonMaxSuppression);
     float highThresold = 0.3 * maxGradient; 
-    float lowThresold = 0.1 * maxGradient;
+    float lowThresold = 0.15 * maxGradient;
 
 
     Matrix* thresholded = M_Create_2D(nonMaxSuppression->rows, nonMaxSuppression->cols);

@@ -1,6 +1,9 @@
 #include "Binarisation.h"
 #include <stdlib.h>
 #include "../deepLearning/Matrix.h"
+#include "Grayscale.h"
+#include "Preprocessing.h"
+#include <SDL2/SDL_image.h>
 
 
 
@@ -13,7 +16,7 @@ Matrix* Binarisation(Matrix* input, float threshold)
         {
             if (input->data[j + i * input->cols] > threshold)
             {
-                output->data[j + i * input->cols] = 1;
+                output->data[j + i * input->cols] = 1.0f;
             }
             else
             {
@@ -65,21 +68,11 @@ void M_Inverse(Matrix* input)
 
 Matrix* M_OptimalBinarisation(Matrix* input)
 {
-    float threshold = 0;
-    float maxVariance = 0;
-    for (size_t i = 0; i < 255; i++)
-    {
-        Matrix* binarised = Binarisation(input, i/255.0f);
-        float variance = M_Variance(binarised);
-        if (variance > maxVariance)
-        {
-            maxVariance = variance;
-            threshold = i;
-        }
-        M_Free(binarised);
-    }
-    printf("Threshold : %f\n", threshold);
-    Matrix* binarised = Binarisation(input, 0.75f);
+    Matrix* gaussian = GaussianBlur(input, 1.0f);
+    //Mean adaptive threshold
+    Matrix* binarised = Binarisation(gaussian, M_Mean(gaussian));
+    //Variance adaptive threshold
+
     M_Inverse(binarised);
     return binarised;
 }
