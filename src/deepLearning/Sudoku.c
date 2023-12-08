@@ -19,9 +19,6 @@ int GetNumber(Network* n,Matrix* matrix)
     int isBlank;
     Matrix* preprocessed = M_OptimalBinarisation(matrix);
     Matrix* final = MatrixToDigit(preprocessed,&isBlank);
-    char path [1024];
-    snprintf(path, sizeof(path), "images/cell_%i.jpg",rand());
-    IMG_SaveJPG(MatrixToSurface(preprocessed),path,100);
 
     final->rows = 784;
     final->cols = 1;
