@@ -18,13 +18,13 @@ void P_DrawSegment(Matrix* matrix, Point* p1, Point* p2, float value)
     float dx = p2->x - p1->x;
     float dy = p2->y - p1->y;
     float steps = 0;
-    if(abs(dx) > abs(dy))
+    if(fabsf(dx) > fabsf(dy))
     {
-        steps = abs(dx);
+        steps = fabsf(dx);
     }
     else
     {
-        steps = abs(dy);
+        steps = fabsf(dy);
     }
     float xInc = dx / steps;
     float yInc = dy / steps;
@@ -48,13 +48,13 @@ int P_IsSegmentComplete(const Matrix* m, Point* a, Point* b, int searchRadius)
     float dx = b->x - a->x;
     float dy = b->y - a->y;
     float steps = 0;
-    if(abs(dx) > abs(dy))
+    if(fabsf(dx) > fabsf(dy))
     {
-        steps = abs(dx);
+        steps = fabsf(dx);
     }
     else
     {
-        steps = abs(dy);
+        steps = fabsf(dy);
     }
     float xInc = dx / steps;
     float yInc = dy / steps;

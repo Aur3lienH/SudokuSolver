@@ -8,7 +8,7 @@ typedef struct Layer
 {
     Matrix* (*FeedForward)(void* layer, Matrix* input);
     Matrix* (*Process)(void* layer, Matrix* input);
-    Matrix* (*BackPropagation)(void* layer, const Matrix* input, Matrix* delta);
+    Matrix* (*BackPropagation)(void* layer, Matrix* input, Matrix* delta);
     void (*AdjustWeigths)(void* layer,const float learningRate, float* accumulator, float lambda);
     void (*Compile)(void* layer, LayerShape*);
     void (*Free)(void* layer);
@@ -36,4 +36,4 @@ Matrix* L_BackPropagate(void* layer, const Matrix* input, Matrix* delta);
 
 void L_Update(void* layer,const float learningRate, float* accumulator, float lambda);
 
-const Matrix* L_Process(void* layer, const Matrix* input);
+Matrix* L_Process(void* layer, Matrix* input);

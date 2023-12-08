@@ -27,7 +27,7 @@ const char* SUDOKU_DATA_PATH = "datasets/datasetCreation/processed/all_digits_im
 
 Matrix* temp = NULL;
 
-void AddNoise(const Matrix* input, Matrix* output)
+void AddNoise(Matrix* input, Matrix* output)
 {
     M_RotateImage_1D(input,temp,(rand() % 15) - 7.5,28);
     M_Zoom(temp,output,((rand() % 20) / 100.0) + 1);
@@ -91,7 +91,7 @@ void Mnist_Train()
 {
     temp = M_Create_2D(784,1);
     printf("Starting Training ... \n");
-    Dataset* trainDataset = LoadCombinedTrainDataset(MNIST_DATA_PATH,MNIST_LABEL_PATH,2051,2049);
+    Dataset* trainDataset = LoadCombinedTrainDataset();
 
     Network* network = N_CreateNetwork();
     N_AddLayer(network, I_Create(784));
@@ -485,7 +485,7 @@ Network* LoadBestRecognitionModel()
     char* bestModel = FindBestModel("./models/recognition");
     printf("Best model : %s\n",bestModel);
     char path[1024];
-    sprintf(path,"./models/recognition/%s",bestModel);
+    snprintf(path, sizeof(path), "./models/recognition/%s",bestModel);
 
 
     printf("load model : %s\n", path);

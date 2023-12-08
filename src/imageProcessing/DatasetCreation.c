@@ -61,7 +61,7 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
     P_DrawSDL(surface,&square.points[2],0xFF0000);
     P_DrawSDL(surface,&square.points[3],0xFF0000);
     char* savePath = malloc(sizeof(char) * 100);
-    sprintf(savePath,"%s/%s",outputPath,filename);
+    snprintf(savePath, sizeof(savePath),"%s/%s",outputPath,filename);
     printf("Saving %s\n",savePath);
     IMG_SaveJPG(surface,savePath,100);
 
@@ -89,7 +89,7 @@ void CreateDataset(const char* inputFolder, const char* outputFolder, size_t wid
     }
     char* outputFolderCopy = malloc(sizeof(char) * 100);
     strcpy(outputFolderCopy,outputFolder);
-    strcat(outputFolder,"/dataset.dat");
+    strcat((char *)outputFolder,"/dataset.dat");
     FILE* datasetFile = fopen(outputFolder,"wb");
     if(datasetFile == NULL)
     {
@@ -112,7 +112,7 @@ void CreateDataset(const char* inputFolder, const char* outputFolder, size_t wid
     for (int i = 0; i < n; i++)
     {
         char* path = malloc(sizeof(char) * 100);
-        sprintf(path,"%s/%s",inputFolder,namelist[i]->d_name);
+        snprintf(path, sizeof(path),"%s/%s",inputFolder,namelist[i]->d_name);
         printf("Processing %s\n",path);
         ImageProcess(path,outputFolderCopy,datasetFile,namelist[i]->d_name,width);  
         free(path);

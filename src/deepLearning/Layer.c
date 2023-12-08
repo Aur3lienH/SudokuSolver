@@ -22,7 +22,7 @@ void L_Update(void* layer,const float learningRate, float* accumulator, float la
     return;
 }
 
-const Matrix* L_Process(void* layer, const Matrix* input)
+Matrix* L_Process(void* layer, Matrix* input)
 {
     return input;
 }

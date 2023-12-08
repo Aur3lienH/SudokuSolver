@@ -25,12 +25,14 @@ void S_Draw(Matrix* matrix, Square* square, float value)
 
 int S_IsSquare(Square* square, float threshold)
 {
-    if (square == NULL || square->points == NULL) {
+    if (square == NULL)
+    {
         return 0; // Invalid input
     }
 
     float dist[4];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++)
+    {
         dist[i] = P_Distance(&square->points[i], &square->points[(i + 1) % 4]);
         if (dist[i] <= 10.0f) {
             return 0; // Side too short to be considered a square
@@ -38,6 +40,9 @@ int S_IsSquare(Square* square, float threshold)
     }
 
     // Check if all sides are almost equal
+    for (int i = 0; i < 4; i++)
+    {
+        if (dist[i] / dist[(i + 1) % 4] > 1 + threshold || dist[(i + 1) % 4] / dist[i] > 1 + threshold) {
     for (int i = 0; i < 4; i++) {
         if (dist[i] / dist[(i + 1) % 4] > 1.0f + threshold || dist[(i + 1) % 4] / dist[i] > 1.0f + threshold) {
             return 0;
@@ -48,12 +53,11 @@ int S_IsSquare(Square* square, float threshold)
     float diag2 = P_Distance(&square->points[1], &square->points[3]);
 
     // Check if diagonals are almost equal
+    if (diag1 / diag2 > 1 + threshold || diag2 / diag1 > 1 + threshold)
+    {
     if (diag1 / diag2 > 1.0f + threshold || diag2 / diag1 > 1.0f + threshold) {
         return 0;
     }
-
-    // Optional: Check for right angles and diagonal bisection at 90 degrees
-    // This requires implementing an angle calculation function
 
     return 1; // Passed all checks
 }

@@ -70,7 +70,7 @@ Matrix* ReshapeLayer_Process(void* reshapeLayer, Matrix* input)
 }
 
 
-Matrix* ReshapeLayer_BackPropagate(void* reshapeLayer, const Matrix* input, Matrix* delta)
+Matrix* ReshapeLayer_BackPropagate(void* reshapeLayer, Matrix* input, Matrix* delta)
 {
     ReshapeLayer* reshapeLayerPtr = (ReshapeLayer*)reshapeLayer;
     delta->rows = reshapeLayerPtr->previousShape.x;
@@ -134,6 +134,6 @@ void ReshapeLayer_Print(void* reshapeLayer, int* parametersCount)
 {
     ReshapeLayer* reshapeLayerPtr = (ReshapeLayer*)reshapeLayer;
     PrintCentered("Reshape Layer");
-    printf("Output shape %d: %dx%dx%d\n",*parametersCount,reshapeLayerPtr->layer->layerShape->x,reshapeLayerPtr->layer->layerShape->y,reshapeLayerPtr->layer->layerShape->z);
+    printf("Output shape %d: %zux%zux%zu\n",*parametersCount,reshapeLayerPtr->layer->layerShape->x,reshapeLayerPtr->layer->layerShape->y,reshapeLayerPtr->layer->layerShape->z);
     printf("Parameters Count: 0\n");
 }

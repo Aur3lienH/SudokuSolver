@@ -130,7 +130,7 @@ Matrix* Conv_Process(void* layerPtr, Matrix* input)
 
 
 
-Matrix* Conv_BackPropagateFully(void* layerPtr, const Matrix* input, Matrix* delta)
+Matrix* Conv_BackPropagateFully(void* layerPtr, Matrix* input, Matrix* delta)
 {
     ConvLayer* convLayer = (ConvLayer*)layerPtr;
     //reluDerivative(convLayer->layer->outputs,convLayer->deltaActivation);
@@ -138,19 +138,19 @@ Matrix* Conv_BackPropagateFully(void* layerPtr, const Matrix* input, Matrix* del
     M_Rotate180_3D(convLayer->filters, convLayer->rotatedFilters);
     M_FullConvolution3D(convLayer->rotatedFilters,convLayer->deltaActivation, convLayer->newDelta);
     
-    M_Convolution3D_Add(input,convLayer->deltaActivation, convLayer->delta);
+    M_Convolution3D_Add((Matrix *)input,convLayer->deltaActivation, convLayer->delta);
     
     return convLayer->newDelta;
 }
 
-Matrix* Conv_BackPropagateGradient(void* layerPtr, const Matrix* input, Matrix* delta)
+Matrix* Conv_BackPropagateGradient(void* layerPtr, Matrix* input, Matrix* delta)
 {
     ConvLayer* convLayer = (ConvLayer*)layerPtr;
     //reluDerivative(convLayer->layer->outputs,convLayer->deltaActivation);
     M_LinearMul(convLayer->deltaActivation, delta, convLayer->deltaActivation);
     //M_Rotate180_3D(convLayer->filters, convLayer->rotatedFilters);
     //M_FullConvolution3D(convLayer->rotatedFilters,convLayer->deltaActivation, convLayer->newDelta);+
-    M_Convolution3D_Add(input,convLayer->deltaActivation, convLayer->delta);
+    M_Convolution3D_Add((Matrix *)input,convLayer->deltaActivation, convLayer->delta);
     return convLayer->newDelta;
 
 }
@@ -257,8 +257,8 @@ void Conv_Print(void* layerPtr, int* parametersCount)
     ConvLayer* convLayer = (ConvLayer*)layerPtr;
     int convParameters = convLayer->filters->rows * convLayer->filters->cols * convLayer->filters->dims + convLayer->layer->layerShape->z;
     PrintCentered("Convolutional Layer");
-    printf("Filter Shape: %d x %d x %d\n",convLayer->filterShape->x,convLayer->filterShape->y,convLayer->filterShape->z);
-    printf("Output Shape: %d x %d x %d\n",convLayer->layer->layerShape->x,convLayer->layer->layerShape->y,convLayer->layer->layerShape->z);
-    printf("Parameters Count: %d\n",convParameters);
+    printf("Filter Shape: %zu x %zu x %zu\n",convLayer->filterShape->x,convLayer->filterShape->y,convLayer->filterShape->z);
+    printf("Output Shape: %zu x %zu x %zu\n",convLayer->layer->layerShape->x,convLayer->layer->layerShape->y,convLayer->layer->layerShape->z);
+    printf("Parameters Count: %i\n",convParameters);
     *parametersCount += convParameters;
 }

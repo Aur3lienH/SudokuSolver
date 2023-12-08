@@ -8,17 +8,16 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <cairo.h>
 
 // Global variables
-GtkWidget *window;
-
-GtkWidget *hbox;
-
-GtkWidget *vbox;
-
-GtkWidget *nav_hbox;
-
-GtkWidget *image;
+GtkWidget 
+*window,
+*hbox,
+*vbox,
+*nav_hbox,
+*image,
+*grid;
 
 GtkWidget
 *btn_open,
@@ -36,10 +35,12 @@ int i = 0;
 
 GtkWidget *sudoku_labels[9][9];
 
+int original_values[9][9];
 int sudoku_grid[9][9];
 
-char *original_filename;
-char *filename;
+char 
+*original_filename,
+*filename;
 
 /*
 *   Function: solver_is_valid_image_file
@@ -148,9 +149,87 @@ static gboolean on_delete_event(GtkWidget *widget)
 }
 
 /*
-*   Function: solver_button_open
+*   Function: save_sudoku_grid_to_image
 *   ---------------------
-*   Opens a file chooser dialog and shows the image of the sudoku puzzle.
+*   Saves the solved sudoku grid to an image.
+*/
+void save_sudoku_grid_to_image()
+{
+    int grid_size = 9;
+    int cell_size = 50; // Size of each cell in the grid
+    int image_size = grid_size * cell_size;
+
+    // Create a Cairo surface to draw on
+    cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, image_size, image_size);
+    cairo_t *cr = cairo_create(surface);
+
+    cairo_set_source_rgb(cr, 1, 1, 1); // White color
+    cairo_paint(cr);
+
+    // Set font size
+    cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size(cr, 30);
+
+    // Draw 3x3 subgrid rectangles
+    int subgrid_size = 3 * cell_size; // Size of each 3x3 subgrid rectangle
+    cairo_set_source_rgb(cr, 0, 0, 0); // Black color for subgrid borders
+    cairo_set_line_width(cr, 3);
+    for (int i = 0; i < grid_size; i += 3)
+    {
+        for (int j = 0; j < grid_size; j += 3)
+        {
+            cairo_rectangle(cr, j * cell_size, i * cell_size, subgrid_size, subgrid_size);
+            cairo_stroke(cr);
+        }
+    }
+
+    // Draw the Sudoku grid and numbers
+    for (int i = 0; i < grid_size; i++)
+    {
+        for (int j = 0; j < grid_size; j++)
+        {
+            // Calculate cell position
+            int x = j * cell_size;
+            int y = i * cell_size;
+
+            // Draw cell border
+            cairo_set_source_rgb(cr, 0, 0, 0);
+            cairo_set_line_width(cr, 1);
+
+            cairo_rectangle(cr, x, y, cell_size, cell_size);
+            cairo_stroke(cr);
+
+            if (sudoku_grid[i][j] == original_values[i][j])
+            {
+                cairo_set_source_rgb(cr, 0, 0, 0);
+            }
+            else
+            {
+                cairo_set_source_rgb(cr, 0, 0, 1);
+            }
+
+            // Draw number
+            char num_text[2];
+            snprintf(num_text, sizeof(num_text), "%d", sudoku_grid[i][j]);
+            cairo_move_to(cr, x + (cell_size / 2 - 10), 
+            y + (cell_size / 2 + 10));
+            cairo_show_text(cr, num_text);
+        }
+    }
+
+    // Save the surface to a PNG file
+    cairo_surface_write_to_png(surface, "solved_sudoku_grid.png");
+
+    // Clean up
+    cairo_destroy(cr);
+    cairo_surface_destroy(surface);
+}
+
+
+/*
+*   Function: thread
+*   ---------------------
+*   Thread to execute the image processing.
 */
 void* thread(void* arg)
 {
@@ -178,6 +257,18 @@ void solver_button_open(GtkButton *button)
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
     gint res;
 
+    GList *children, *iter;
+    children = gtk_container_get_children(GTK_CONTAINER(hbox));
+    for(iter = children; iter != NULL; iter = g_list_next(iter))
+    {
+        GtkWidget *widget = GTK_WIDGET(iter->data);
+        if (GTK_IS_GRID(widget))
+        {
+            gtk_widget_destroy(widget);
+        }
+    }
+    g_list_free(children);
+
     gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
 
     dialog = gtk_file_chooser_dialog_new("Open File", NULL,
@@ -198,7 +289,7 @@ void solver_button_open(GtkButton *button)
     {
         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
         filename = gtk_file_chooser_get_filename(chooser);
-        original_filename = g_strdup(filename); // Save the original filename
+        original_filename = g_strdup(filename);
         
         // Check the file type here before proceeding
         if (!solver_is_valid_image_file(filename))
@@ -285,7 +376,8 @@ void solver_button_original_image(GtkButton *button, gpointer user_data)
     gtk_widget_set_sensitive(btn_original_image, FALSE);
 
     // Connect the destroy signal to the window
-    g_signal_connect(G_OBJECT(original_image_window), "destroy", G_CALLBACK(on_original_image_window_destroy), button);
+    g_signal_connect(G_OBJECT(original_image_window), "destroy",
+    G_CALLBACK(on_original_image_window_destroy), button);
 
     // Scale the image to a width of 500 pixels
     // while maintaining the aspect ratio
@@ -351,7 +443,7 @@ void on_sudoku_button_clicked(GtkButton *button, gpointer user_data)
             sudoku_grid[row][col] = text[0] - '0'; // Convert char to int
 
             // Change the name of the button
-            gtk_widget_set_name(button, "original_number");
+            gtk_widget_set_name(GTK_WIDGET(button), "original_number");
         }
         else if (text[0] == '0') // Check if input is 0
         {
@@ -360,7 +452,7 @@ void on_sudoku_button_clicked(GtkButton *button, gpointer user_data)
             sudoku_grid[row][col] = 0;
 
             // Change the name of the button
-            gtk_widget_set_name(button, "empty_cell");
+            gtk_widget_set_name(GTK_WIDGET(button), "empty_cell");
         }
     }
 
@@ -380,11 +472,11 @@ void solver_button_next_image(GtkButton* button)
     {
         if (i == 1)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_previous_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_previous_image), TRUE);
         }
         if (i == 7)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         // Show next image
         gtk_widget_destroy(image);
@@ -400,11 +492,11 @@ void solver_button_next_image(GtkButton* button)
     {
         if (i == 2)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_previous_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_previous_image), TRUE);
         }
         if (i == 6)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         // Show next image
         gtk_widget_destroy(image);
@@ -431,11 +523,11 @@ void solver_button_previous_image(GtkButton* button)
     {
         if (i == 0)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         if (i == 6)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_next_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_next_image), TRUE);
         }
         // Show previous image
         gtk_widget_destroy(image);
@@ -459,11 +551,11 @@ void solver_button_previous_image(GtkButton* button)
     {
         if (i == 1)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(button), FALSE);
+            gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
         if (i == 5)
         {
-            gtk_widget_set_sensitive(GTK_BUTTON(btn_next_image), TRUE);
+            gtk_widget_set_sensitive(GTK_WIDGET(btn_next_image), TRUE);
         }
         // Show previous image
         gtk_widget_destroy(image);
@@ -599,6 +691,7 @@ void solver_button_nn(GtkButton *button)
             if (sudoku_grid[i][j] != 0)
             {
                 gtk_widget_set_name(btn, "original_number");
+                original_values[i][j] = sudoku_grid[i][j];
             }
             else
             {
@@ -670,6 +763,10 @@ void solver_button_solve(GtkButton *button)
 
     gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
     gtk_widget_show_all(hbox);
+
+    gtk_widget_set_sensitive(btn_open, TRUE);
+
+    save_sudoku_grid_to_image();
 }
 
 /*

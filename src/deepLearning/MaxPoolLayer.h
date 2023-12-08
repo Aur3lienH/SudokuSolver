@@ -26,7 +26,7 @@ Matrix* MaxPool_FeedForward(void* layerPtr, Matrix* input);
 
 Matrix* MaxPool_Process(void* layerPtr, Matrix* input);
 
-Matrix* MaxPool_BackPropagate(void* layerPtr, const Matrix* input, Matrix* delta);
+Matrix* MaxPool_BackPropagate(void* layerPtr, Matrix* input, Matrix* delta);
 
 void MaxPool_UpdateWeights(void* layerPtr,float learningRate, float* accumulator, float lambda);
 
