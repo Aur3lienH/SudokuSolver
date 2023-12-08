@@ -178,6 +178,30 @@ Matrix* SurfaceToDigit(SDL_Surface* surface, int* isBlankPtr)
     return downSized;
 }
 
+Matrix* MatrixToDigit(Matrix* matrix, int* isBlankPtr)
+{
+    /*
+    M_Dim(downSized);
+    RemoveCorners(downSized,28);
+    Matrix* centered = CenterDigit(downSized,28);
+    Matrix* zoomed = M_ZoomI(centered,28,0.6);
+    Matrix* output = M_IBillinearInterpolation(zoomed);
+    for (size_t i = 0; i < 0; i++)
+    {
+        output = M_IBillinearInterpolation(output);
+    }
+    Matrix* downSized = Downsize(res,28,28);
+    output = CenterDigit(output,28);
+    */
+   RemoveCorners(matrix,matrix->rows);
+   Matrix* input = M_ZoomI(matrix,matrix->rows,0.75);
+   if(isBlankPtr != NULL) *isBlankPtr = IsBlank(input);
+   Matrix* centered = CenterDigit(input,matrix->rows);
+   Matrix* downSized = Downsize(centered,28,28);
+return downSized;
+}
+
+
 
 
 

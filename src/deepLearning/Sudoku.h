@@ -4,9 +4,9 @@
 #include "Network.h"
 
 
-int GetNumber(Network* n,SDL_Surface *img);
+int GetNumber(Network* n,Matrix *img);
 
-int** GetSudokuNumbers(Network* n, SDL_Surface **img);
+int** GetSudokuNumbers(Network* n, Matrix **img);
 
 void ToSudoku();
 

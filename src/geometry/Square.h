@@ -20,4 +20,6 @@ int S_IsSquare(Square* square, float threshold);
 
 void S_Print(Square* square);
 
+void S_Sort(Square* square, Matrix* img);
+
 void S_Free(Square* square);

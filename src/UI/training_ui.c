@@ -244,17 +244,6 @@ void training_button_training(GtkButton *button)
     // Call training function
     Mnist_Train();
 
-    // for (float i = 0; i <= 1; i += 0.01)
-    // {
-    //     training_update_progress(i);
-    //     while (gtk_events_pending())
-    //     {
-    //         gtk_main_iteration_do(FALSE);
-    //     }
-    //     g_usleep(50000);
-        
-    // }
-
     // Update the progress bar to show completion text
     training_update_progress(1.0);
 }

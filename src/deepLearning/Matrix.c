@@ -255,7 +255,7 @@ float M_GetMax(const Matrix* m)
 
 float M_Get(const Matrix* m, size_t rows, size_t cols)
 {
-    return m->data[rows * m->cols + cols];
+    return m->data[cols + rows * m->cols];
 }
 
 
@@ -459,6 +459,12 @@ void SM_SetValue(Matrix* a, size_t index, float value)
     {
         BM_SetValue(a,index,value);
     }
+}
+
+void M_SetValue(Matrix* m,size_t rows, size_t cols, const float value)
+{
+    m->data[rows * m->cols + cols] = value;
+
 }
 
 float SM_GetValue(const Matrix* a, size_t index)
@@ -676,30 +682,42 @@ void M_FullConvolution(Matrix* a, Matrix* b, Matrix* output)
     }
 }
 
-void M_FullConvolution3D(Matrix* a, Matrix* b, Matrix* output)
-{
+void M_FullConvolution3D(Matrix* a, Matrix* b, Matrix* output) {
     float* aData = a->data;
     float* bData = b->data;
     float* outputData = output->data;
     M_Zero(output);
 
-    for (size_t j = 0; j < a->dims; j++)
-    {
-        M_FullConvolution(a, b, output);
-        b->data += M_GetSize2D(b);
-        a->data += M_GetSize2D(a);
-    }
-    size_t outputSize = M_GetSize2D(output);
-    for (size_t i = 1; i < output->dims; i++)
-    {
-        for (size_t j = 0; j < outputSize; j++)
-        {
-            output->data[j + i * outputSize] = output->data[j];
-        }
-    }
-    
+    size_t outputSliceSize = M_GetSize2D(output);
+    size_t aSliceSize = M_GetSize2D(a);
+    size_t numFilters = a->dims;
+    size_t numFeatureMaps = output->dims;
 
-    
+    // Iterate over each filter in 'a'
+    for (size_t j = 0; j < numFilters; j++) {
+        // Temporary matrix to store the convolution result for the current filter
+        Matrix* tempOutput = M_Create_2D(output->rows, output->cols);
+        M_Zero(tempOutput);
+
+        // Perform convolution for the current filter and delta activation
+        M_FullConvolution(a, b, tempOutput);
+
+        // Determine which feature map in 'output' this filter contributes to
+        size_t featureMapIndex = j % numFeatureMaps;
+        // Accumulate the result in the appropriate feature map of 'output'
+        for (size_t k = 0; k < outputSliceSize; k++) {
+            output->data[featureMapIndex * outputSliceSize + k] += tempOutput->data[k];
+        }
+
+        // Move to the next filter and the corresponding delta activation slice
+        a->data += aSliceSize;
+        b->data += M_GetSize2D(b);
+
+        // Clean up temporary matrix
+        M_Free(tempOutput);
+    }
+
+    // Reset data pointers to original position
     a->data = aData;
     b->data = bData;
     output->data = outputData;

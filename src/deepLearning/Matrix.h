@@ -108,6 +108,8 @@ int M_GetMatrixType();
 //Set all one element of the matrix to a value
 void SM_SetValue(Matrix* m,size_t index, const float value);
 
+void M_SetValue(Matrix* m,size_t rows, size_t cols, const float value);
+
 //Get one element of the matrix
 float SM_GetValue(const Matrix* m,size_t index);
 

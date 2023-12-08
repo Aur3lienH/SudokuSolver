@@ -8,7 +8,7 @@
 
 SDL_Surface* SudokuImgProcessing(SDL_Surface* image)
 {
-    Matrix* res = preprocess(image, 0.5);
+    Matrix* res = PreprocessToCanny(image, 0.5);
     Square square = GetSquareWithContour(res);
     //Square square2 = Hough(res);
     SDL_Surface* surface = MatrixToSurface(res);
@@ -20,4 +20,28 @@ SDL_Surface* SudokuImgProcessing(SDL_Surface* image)
 
     
     return surface;
+}
+
+Matrix** SplitCells(Matrix* image, size_t cellCount)
+{
+    Matrix** cells = malloc(sizeof(Matrix*) * cellCount * cellCount);
+    size_t cellSize = image->rows / cellCount;
+    size_t cellSizeSquared = cellSize * cellSize;
+    for (size_t h = 0; h < cellCount; h++)
+    {
+        for (size_t i = 0; i < cellCount; i++)
+        {
+            cells[i + h * cellCount] = M_Create_2D(cellSize,cellSize);
+            for (size_t j = 0; j < cellSize; j++)
+            {
+                for (size_t k = 0; k < cellSize; k++)
+                {
+                    cells[i+h*cellCount]->data[j * cellSize + k] = image->data[(h * cellSize + j) * image->cols + i * cellSize + k];
+                }
+            }
+        }
+    }
+    
+    
+    return cells;
 }

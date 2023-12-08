@@ -22,3 +22,7 @@ Activation* Softmax();
 void softmax(Matrix* m, Matrix* output);
 void softmaxDerivative(Matrix* m, Matrix* output);
 
+Activation* Linear();
+void linear(Matrix* m, Matrix* output);
+void linearDerivative(Matrix* m, Matrix* output);
+

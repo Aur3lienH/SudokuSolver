@@ -3,7 +3,5 @@
 #include "../deepLearning/Matrix.h"
 
 
-Matrix* canny(Matrix* input, float sigma);
+Matrix* Canny(Matrix* input, float sigma);
 
-
-Matrix* getSquare(Matrix* canny);

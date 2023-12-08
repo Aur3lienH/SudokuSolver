@@ -107,7 +107,6 @@ void ReshapeLayer_Save(void* reshapeLayer, FILE* file)
 Layer* ReshapeLayer_Load(FILE* file)
 {
     LayerShape* layerShape = LS_Load(file);
-    printf("Loaded shape %dx%dx%d\n",layerShape->x,layerShape->y,layerShape->z);
     Layer* layer = ReshapeLayer_Create(layerShape);
     return layer;
 }

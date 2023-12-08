@@ -38,7 +38,7 @@ void AddNoise(const Matrix* input, Matrix* output)
 void Mnist_Train_ConvLayers()
 {
     printf("Strating training ...\n");
-    Dataset* trainDataset = LoadCombinedTrainDataset();
+    Dataset* trainDataset = LoadMnist(MNIST_DATA_PATH,MNIST_LABEL_PATH,2051,2049);
 
 
     for (size_t i = 0; i < trainDataset->size; i++)
@@ -53,8 +53,11 @@ void Mnist_Train_ConvLayers()
     N_AddLayer(network, I_Create_2D(LS_Create3D(28,28,1)));
     N_AddLayer(network, Conv_Create(LS_Create3D(3,3,32)));
     N_AddLayer(network, MaxPool_Create(2));
+    N_AddLayer(network, Conv_Create(LS_Create3D(3,3,16)));
     N_AddLayer(network, Flatten_Create());
+    N_AddLayer(network, Drop_Create(0.3));
     N_AddLayer(network, FCL_Create(128, ReLU()));
+    N_AddLayer(network, Drop_Create(0.3));
     N_AddLayer(network, FCL_Create(10, Softmax()));
 
 

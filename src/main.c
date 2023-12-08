@@ -15,6 +15,7 @@
 #include "Downscale.h"
 #include "imageProcessing/Grayscale.h"
 #include "imageProcessing/DatasetCreation.h"
+#include "deepLearning/GridDetection.h"
 
 void HandleFlags(int argc, char* argv[])
 {
@@ -106,7 +107,7 @@ void HandleFlags(int argc, char* argv[])
             {
                 SDL_Surface* img = IMG_Load(argv[i+1]);
 
-                Matrix* res = preprocess(img,1.2);
+                Matrix* res = PreprocessToCanny(img,1.2);
                 SDL_Surface* surface = MatrixToSurface(res);
                 int result = IMG_SaveJPG(surface,"./images/export/export.jpg",100);
                 printf("Result : %d\n",result);
@@ -147,6 +148,18 @@ void HandleFlags(int argc, char* argv[])
                 printf("No folder provided\n");
             }
             return;
+        }
+
+        if(CompareStrings(argv[i],"--train-grid"))
+        {
+            if(argc >= 3)
+            {
+                TrainGridRecognition(argv[i+1]);
+            }
+            else
+            {
+                printf("No folder provided\n");
+            }
         }
 
         

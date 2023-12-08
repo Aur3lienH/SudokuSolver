@@ -158,7 +158,7 @@ void propagate(Matrix* input, size_t posX, size_t posY)
 }
 
 
-Matrix* canny(Matrix* input, float sigma)
+Matrix* Canny(Matrix* input, float sigma)
 {
     Matrix* kernel = M_Create_2D(5,5);
 
@@ -279,7 +279,7 @@ Matrix* canny(Matrix* input, float sigma)
     }
 
     float maxGradient = M_GetMax(nonMaxSuppression);
-    float highThresold = 0.2 * maxGradient; 
+    float highThresold = 0.3 * maxGradient; 
     float lowThresold = 0.1 * maxGradient;
 
 

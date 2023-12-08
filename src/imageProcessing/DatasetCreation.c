@@ -51,13 +51,8 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
     }
     Matrix* grayscaled = GrayscaleToMatrix(image);
 	Matrix* resized = resize(grayscaled,width);
-    Matrix* cannied = canny(resized, 2);
+    Matrix* cannied = Canny(resized, 2);
     Square square = GetSquareWithContour(cannied);
-    //Write the points in the file
-    for (size_t i = 0; i < 4; i++)
-    {
-        fwrite(&square.points[i].x,sizeof(int),1,datasetFile);
-    }
     Matrix* saveMatrix = M_Complete(resized,width,width);
 
     SDL_Surface* surface = MatrixToSurface(saveMatrix);
@@ -101,6 +96,7 @@ void CreateDataset(const char* inputFolder, const char* outputFolder, size_t wid
         printf("Error while opening the file\n");
         exit(-1);
     }
+    printf("number of images : %d\n",n);
     int res = fwrite(&n,sizeof(int),1,datasetFile);
     if(res != 1)
     {

@@ -16,9 +16,41 @@ const float FillingSpeed = 0.5;
 Network* network = NULL;
 Matrix* input = NULL;
 
+/*
+*   Function: dd_load_css
+*   ------------------
+*   Loads the CSS file.
+*/
+void dd_load_css()
+{
+    GtkCssProvider *provider;
+    GdkDisplay *display;
+    GdkScreen *screen;
+    GError *error = NULL;
 
-static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer data) {
-    if (event->keyval == GDK_KEY_r || event->keyval == GDK_KEY_R) {
+    provider = gtk_css_provider_new();
+    display = gdk_display_get_default();
+    screen = gdk_display_get_default_screen(display);
+    
+    gtk_style_context_add_provider_for_screen(screen, 
+    GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    
+    gtk_css_provider_load_from_path(provider, "./src/UI/style.css", &error);
+
+    if (error)
+    {
+        g_printerr("Error loading CSS: %s\n", error->message);
+        g_clear_error(&error);
+    }
+
+    g_object_unref(provider);
+}
+
+
+static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer data)
+{
+    if (event->keyval == GDK_KEY_r || event->keyval == GDK_KEY_R)
+    {
         for (size_t i = 0; i < 784; i++)
         {
             Pixels[i] = 0;
@@ -31,14 +63,16 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
 
 
 
-static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
     guint windowWidth, windowHeight;
     // Get the dimensions of the window.
     windowWidth = gtk_widget_get_allocated_width(widget);
     windowHeight = gtk_widget_get_allocated_height(widget);
 
     // Calculate the size of the square and position to center it.
-    double square_size = (windowWidth / (double)PixelsWidth); // The size of the square (e.g., 100x100 pixels).
+    double square_size = (windowWidth / (double)PixelsWidth);
+    // The size of the square (e.g., 100x100 pixels).
     
     double x = 0;
     double y = 0;
@@ -46,9 +80,10 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
     {
         for (size_t j = 0; j < PixelsWidth; j++)
         {
-                    // Set the color of the square (red in this case).
+            // Set the color of the square (red in this case).
             double value = Pixels[j + i * PixelsWidth];
-            cairo_set_source_rgb(cr, value, value, value); // RGB values are in the range [0, 1].
+            cairo_set_source_rgb(cr, value, value, value); 
+            // RGB values are in the range [0, 1].
 
             // Position the square and set its size.
             cairo_rectangle(cr, x, y, square_size, square_size);
@@ -66,6 +101,7 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
     char* text = (char*)malloc(sizeof(char) * 2);
     text[1] = '\0';
     const Matrix* res = N_Process(network,input);
+    M_Print(res, "res");
         
     for (size_t i = 0; i < 10; i++)
     {
@@ -77,12 +113,14 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
         cairo_set_source_rgb(cr, 1, 1, 1);
         double height = res->data[i] * 40;
-        cairo_rectangle(cr, x - square_size / 2, y - height, square_size, height);
+        cairo_rectangle(cr, x - square_size / 2, y - height, 
+        square_size, height);
         cairo_fill(cr);
         x += 50;
     }
     
-    return FALSE; // Returning FALSE means event propagation continues if necessary.
+    return FALSE; 
+    // Returning FALSE means event propagation continues if necessary.
 }
 
 void AddColorToPixel(size_t index, double value)
@@ -222,7 +260,8 @@ int DrawDigit(int argc, char *argv[], Network* n) {
             {
                 surface = Load("images/cells/cell_0.jpg");
             }
-            temp = SurfaceToDigit(surface,NULL);
+            int isBlank = 0;
+            temp = SurfaceToDigit(surface,&isBlank);
             input = M_Create_2D_Data(PixelsCount,1,Pixels);
             M_Copy(temp,input);
             M_Free(temp);
@@ -264,6 +303,8 @@ int DrawDigit(int argc, char *argv[], Network* n) {
 
     // Initialize GTK.
     gtk_init(&argc, &argv);
+
+    dd_load_css();
 
     // Create a new window.
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);

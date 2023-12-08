@@ -173,12 +173,6 @@ Square GetSquare(Point* intersections,size_t intersectionsCount, Matrix* input)
     Point* sortedDownLeft = SortPointByDistance(intersections,intersectionsCount,(Point){.x = 0, .y = input->rows});
     Point* sortedDownRight = SortPointByDistance(intersections,intersectionsCount,(Point){.x = input->cols, .y = input->rows});
 
-    printf("Sorted points\n");
-    printf("first point : %d, %d\n", sortedUpLeft[0].x, sortedUpLeft[0].y);
-    printf("second point : %d, %d\n", sortedUpRigth[0].x, sortedUpRigth[0].y);
-    printf("third point : %d, %d\n", sortedDownLeft[0].x, sortedDownLeft[0].y);
-    printf("fourth point : %d, %d\n", sortedDownRight[0].x, sortedDownRight[0].y);
-
     size_t tempBatchSize = batchSize;
     while(tempBatchSize < intersectionsCount)
     {
@@ -366,6 +360,5 @@ Square Hough(Matrix* img)
     //drawLines(img, lines, linesCount, rhoSize);
     //S_Draw(img, &square,1);
     return square;
-    
 }
 

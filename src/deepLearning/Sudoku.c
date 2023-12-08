@@ -6,18 +6,24 @@
 #include "Matrix.h"
 #include "Mnist.h"
 #include "../Downscale.h"
+#include "../imageProcessing/Binarisation.h"
+#include "../imageProcessing/Grayscale.h"
 #include <stdlib.h>
 
 const int modelDetectingBlank = 0;
 
 
 
-int GetNumber(Network* n,SDL_Surface *img)
+int GetNumber(Network* n,Matrix* matrix)
 {
     int isBlank;
-    Matrix* matrix = SurfaceToDigit(img,&isBlank);
-    matrix->rows = 784;
-    matrix->cols = 1;
+    Matrix* preprocessed = M_OptimalBinarisation(matrix);
+    Matrix* final = MatrixToDigit(preprocessed,&isBlank);
+    char path [1024];
+    sprintf(path,"images/cell_%li.jpg",rand());
+    IMG_SaveJPG(MatrixToSurface(preprocessed),path,100);
+    final->rows = 784;
+    final->cols = 1;
     if (isBlank && !modelDetectingBlank)
     {
         M_Free(matrix);
@@ -25,15 +31,15 @@ int GetNumber(Network* n,SDL_Surface *img)
     }
     else
     {
-        M_Dim(matrix);
-        int res = S_MatrixToLabel(N_Process(n, matrix));
+        int res = S_MatrixToLabel(N_Process(n, final));
         M_Free(matrix);
+        M_Free(final);
         return res;
     }
 
 }
 
-int** GetSudokuNumbers(Network* n, SDL_Surface **img)
+int** GetSudokuNumbers(Network* n, Matrix **img)
 {
     int** res = (int**)malloc(sizeof(int*) * 9);
     for (size_t i = 0; i < 9; i++)
@@ -50,18 +56,19 @@ int** GetSudokuNumbers(Network* n, SDL_Surface **img)
 int** GetSudokuNumbers_File(Network* n)
 {
     char* path;
-    SDL_Surface** img = (SDL_Surface**)malloc(sizeof(SDL_Surface*) * 81);
+    Matrix** img = (Matrix**)malloc(sizeof(Matrix*) * 81);
     for (size_t i = 0; i < 81; i++)
     {
         path = (char*)malloc(sizeof(char) * 1024);
         sprintf(path, "images/cells/cell_%li.jpg", i);
-        img[i] = IMG_Load(path);
+        SDL_Surface* surface = IMG_Load(path);
+        img[i] = GrayscaleToMatrix(surface);
         free(path);
     }
     int** res = GetSudokuNumbers(n, img);
     for (size_t i = 0; i < 81; i++)
     {
-        SDL_FreeSurface(img[i]);
+        M_Free(img[i]);
     }
     free(img);
     return res;    

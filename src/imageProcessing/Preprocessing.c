@@ -19,24 +19,20 @@ Matrix* resize(const Matrix* input, size_t downSizeWidth)
 	return DownScale(input,ratio);
 }
 
-Matrix* preprocess(SDL_Surface* image, double factor_size)
+Matrix* PreprocessToCanny(SDL_Surface* input, size_t downSizeWidth)
 {
-	
-	
-	Matrix* grayscaled = GrayscaleToMatrix(image);
-	Matrix* resized = resize(grayscaled, 500);
-	clock_t time1 = clock();
-	Matrix* cannied = canny(resized, 2);
-	clock_t time2 = clock();
-	printf("Time to canny : %fs\n", (double)(time2 - time1) / CLOCKS_PER_SEC);
-	
-	//Square square = Hough(cannied);
-	printf("Square found\n");
-	//printf("Point 1: %d, %d\n", square.points[0].x, square.points[0].y);
-	//printf("Point 2: %d, %d\n", square.points[1].x, square.points[1].y);
-	//printf("Point 3: %d, %d\n", square.points[2].x, square.points[2].y);
-	//printf("Point 4: %d, %d\n", square.points[3].x, square.points[3].y);
-
-	return cannied;
+	Matrix* grayscaled = GrayscaleToMatrix(input);
+	Matrix* resized = resize(grayscaled, downSizeWidth);
+	Matrix* canny = Canny(resized, 1);
+	M_Free(grayscaled);
+	M_Free(resized);
+	return canny;
 }
 
+
+
+
+Matrix* PreprocessSquare(Matrix* input)
+{
+	
+}

@@ -6,7 +6,9 @@
 #include "./deepLearning/Matrix.h"
 
 
-Matrix* SurfaceToDigit(SDL_Surface* surface, int* isBlank);
+Matrix* MatrixToDigit(Matrix* matrix, int* isBlankPtr);
+
+Matrix* SurfaceToDigit(SDL_Surface* surface, int* isBlankPtr);
 
 SDL_Surface* Load(char* path);
 

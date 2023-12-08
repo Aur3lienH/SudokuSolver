@@ -382,7 +382,6 @@ void N_Reset(Network* n)
     {
         if(n->layers[i]->layerType == 4)
         {
-            printf("Resetting reshape layer\n");
             ReshapeLayer_Reset(n->layers[i]->layerPtr);
         }
     }

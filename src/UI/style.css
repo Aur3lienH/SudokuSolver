@@ -4,6 +4,11 @@ window {
     font-family: 'Roboto', sans-serif;
 }
 
+#solver_error_dialog {
+    background-color: #333333;
+    color: #FFFFFF;
+}
+
 #vbox {
     background-color: #333333;
     padding: 20px;

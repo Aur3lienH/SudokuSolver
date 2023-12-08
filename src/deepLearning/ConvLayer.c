@@ -137,7 +137,7 @@ Matrix* Conv_BackPropagateFully(void* layerPtr, const Matrix* input, Matrix* del
     M_LinearMul(convLayer->deltaActivation, delta, convLayer->deltaActivation);
     M_Rotate180_3D(convLayer->filters, convLayer->rotatedFilters);
     M_FullConvolution3D(convLayer->rotatedFilters,convLayer->deltaActivation, convLayer->newDelta);
-    //
+    
     M_Convolution3D_Add(input,convLayer->deltaActivation, convLayer->delta);
     
     return convLayer->newDelta;
