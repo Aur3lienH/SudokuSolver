@@ -42,3 +42,9 @@ SDL_Surface* MatrixToSurface(Matrix* matrix)
 	return res;
 }
 
+void M_SaveImage(const Matrix* matrix, const char* path)
+{
+	SDL_Surface* surface = MatrixToSurface(matrix);
+	IMG_SaveJPG(surface, path, 100);
+}
+

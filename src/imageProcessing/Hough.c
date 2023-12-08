@@ -176,7 +176,6 @@ Square GetSquare(Point* intersections,size_t intersectionsCount, Matrix* input)
     size_t tempBatchSize = batchSize;
     while(tempBatchSize < intersectionsCount)
     {
-        printf("Batch size: %zu\n", tempBatchSize);
         for (size_t i = 0; i < tempBatchSize; i++)
         {
             Point upLeft = sortedUpLeft[i];
@@ -346,11 +345,9 @@ Square Hough(Matrix* img)
     
 
 
-    printf("Lines count: %zu\n", linesCount);
     size_t intersectionsCount = 0;
     Point* intersections = GetIntersectionPoints(lines, linesCount, &intersectionsCount, img, rhoSize);
     
-    printf("Intersections count: %zu\n", intersectionsCount);
     //size_t squaresCount = 0;
     
     Square square = GetSquare(intersections, intersectionsCount, img);

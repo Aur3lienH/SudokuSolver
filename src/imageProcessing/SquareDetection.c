@@ -267,7 +267,6 @@ Square GetSquareWithContour(Matrix* img)
             
         }
     }
-    IMG_SaveJPG(MatrixToSurface(flag),"images/contour.jpg",100);
     S_Print(&res);
     return res;
 }

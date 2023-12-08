@@ -24,14 +24,11 @@ void SaveMatrix(Matrix* matrix, char* path)
 int** ImageToSudoku(char* path)
 {
     Network* n = LoadBestRecognitionModel();
-    printf("Model loaded\n");
     SDL_Surface* image = IMG_Load(path);
     Matrix* grayscaled = GrayscaleToMatrix(image);
     SaveMatrix(grayscaled,"images/export/preproc_0.jpg");
     Matrix* resized = resize(grayscaled, 500);
     Matrix* canny = Canny(resized, 1);
-    SaveMatrix(canny,"images/export/preproc_1.jpg");
-    printf("Canny applied\n");
     Square square = GetSquareWithContour(canny);
     S_Sort(&square, canny);
     SDL_Surface* surface = MatrixToSurface(canny);

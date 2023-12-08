@@ -62,7 +62,6 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
     P_DrawSDL(surface,&square.points[3],0xFF0000);
     char* savePath = malloc(sizeof(char) * 100);
     snprintf(savePath, sizeof(savePath),"%s/%s",outputPath,filename);
-    printf("Saving %s\n",savePath);
     IMG_SaveJPG(surface,savePath,100);
 
     //Write the matrix after it has been resized
@@ -96,7 +95,6 @@ void CreateDataset(const char* inputFolder, const char* outputFolder, size_t wid
         printf("Error while opening the file\n");
         exit(-1);
     }
-    printf("number of images : %d\n",n);
     int res = fwrite(&n,sizeof(int),1,datasetFile);
     if(res != 1)
     {
@@ -113,7 +111,6 @@ void CreateDataset(const char* inputFolder, const char* outputFolder, size_t wid
     {
         char* path = malloc(sizeof(char) * 100);
         snprintf(path, sizeof(path),"%s/%s",inputFolder,namelist[i]->d_name);
-        printf("Processing %s\n",path);
         ImageProcess(path,outputFolderCopy,datasetFile,namelist[i]->d_name,width);  
         free(path);
     }

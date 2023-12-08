@@ -424,10 +424,6 @@ Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
 {
     Matrix* out = M_Create_2D(newWidth, newWidth);
 
-    printf("from point 0: %i, %i\n", grid.points[0].x, grid.points[0].y);
-    printf("from point 1: %i, %i\n", grid.points[1].x, grid.points[1].y);
-    printf("from point 2: %i, %i\n", grid.points[2].x, grid.points[2].y);
-    printf("from point 3: %i, %i\n", grid.points[3].x, grid.points[3].y);
     Square from;
     //Top left corner
     from.points[0].x = grid.points[0].x;

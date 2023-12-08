@@ -2,6 +2,7 @@
 #include "../deepLearning/Matrix.h"
 #include "../geometry/Square.h"
 #include "../geometry/Point.h"
+#include "Grayscale.h"
 #include <math.h>
 #include <err.h>
 
@@ -120,7 +121,6 @@ void propagate(Matrix* input, size_t posX, size_t posY)
         //Check if the point is out of bounds
         if(x < 0 || x >= input->cols || y < 0 || y >= input->rows)
         {
-            printf("Point out of bounds\n");
             continue;
         }
         //Check if the point is already visited or if it is not an edge, if it is go to the next point
@@ -175,6 +175,8 @@ Matrix* Canny(Matrix* input, float sigma)
     float sum = M_GetSum(kernel);
     M_ScalarMul(kernel, 1.0f / sum, kernel);
 
+    
+
 
     //Perform the convolution with valid padding
     Matrix* blurred = M_Create_2D(input->rows, input->cols);
@@ -217,6 +219,8 @@ Matrix* Canny(Matrix* input, float sigma)
             gradient->data[i * gradient->cols + j] = value;
         }
     }
+    M_SaveImage(gradient, "images/export/preproc_1.jpg");
+    
 
     Matrix* nonMaxSuppression = M_Create_2D(gradient->rows, gradient->cols);
     for (size_t i = 0; i < nonMaxSuppression->rows; i++)
@@ -278,6 +282,8 @@ Matrix* Canny(Matrix* input, float sigma)
         }
     }
 
+    M_SaveImage(nonMaxSuppression, "images/export/preproc_2.jpg");
+
     float maxGradient = M_GetMax(nonMaxSuppression);
     float highThresold = 0.3 * maxGradient; 
     float lowThresold = 0.15 * maxGradient;
@@ -303,6 +309,8 @@ Matrix* Canny(Matrix* input, float sigma)
             }
         }
     }
+
+    M_SaveImage(thresholded, "images/export/preproc_3.jpg");
     
     for (size_t i = 0; i < thresholded->rows; i++)
     {
@@ -317,6 +325,7 @@ Matrix* Canny(Matrix* input, float sigma)
     
 
     
+    M_SaveImage(thresholded, "images/export/preproc_4.jpg");
     return thresholded;
 }
 

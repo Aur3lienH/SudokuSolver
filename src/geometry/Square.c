@@ -34,7 +34,8 @@ int S_IsSquare(Square* square, float threshold)
     for (int i = 0; i < 4; i++)
     {
         dist[i] = P_Distance(&square->points[i], &square->points[(i + 1) % 4]);
-        if (dist[i] <= 10.0f) {
+        if (dist[i] <= 10.0f) 
+        {
             return 0; // Side too short to be considered a square
         }
     }
@@ -43,9 +44,13 @@ int S_IsSquare(Square* square, float threshold)
     for (int i = 0; i < 4; i++)
     {
         if (dist[i] / dist[(i + 1) % 4] > 1 + threshold || dist[(i + 1) % 4] / dist[i] > 1 + threshold) {
-    for (int i = 0; i < 4; i++) {
-        if (dist[i] / dist[(i + 1) % 4] > 1.0f + threshold || dist[(i + 1) % 4] / dist[i] > 1.0f + threshold) {
-            return 0;
+            for (int i = 0; i < 4; i++) 
+            {
+                if (dist[i] / dist[(i + 1) % 4] > 1.0f + threshold || dist[(i + 1) % 4] / dist[i] > 1.0f + threshold) 
+                {
+                    return 0;
+                }
+            }
         }
     }
 
@@ -55,6 +60,8 @@ int S_IsSquare(Square* square, float threshold)
     // Check if diagonals are almost equal
     if (diag1 / diag2 > 1 + threshold || diag2 / diag1 > 1 + threshold)
     {
+        return 0;
+    }
     if (diag1 / diag2 > 1.0f + threshold || diag2 / diag1 > 1.0f + threshold) {
         return 0;
     }
@@ -99,7 +106,8 @@ int S_IsSquareComplete(Matrix* matrix, Square* square, int searchRadius)
     }
 
     // Check if all sides are complete
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) 
+    {
         if (!P_IsSegmentComplete(matrix, &square->points[i], &square->points[(i + 1) % 4], searchRadius)) {
             return 0;
         }
@@ -153,15 +161,18 @@ void S_Sort(Square* square, Matrix* img)
     used[index] = 1; // Mark this point as used
 
     // The last point is the one not used
-    for (size_t i = 0; i < 4; i++) {
-        if (!used[i]) {
+    for (size_t i = 0; i < 4; i++) 
+    {
+        if (!used[i]) 
+        {
             closestPoints[3] = square->points[i];
             break;
         }
     }
 
     // Reassign the points in the correct order
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++) 
+    {
         square->points[i] = closestPoints[i];
     }
 
