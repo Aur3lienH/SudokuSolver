@@ -56,7 +56,7 @@ void Conv_Compile(void* layer,LayerShape* previousLayerShape)
     convLayer->adamBias = Adam_Create_D(convLayer->layer->layerShape->z);
     if(convLayer->filters == NULL)
     {
-        convLayer->filters = M_Create_3D(convLayer->filterShape->x,convLayer->filterShape->y,convLayer->filterShape->z);
+        convLayer->filters = M_Create_3D(convLayer->filterShape->x,convLayer->filterShape->y,convLayer->filterShape->z * previousLayerShape->z);
         M_HeUniformConv(convLayer->filters,previousLayerShape->z);
     }
 

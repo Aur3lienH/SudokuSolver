@@ -24,7 +24,7 @@ int GetNumber(Network* n,Matrix* matrix, size_t id)
     snprintf(path, sizeof(path), "images/export/step_%li.jpg", id+1);
     M_SaveImage(preprocessed, path);
     Matrix* final = MatrixToDigit(preprocessed,&isBlank);
-    snprintf(path, sizeof(path), "images/cells/step_%li.jpg", id+2);
+    snprintf(path, sizeof(path), "images/export/step_%li.jpg", id+2);
     M_SaveImage(final, path);
 
     final->rows = 784;

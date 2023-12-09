@@ -77,12 +77,10 @@ void BM_Mul(const Matrix* a, const Matrix* b, Matrix* c)
             {
                 for (size_t ii = 0; ii < BLOCK_SIZE; ii++)
                 {
-                    //Go to the next row in this matrix and go to the next column in the other matrix
                     for (size_t jj = 0; jj < BLOCK_SIZE; jj++)
                     {
                         float sum = 0.0f;
                         float* res = (out + ii * BLOCK_SIZE + jj);
-                        //Go to the next column in this matrix and go to the next rows in the other matrix
 
                         for (size_t kk = 0; kk < BLOCK_SIZE; kk++)
                         {
@@ -133,7 +131,6 @@ void BM_M_Mul(const Matrix* a, const Matrix* b, Matrix* c)
     }
     M_Zero(c);
     //Set output to 0
-    //The two loops are used to go through the blocks of the matrices
     for (size_t f = 0; f < rowsLeftBlockCount; f++)
     {
         size_t outLoopCount = (f == rowsLeftBlockCount - 1) ? missingOutCols : BLOCK_SIZE;
@@ -142,12 +139,9 @@ void BM_M_Mul(const Matrix* a, const Matrix* b, Matrix* c)
         {
             size_t leftLoopCount = (i == rowsRightBlockCount - 1) ? aMissingRows : BLOCK_SIZE;
 
-            
-            //Go to the next row in this matrix and go to the next column in the other matrix
             for (size_t jj = 0; jj < outLoopCount; jj++)
             {
                 float* res = (out + jj);
-                //Go to the next column in this matrix and go to the next rows in the other matrix
                 float sum = 0;
                 for (size_t kk = 0; kk < leftLoopCount; kk++)
                 {

@@ -112,7 +112,6 @@ int S_IsSquareComplete(Matrix* matrix, Square* square, int searchRadius)
             return 0;
         }
     }
-    printf("All sides are complete\n");
     return 1; // Passed all checks
 }
 
@@ -176,10 +175,5 @@ void S_Sort(Square* square, Matrix* img)
         square->points[i] = closestPoints[i];
     }
 
-    // Print the sorted points
-    printf("Top left: %d, %d\n", closestPoints[0].x, closestPoints[0].y);
-    printf("Top right: %d, %d\n", closestPoints[1].x, closestPoints[1].y);
-    printf("Bottom left: %d, %d\n", closestPoints[2].x, closestPoints[2].y);
-    printf("Bottom right: %d, %d\n", closestPoints[3].x, closestPoints[3].y);
 }
 
