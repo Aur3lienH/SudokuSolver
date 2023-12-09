@@ -252,7 +252,6 @@ Square GetSquareWithContour(Matrix* img)
             PointSet* pointSet = GetOneSquare(img,flag,(Point){j,i});
             Square square = getSquareFromPointSet(pointSet,img);
             S_Sort(&square,img);
-            S_Print(&square);
             if(S_IsSquareComplete(img,&square,5))
             {
                 if(S_Perimeter(&square) > S_Perimeter(&res))
@@ -267,6 +266,5 @@ Square GetSquareWithContour(Matrix* img)
             
         }
     }
-    S_Print(&res);
     return res;
 }

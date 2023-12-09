@@ -14,11 +14,18 @@ const int modelDetectingBlank = 0;
 
 
 
-int GetNumber(Network* n,Matrix* matrix)
+int GetNumber(Network* n,Matrix* matrix, size_t id)
 {
     int isBlank;
+    char path[1024];
+    snprintf(path, sizeof(path), "images/export/step_%li.jpg", id);
+    M_SaveImage(matrix, path);
     Matrix* preprocessed = M_OptimalBinarisation(matrix);
+    snprintf(path, sizeof(path), "images/export/step_%li.jpg", id+1);
+    M_SaveImage(preprocessed, path);
     Matrix* final = MatrixToDigit(preprocessed,&isBlank);
+    snprintf(path, sizeof(path), "images/cells/step_%li.jpg", id+2);
+    M_SaveImage(final, path);
 
     final->rows = 784;
     final->cols = 1;
@@ -45,7 +52,7 @@ int** GetSudokuNumbers(Network* n, Matrix **img)
         res[i] = (int*)malloc(sizeof(int) * 9);
         for (size_t j = 0; j < 9; j++)
         {
-            res[i][j] = GetNumber(n, img[i * 9 + j]);
+            res[i][j] = GetNumber(n, img[i * 9 + j], (i * 9 + j + 1) * 3);
         }
     }
     return res;

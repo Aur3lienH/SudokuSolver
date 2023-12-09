@@ -41,12 +41,7 @@ int** ImageToSudoku(char* path)
     SaveMatrix(perspectiveCorrected,"images/export/step_2.jpg");
 
     Matrix** cells = SplitCells(perspectiveCorrected, 9); 
-    for (size_t i = 0; i < 81; i++)
-    {
-        char path [1024];
-        snprintf(path, sizeof(path), "images/export/step_%li.jpg", i+3);
-        IMG_SaveJPG(MatrixToSurface(cells[i]),path,100);
-    }
+
     
 
 

@@ -42,6 +42,9 @@ char
 *original_filename,
 *filename;
 
+const size_t preproc_count = 4;
+const size_t treatment_count = 245;
+
 /*
 *   Function: solver_is_valid_image_file
 *   -----------------------------
@@ -474,7 +477,7 @@ void solver_button_next_image(GtkButton* button)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(btn_previous_image), TRUE);
         }
-        if (i == 7)
+        if (i == preproc_count)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
@@ -494,7 +497,7 @@ void solver_button_next_image(GtkButton* button)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(btn_previous_image), TRUE);
         }
-        if (i == 6)
+        if (i == treatment_count)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
@@ -525,7 +528,7 @@ void solver_button_previous_image(GtkButton* button)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
-        if (i == 6)
+        if (i == preproc_count - 1)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(btn_next_image), TRUE);
         }
@@ -553,7 +556,7 @@ void solver_button_previous_image(GtkButton* button)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
         }
-        if (i == 5)
+        if (i == treatment_count - 1)
         {
             gtk_widget_set_sensitive(GTK_WIDGET(btn_next_image), TRUE);
         }

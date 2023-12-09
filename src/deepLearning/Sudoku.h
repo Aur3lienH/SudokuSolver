@@ -4,7 +4,6 @@
 #include "Network.h"
 
 
-int GetNumber(Network* n,Matrix *img);
 
 int** GetSudokuNumbers(Network* n, Matrix **img);
 
