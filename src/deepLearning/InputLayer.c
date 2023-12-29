@@ -87,7 +87,6 @@ Matrix* I_Process(void* layerPtr, Matrix* input)
 Matrix* I_FeedForward(void* layerPtr, Matrix* input)
 {
     InputLayer* inputLayer = (InputLayer*)layerPtr;
-
     inputLayer->TransformInput(input,inputLayer->layer->outputs);
 
     return inputLayer->layer->outputs;

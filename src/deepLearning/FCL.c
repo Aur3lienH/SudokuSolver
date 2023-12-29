@@ -145,8 +145,7 @@ Matrix* FCL_Backpropagation(void* layerPtr, Matrix* input, Matrix* delta)
 
     fcl->M_Transpose2Mul(fcl->deltaActivation,input,fcl->delta);
 
-    
-    
+
     fcl->M_Transpose1Mul(fcl->weights,fcl->deltaActivation,fcl->newDelta);
 
     return fcl->newDelta;
@@ -254,6 +253,12 @@ void FCL_Print(void* layerPtr, int* parametersCount)
         break;
     case 2:
         printf("Softmax\n");
+        break;
+    case 3:
+        printf("Linear\n");
+        break;
+    default:
+        errx(1,"Activation not known !\n");
         break;
     }
 

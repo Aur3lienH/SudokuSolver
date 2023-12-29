@@ -27,3 +27,10 @@ Matrix* L_Process(void* layer, Matrix* input)
     return input;
 }
 
+
+void L_Free(Layer* layer)
+{
+    free(layer->layerShape);
+    free(layer);
+}
+

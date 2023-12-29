@@ -6,6 +6,7 @@ typedef struct ReshapeLayer
 {
     Layer* layer;
     LayerShape previousShape;
+    Matrix* delta;
 } ReshapeLayer;
 
 

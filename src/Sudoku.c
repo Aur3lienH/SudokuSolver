@@ -36,16 +36,15 @@ int** ImageToSudoku(char* path)
     P_DrawSDL(surface,&square.points[1],0xFF0000);
     P_DrawSDL(surface,&square.points[2],0xFF0000);
     P_DrawSDL(surface,&square.points[3],0xFF0000);
-    IMG_SaveJPG(surface,"images/export/step_1.jpg",100);
+    IMG_SaveJPG(surface,"images/export/step_2.jpg",100);
     Matrix* perspectiveCorrected = TransformPerspective(resized, square,540);
-    SaveMatrix(perspectiveCorrected,"images/export/step_2.jpg");
+    SaveMatrix(perspectiveCorrected,"images/export/step_3.jpg");
 
     Matrix** cells = SplitCells(perspectiveCorrected, 9); 
 
     
 
 
-    printf("Cells splitted\n");
 
     int** sudoku = GetSudokuNumbers(n, cells);
     printf("Sudoku numbers detected\n");

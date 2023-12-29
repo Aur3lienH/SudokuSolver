@@ -18,7 +18,7 @@
 
 
 
-#define DEBUG 0
+#define DEBUG 1
 
 const size_t BLOCK_SIZE = 32;
 const size_t BLOCK_SIZE_SQUARED = BLOCK_SIZE * BLOCK_SIZE;
@@ -166,9 +166,9 @@ void BM_M_SSE_Mul(const Matrix* a, const Matrix* b, Matrix* c)
         errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
         return;
     }
-    if(BLOCK_SIZE != 4)
+    if(BLOCK_SIZE % 4 != 0)
     {
-        errx(-1,"BM_To_M_Mul: BLOCK_SIZE must be 4\n");
+        errx(-1,"BM_M_SSE_Transpose1Mul: BLOCK_SIZE must be a multiple of 4\n");
         return;
     }
 #endif
@@ -301,9 +301,9 @@ void BM_M_SSE_NCOND_Mul(const Matrix* a, const Matrix* b, Matrix* c)
         errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
         return;
     }
-    if(BLOCK_SIZE != 4)
+    if(BLOCK_SIZE % 4 != 0)
     {
-        errx(-1,"BM_To_M_Mul: BLOCK_SIZE must be 4\n");
+        errx(-1,"BM_M_SSE_Transpose1Mul: BLOCK_SIZE must be a multiple of 4\n");
         return;
     }
 #endif
@@ -382,9 +382,9 @@ void BM_M_AVX_Mul(const Matrix* a, const Matrix* b, Matrix* c)
         errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
         return;
     }
-    if(BLOCK_SIZE != 8)
+    if(BLOCK_SIZE % 8 != 0)
     {
-        errx(-1,"BM_To_M_Mul: BLOCK_SIZE must be 4\n");
+        errx(-1,"BM_M_AVX_Mul: BLOCK_SIZE must be a multiple of 8\n");
         return;
     }
 #endif
@@ -516,9 +516,9 @@ void BM_M_AVX_NCOND_Mul(const Matrix* a, const Matrix* b, Matrix* c)
         errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
         return;
     }
-    if(BLOCK_SIZE != 4)
+    if(BLOCK_SIZE % 8 != 0)
     {
-        errx(-1,"BM_To_M_Mul: BLOCK_SIZE must be 4\n");
+        errx(-1,"BM_M_AVX_Transpose1Mul: BLOCK_SIZE must be a multiple of 8\n");
         return;
     }
 #endif
@@ -700,13 +700,13 @@ void BM_Transpose1Mul(const Matrix* a,const Matrix* b, Matrix* c)
 void BM_M_SSE_Transpose1Mul(const Matrix* a, const Matrix* b, Matrix* c)
 {
 #if DEBUG
-    if(BLOCK_SIZE != 4)
+    if(BLOCK_SIZE % 4 != 0)
     {
-        errx(-1,"BM_M_SSE_Transpose1Mul: BLOCK_SIZE must be 4\n");
+        errx(-1,"BM_M_SSE_Transpose1Mul: BLOCK_SIZE must be a multiple of 4\n");
         return;
     }
 
-    if(a->rows != b->rows || a->cols != output->rows || b->cols != output->cols)
+    if(a->rows != b->rows || a->cols != c->rows || b->cols != c->cols)
     {
         errx(-1,"BM_M_SSE_Transpose1Mul(): Matrix dimensions do not match\n");
         return;
@@ -791,15 +791,18 @@ void BM_M_SSE_Transpose1Mul(const Matrix* a, const Matrix* b, Matrix* c)
 void BM_M_AVX_Transpose1Mul(const Matrix* a, const Matrix* b, Matrix* c)
 {
     #if DEBUG
-    if(BLOCK_SIZE != 4)
+    if(BLOCK_SIZE % 4 != 0)
     {
-        errx(-1,"BM_M_SSE_Transpose1Mul: BLOCK_SIZE must be 4\n");
+        errx(-1,"BM_M_AVX_Transpose1Mul: BLOCK_SIZE must be a multiple of 4\n");
         return;
     }
 
-    if(a->rows != b->rows || a->cols != output->rows || b->cols != output->cols)
+    if(a->effectiveRows != b->effectiveRows || a->effectiveCols != c->effectiveRows || b->effectiveCols != c->effectiveCols)
     {
-        errx(-1,"BM_M_SSE_Transpose1Mul(): Matrix dimensions do not match\n");
+        M_Dim(a);
+        M_Dim(b);
+        M_Dim(c);
+        errx(-1,"BM_M_AVX_Transpose1Mul(): Matrix dimensions do not match\n");
         return;
     }
 #endif
@@ -1082,6 +1085,9 @@ void BM_M_SSE_Transpose2Mul(const Matrix* a, const Matrix* b, Matrix* c)
 void BM_M_AVX_Transpose2Mul(const Matrix* a, const Matrix* b, Matrix* c) {
 #if DEBUG
     if (a->cols != b->cols || a->rows != c->effectiveRows || b->rows != c->effectiveCols || b->cols != 1) {
+        M_Dim(a);
+        M_Dim(b);
+        M_Dim(c);
         errx(1, "BM_M_Transpose2Mul() : Matrix dimensions do not match\n");
     }
 #endif

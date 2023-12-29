@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-
+//Create the conv layer and assign every function to it
 Layer* Conv_Create(LayerShape* layerShape)
 {
 
@@ -61,7 +61,7 @@ void Conv_Compile(void* layer,LayerShape* previousLayerShape)
     }
 
 
-    convLayer->rotatedFilters = M_Create_3D(convLayer->filterShape->x,convLayer->filterShape->y,convLayer->filterShape->z);
+    convLayer->rotatedFilters = M_Create_3D(convLayer->filterShape->x,convLayer->filterShape->y,convLayer->filterShape->z * previousLayerShape->z);
     size_t x = convLayer->layer->layerShape->x;
     size_t y = convLayer->layer->layerShape->y;
     size_t z = convLayer->layer->layerShape->z;
@@ -90,24 +90,65 @@ void Conv_Compile(void* layer,LayerShape* previousLayerShape)
 }
 
 
-void ForwardPass(Matrix* input, Matrix* filters,Matrix* deltaActivation, Matrix* outputs, float* bias)
+void ForwardPass(ConvLayer* convLayer,Matrix* input, Matrix* filters,Matrix* deltaActivation, Matrix* outputs, float* bias)
 {
+    //Store the pointer to the beginning of the array of the matrix to reset them
     float* convLayerArray = outputs->data;
     float* filterArray = filters->data;
     float* deltaArray = deltaActivation->data;
+    float* inputArray = input->data;
+
+    //Set the ouptuts matrix to zeros
     M_Zero(outputs);
-    for (size_t i = 0; i < filters->dims; i++)
+
+    //Get the previous and actual feature count
+    int filterCount = convLayer->layer->layerShape->z;
+    int previousFeatureCount = convLayer->newDelta->dims;
+
+    //Loop through all the filters and apply the convolution
+    for (size_t i = 0; i < filterCount; i++)
     {
-        M_Convolution3D_2D_Add(input,filters,outputs);
-        M_AddBiasReLU(outputs,bias[i],deltaActivation,outputs);
+        for (size_t j = 0; j < previousFeatureCount; j++)
+        {
+            M_Convolution_Add(input,filters,outputs);
+            input->data += M_GetSize2D(input);
+            filters->data += M_GetSize2D(filters);
+        }
+        M_ReLU(outputs,deltaActivation,outputs);
+        input->data = inputArray;
         outputs->data += M_GetSize2D(outputs);
-        filters->data += M_GetSize2D(filters);
         deltaActivation->data += M_GetSize2D(deltaActivation);
     }
 
+    //Reset the pointers of the matrix
     filters->data = filterArray;
     outputs->data = convLayerArray;
     deltaActivation->data = deltaArray;
+    input->data = inputArray;
+}
+
+
+void BackwardPass(ConvLayer* convLayer, Matrix* previousGradient, Matrix* rotatedFilters, Matrix* outputs)
+{
+    float* previousGradientData = previousGradient->data;
+    float* outputData = outputs->data;
+    float* rotatedFiltersData = rotatedFilters->data;
+    size_t previousNumOfFeature = convLayer->newDelta->dims;
+    M_Zero(outputs);
+    for (size_t i = 0; i < previousGradient->dims; i++)
+    {
+        for (size_t j = 0; j < previousNumOfFeature; j++)
+        {
+            M_FullConvolution(previousGradient,rotatedFilters,outputs);
+            rotatedFilters->data += M_GetSize2D(rotatedFilters);
+            outputs->data += M_GetSize2D(outputs);
+        }
+        outputs->data = outputData;
+        previousGradient->data += M_GetSize2D(previousGradient);
+    }
+    outputs->data = outputData;
+    previousGradient->data = previousGradientData;
+    rotatedFilters->data = rotatedFiltersData;
 
 }
 
@@ -117,8 +158,7 @@ void ForwardPass(Matrix* input, Matrix* filters,Matrix* deltaActivation, Matrix*
 Matrix* Conv_FeedForward(void* layerPtr, Matrix* input)
 {
     ConvLayer* convLayer = (ConvLayer*)layerPtr;
-    ForwardPass(input, convLayer->filters,convLayer->deltaActivation,convLayer->layer->outputs,convLayer->biases);
-
+    ForwardPass(convLayer,input, convLayer->filters,convLayer->deltaActivation,convLayer->layer->outputs,convLayer->biases);
     
     return convLayer->layer->outputs;
 }
@@ -136,8 +176,9 @@ Matrix* Conv_BackPropagateFully(void* layerPtr, Matrix* input, Matrix* delta)
     //reluDerivative(convLayer->layer->outputs,convLayer->deltaActivation);
     M_LinearMul(convLayer->deltaActivation, delta, convLayer->deltaActivation);
     M_Rotate180_3D(convLayer->filters, convLayer->rotatedFilters);
-    M_FullConvolution3D(convLayer->rotatedFilters,convLayer->deltaActivation, convLayer->newDelta);
-    
+    BackwardPass(convLayer,convLayer->deltaActivation,convLayer->rotatedFilters,convLayer->newDelta);
+    //M_FullConvolution3D(convLayer->rotatedFilters,convLayer->deltaActivation, convLayer->newDelta);
+    //M_Print(convLayer->newDelta,"newDelta");
     M_Convolution3D_Add((Matrix *)input,convLayer->deltaActivation, convLayer->delta);
     
     return convLayer->newDelta;

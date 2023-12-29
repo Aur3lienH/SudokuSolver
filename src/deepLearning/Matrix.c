@@ -18,7 +18,7 @@
     #include <emmintrin.h>
 #endif
 
-#define DEBUG 1
+#define DEBUG 0
 
 const int matrixType = 1;
 
@@ -71,6 +71,10 @@ Matrix* M_Init(size_t rows, size_t cols, size_t dims, size_t effectiveRows, size
     Matrix* m = (Matrix*)malloc(sizeof(Matrix));
 #if SSE
     m->data = (float*)_mm_malloc(rows * cols * dims * sizeof(float),64);
+    if(m->data == NULL)
+    {
+        errx(-1,"M_Init(): Could not allocate memory\n");
+    }
 #else
     m->data = (float*)malloc(rows * cols * dims * sizeof(float));
 #endif
@@ -234,6 +238,15 @@ void M_Add(const Matrix* a,const Matrix* b, Matrix* output)
     for (size_t i = 0; i < matrixSize; i++)
     {
         output->data[i] = a->data[i] + b->data[i];
+    }
+}
+
+void M_AddScalar(const Matrix* m, const float scalar, Matrix* output)
+{
+    size_t matrixSize = M_GetSize3D(m);
+    for (size_t i = 0; i < matrixSize; i++)
+    {
+        output->data[i] = m->data[i] + scalar;
     }
 }
 
@@ -586,6 +599,24 @@ void M_Convolution3D_Add(Matrix* a, Matrix* b, Matrix* output)
 
 
 
+void M_ReLU(const Matrix* input, Matrix* gradient, Matrix* output)
+{
+    size_t matrixSize = M_GetSize2D(input);
+    for (size_t i = 0; i < matrixSize; i++)
+    {
+        if(input->data[i] > 0)
+        {
+            output->data[i] = input->data[i];
+            gradient->data[i] = 1;
+        }
+        else
+        {
+            output->data[i] = 0;
+            gradient->data[i] = 0;
+        }
+    }
+    
+}
 
 void M_ReLU_Convolution(const Matrix* a, const Matrix* b,float bias, Matrix* deltaActivation, Matrix* output)
 {
@@ -856,4 +887,55 @@ Matrix* M_Complete(const Matrix* m, size_t rows, size_t cols)
         }
     }
     return res;
+}
+
+
+void M_DepthwiseConvolution(Matrix* input, Matrix* filter, Matrix* output)
+{
+    float* filterData = filter->data;
+
+    for (size_t i = 0; i < input->rows; i++)
+    {
+        for (size_t j = 0; j < input->cols; j++)
+        {
+            for (size_t l = 0; l < filter->dims; l++)
+            {
+                float sum = 0;
+                for (size_t k = 0; k < filter->rows; k++)
+                {
+                    for (size_t m = 0; m < filter->cols; m++)
+                    {
+                        sum += input->data[M_ConvertIndex(input,i + k, j + m) + l * M_GetSize2D(input)] * *filterData;
+                        filterData++;
+                    }
+                }
+                output->data[M_ConvertIndex(output,i,j) + l * M_GetSize2D(output)] = sum;
+            }
+        }
+    }
+}
+
+void M_PointWiseConvolution(Matrix* input, Matrix* filter, Matrix* output)
+{
+    float* filterData = filter->data;
+
+    for (size_t i = 0; i < input->rows; i++)
+    {
+        for (size_t j = 0; j < input->cols; j++)
+        {
+            for (size_t l = 0; l < filter->dims; l++)
+            {
+                float sum = 0;
+                for (size_t k = 0; k < filter->rows; k++)
+                {
+                    for (size_t m = 0; m < filter->cols; m++)
+                    {
+                        sum += input->data[M_ConvertIndex(input,i + k, j + m) + l * M_GetSize2D(input)] * *filterData;
+                        filterData++;
+                    }
+                }
+                output->data[M_ConvertIndex(output,i,j) + l * M_GetSize2D(output)] = sum;
+            }
+        }
+    }
 }

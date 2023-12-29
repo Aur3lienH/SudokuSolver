@@ -5,6 +5,7 @@
 Layer* ReshapeLayer_Create(LayerShape* shape)
 {
     ReshapeLayer* reshapeLayer = malloc(sizeof(ReshapeLayer));
+    reshapeLayer->delta = NULL;
     reshapeLayer->layer = malloc(sizeof(Layer));
     reshapeLayer->layer->layerType = 4;
     reshapeLayer->layer->layerShape = shape;
@@ -60,6 +61,12 @@ Matrix* ReshapeLayer_FeedForward(void* reshapeLayer, Matrix* input)
     input->rows = reshapeLayerPtr->layer->layerShape->x;
     input->cols = reshapeLayerPtr->layer->layerShape->y;
     input->dims = reshapeLayerPtr->layer->layerShape->z;
+    if(reshapeLayerPtr->delta != NULL)
+    {
+        reshapeLayerPtr->delta->rows = reshapeLayerPtr->layer->layerShape->x;
+        reshapeLayerPtr->delta->cols = reshapeLayerPtr->layer->layerShape->y;
+        reshapeLayerPtr->delta->dims = reshapeLayerPtr->layer->layerShape->z;
+    }
     reshapeLayerPtr->layer->outputs = input;
     return input;
 }
@@ -80,6 +87,7 @@ Matrix* ReshapeLayer_BackPropagate(void* reshapeLayer, Matrix* input, Matrix* de
     _input->rows = reshapeLayerPtr->previousShape.x;
     _input->cols = reshapeLayerPtr->previousShape.y;
     _input->dims = reshapeLayerPtr->previousShape.z;
+    reshapeLayerPtr->delta = delta;
     return delta;
 }
 

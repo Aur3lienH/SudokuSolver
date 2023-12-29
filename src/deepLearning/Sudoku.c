@@ -52,7 +52,7 @@ int** GetSudokuNumbers(Network* n, Matrix **img)
         res[i] = (int*)malloc(sizeof(int) * 9);
         for (size_t j = 0; j < 9; j++)
         {
-            res[i][j] = GetNumber(n, img[i * 9 + j], (i * 9 + j + 1) * 3);
+            res[i][j] = GetNumber(n, img[i * 9 + j], (i * 9 + j + 1) * 3 + 1);
         }
     }
     return res;

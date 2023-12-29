@@ -49,19 +49,19 @@ void Mnist_Train_ConvLayers()
     
     
 
+
     Network* network = N_CreateNetwork();
-    N_AddLayer(network, I_Create_2D(LS_Create3D(28,28,1)));
-    N_AddLayer(network, Conv_Create(LS_Create3D(3,3,32)));
+    N_AddLayer(network, I_Create_2D(LS_Create3D(28, 28, 1)));
+    N_AddLayer(network, Conv_Create(LS_Create3D(5, 5, 128))); 
     N_AddLayer(network, MaxPool_Create(2));
-    N_AddLayer(network, Conv_Create(LS_Create3D(3,3,16)));
+    N_AddLayer(network, Conv_Create(LS_Create3D(3, 3, 64))); 
+    N_AddLayer(network, MaxPool_Create(2));
     N_AddLayer(network, Flatten_Create());
-    N_AddLayer(network, Drop_Create(0.3));
-    N_AddLayer(network, FCL_Create(128, ReLU()));
-    N_AddLayer(network, Drop_Create(0.3));
+    N_AddLayer(network, FCL_Create(512, ReLU())); 
+    N_AddLayer(network, Drop_Create(0.5)); 
     N_AddLayer(network, FCL_Create(10, Softmax()));
 
-
-    N_Compile(network,CE_Create());
+    N_Compile(network, CE_Create());
 
     N_Print(network);
 
@@ -91,16 +91,14 @@ void Mnist_Train()
 {
     temp = M_Create_2D(784,1);
     printf("Starting Training ... \n");
-    Dataset* trainDataset = LoadCombinedTrainDataset();
+    Dataset* trainDataset = LoadMnist(MNIST_TEST_DATA_PATH,MNIST_TEST_LABEL_PATH,2051,2049);
 
     Network* network = N_CreateNetwork();
     N_AddLayer(network, I_Create(784));
-    N_AddLayer(network, FCL_Create(1024,ReLU()));
-    N_AddLayer(network,Drop_Create(0.3));
-    N_AddLayer(network, FCL_Create(1024, ReLU())); 
-    N_AddLayer(network,Drop_Create(0.3));
-    N_AddLayer(network, FCL_Create(1024, ReLU())); 
-    N_AddLayer(network,Drop_Create(0.3));
+    N_AddLayer(network, FCL_Create(128,ReLU()));
+    N_AddLayer(network,Drop_Create(0.2));
+    N_AddLayer(network, FCL_Create(64, ReLU())); 
+    N_AddLayer(network,Drop_Create(0.2));
     //N_AddLayer(network, FCL_Create(16, ReLU()));
     //N_AddLayer(network, FCL_Create(256, ReLU())); 
 
@@ -113,7 +111,7 @@ void Mnist_Train()
     printf("Number of logical processors : %d\n",num_of_logical_processors);
 
 
-    N_Train(network,trainDataset,128,30,num_of_logical_processors,0.001);
+    N_Train(network,trainDataset,128,20,num_of_logical_processors,0.001);
 
 
     Dataset* testDataset = LoadMnist(MNIST_TEST_DATA_PATH,MNIST_TEST_LABEL_PATH,2051,2049);

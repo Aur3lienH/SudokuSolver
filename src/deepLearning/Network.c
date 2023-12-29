@@ -201,7 +201,7 @@ void N_Train(Network* n, Dataset* dataset, size_t batchSize, size_t epochsCount,
             N_Update(networks[0],learningRate);
             i += auxBatchSize;
         }
-        Reco_Save(networks[0]);
+        //Reco_Save(networks[0]);
 
 
     }
@@ -266,7 +266,6 @@ void N_Save(Network* n, const char* path)
     fwrite(&n->layersCount,sizeof(size_t),1,file);
     for (size_t i = 0; i < n->layersCount; i++)
     {
-        printf("Saving layer %zu\n",i);
         fwrite(&n->layers[i]->layerType,sizeof(unsigned char),1,file);
         n->layers[i]->Save(n->layers[i]->layerPtr,file);
     }

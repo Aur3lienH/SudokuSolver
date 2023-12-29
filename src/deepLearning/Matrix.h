@@ -70,6 +70,9 @@ float M_Get(const Matrix* m, size_t rows, size_t cols);
 //Add the first two matrices and put the ouptut in the third parameter
 void M_Add(const Matrix* a,const Matrix* b, Matrix* output);
 
+//Add a scalar to the whole matrix
+void M_AddScalar(const Matrix* m, const float scalar, Matrix* output);
+
 //Apply function to all the elements of the matrix
 void M_Apply(float (*func)(float),const Matrix* m, Matrix* output);
 
@@ -134,11 +137,20 @@ void M_Convolution3D(Matrix* input, Matrix* filter, Matrix* output);
 //Convolution of the first two matrices and put the ouptut in the third parameter with ReLU
 void M_ReLU_Convolution(const Matrix* input, const Matrix* filter,float bias, Matrix* deltaActivation, Matrix* output);
 
+//Apply ReLU function on all the matrix and calculate it's gradient
+void M_ReLU(const Matrix* input, Matrix* gradient, Matrix* output);
+
 //Apply full convolution on all dimensions of the matrix
 void M_FullConvolution(Matrix* input, Matrix* filter, Matrix* output);
 
 //Apply full convolution on all dimensions of the matrix
 void M_FullConvolution3D(Matrix* a, Matrix* filter, Matrix* output);
+
+//Depthwise convolution
+void M_DepthwiseConvolution(Matrix* input, Matrix* filter, Matrix* output);
+
+//Pointwise convolution
+void M_PointWiseConvolution(Matrix* input, Matrix* filter, Matrix* output);
 
 Matrix* M_Complete(const Matrix* m, size_t rows, size_t cols);
 

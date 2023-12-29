@@ -37,3 +37,5 @@ Matrix* L_BackPropagate(void* layer, const Matrix* input, Matrix* delta);
 void L_Update(void* layer,const float learningRate, float* accumulator, float lambda);
 
 Matrix* L_Process(void* layer, Matrix* input);
+
+void L_Free(Layer* layer);
