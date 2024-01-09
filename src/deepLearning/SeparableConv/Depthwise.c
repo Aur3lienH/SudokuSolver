@@ -38,5 +38,55 @@ void Conv_Depth_Compile(void* layer,LayerShape* prevLayerShape)
 Matrix* Conv_Depth_FeedForward(void* layerPtr, Matrix* input)
 {
     Conv_Depth* depthWise = (Conv_Depth*)layerPtr;
-    depthWise->ConvDepthWise(input,depthWise->filterDepthWise,depthWise->outputs);
+    depthWise->ConvDepthWise(input,depthWise->filterDepthWise,depthWise->interMat);
+    M_PointWiseConvolution(depthWise->interMat,depthWise->filterPointWise,depthWise);
+}
+
+Matrix* Conv_Depth_Process(void* layerPtr, Matrix* input)
+{
+    return Conv_Depth_FeedForward(layerPtr,input);
+}
+
+Matrix* Conv_Depth_Backpropagation(void* layerPtr, Matrix* input, Matrix* delta)
+{
+
+}
+
+
+void Conv_Depth_UpdateWeights(void* layerPtr,float learningRate, float* accumulator, float lambda)
+{
+
+}
+
+
+void Conv_Depth_Save(void* layerPtr, FILE* file)
+{
+
+}
+
+Layer* Conv_Depth_Load(FILE* file)
+{
+
+}
+
+
+Layer* Conv_Depth_Copy(void* layerPtr)
+{
+
+}
+
+void Conv_Depth_AddDelta(void* layerPtr, void* layer2Ptr)
+{
+
+}
+
+
+void Conv_Depth_AverageDelta(void* layerPtr, const size_t size)
+{
+
+}
+
+void Conv_Depth_Print(void* layerPtr, int* parametersCount)
+{
+    
 }

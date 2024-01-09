@@ -11,6 +11,7 @@ typedef struct Conv_Depth
     Matrix* filterDepthWise;
     Matrix* filterPointWise;
     Matrix* biases;
+    Matrix* interMat;
     void* (*ConvDepthWise)(const Matrix* input, const Matrix* filter, Matrix* output);
     void (*ConvBackward)(const Matrix* input, const Matrix* filter, Matrix* output);
 
