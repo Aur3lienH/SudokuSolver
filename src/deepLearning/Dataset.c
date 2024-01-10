@@ -1,6 +1,6 @@
-#include "Dataset.h"
+#include "deepLearning/Dataset.h"
 #include <stdlib.h>
-#include "Matrix.h"
+#include "matrix/Matrix.h"
 
 Dataset* Dataset_Create(Matrix*** data, size_t size)
 {

@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "deepLearning/Mnist.h"
-#include "deepLearning/MatrixTests.h"
+#include "deepLearning/applications/Mnist.h"
+#include "matrix/MatrixTests.h"
 #include "UI/App.h"
 #include "UI/DrawDigit.h"
 #include "deepLearning/NetworkTest.h"
-#include "Tools.h"
+#include "tools/StringTools.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "sudokuSolver/Solver.h"
@@ -12,10 +12,11 @@
 #include "Sudoku.h"
 #include "imageProcessing/Preprocessing.h"
 #include "imageProcessing/ImageProcessing.h"
-#include "Downscale.h"
+#include "imageProcessing/Downscale.h"
 #include "imageProcessing/Grayscale.h"
 #include "imageProcessing/DatasetCreation.h"
-#include "deepLearning/GridDetection.h"
+#include "deepLearning/applications/GridDetection.h"
+#include "imageProcessing/SpeedTest.h"
 
 void HandleFlags(int argc, char* argv[])
 {
@@ -160,6 +161,11 @@ void HandleFlags(int argc, char* argv[])
             {
                 printf("No folder provided\n");
             }
+        }
+
+        if(CompareStrings(argv[i],"--speed"))
+        {
+            TestSpeedDownscaleGrayscale();
         }
 
         

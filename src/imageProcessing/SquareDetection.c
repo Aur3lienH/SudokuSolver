@@ -1,11 +1,11 @@
-#include "SquareDetection.h"
-#include "../geometry/Point.h"
-#include "../geometry/Square.h"
-#include "../deepLearning/Matrix.h"
+#include "imageProcessing/SquareDetection.h"
+#include "geometry/Point.h"
+#include "geometry/Square.h"
+#include "matrix/Matrix.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <math.h>
-#include "Grayscale.h"
+#include "imageProcessing/Grayscale.h"
 
 typedef struct {
     Point point;
@@ -259,9 +259,6 @@ Square GetSquareWithContour(Matrix* img)
                     res = square;
                 }
             }
-
-            
-            
 
             
         }

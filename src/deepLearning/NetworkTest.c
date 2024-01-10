@@ -1,13 +1,13 @@
-#include "NetworkTest.h"
-#include "Network.h"
-#include "ConvLayer.h"
-#include "FCL.h"
-#include "Loss.h"
-#include "Matrix.h"
-#include "LayerShape.h"
-#include "InputLayer.h"
-#include "Dataset.h"
-#include "MatrixTests.h"
+#include "deepLearning/NetworkTest.h"
+#include "deepLearning/Network.h"
+#include "deepLearning/layer/ConvLayer.h"
+#include "deepLearning/layer/FCL.h"
+#include "deepLearning/Loss.h"
+#include "matrix/Matrix.h"
+#include "deepLearning/LayerShape.h"
+#include "deepLearning/layer/InputLayer.h"
+#include "deepLearning/Dataset.h"
+#include "matrix/MatrixTests.h"
 
 #include <math.h>
 

@@ -1,15 +1,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "Grayscale.h"
-#include "Canny.h"
-#include "Hough.h"
+#include "imageProcessing/Grayscale.h"
+#include "imageProcessing/Canny.h"
+#include "imageProcessing/Hough.h"
 #include <time.h>
 #include <SDL2/SDL.h>
-#include "../geometry/Square.h"
-#include "../geometry/Point.h"
-#include "../Downscale.h"
-#include "../deepLearning/ImageProcessing.h"
-#include "../deepLearning/Matrix.h"
+#include "geometry/Square.h"
+#include "geometry/Point.h"
+#include "imageProcessing/Downscale.h"
+#include "deepLearning/ImageTransformation.h"
+#include "matrix/Matrix.h"
 #include <math.h>
 
 

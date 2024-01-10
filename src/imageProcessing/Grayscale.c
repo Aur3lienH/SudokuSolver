@@ -1,12 +1,27 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "../deepLearning/Matrix.h"
+#include "matrix/Matrix.h"
 
 
-Matrix* GrayscaleToMatrix(SDL_Surface* image)
+void DownGrayscaleToMatrix_C(SDL_Surface* image, Matrix* res)
 {
 	SDL_Surface* convertedSurface = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0);
-	Matrix* res = M_Create_2D(image->h,image->w);
+	if (SDL_MUSTLOCK(image)) {
+		SDL_LockSurface(image);
+	}
+	Uint32 *pixels = (Uint32 *)convertedSurface->pixels;
+
+
+
+	if (SDL_MUSTLOCK(image)) {
+		SDL_UnlockSurface(image);
+	}
+}
+
+
+void GrayscaleToMatrix_C(SDL_Surface* image, Matrix* res)
+{
+	SDL_Surface* convertedSurface = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0);
 	if (SDL_MUSTLOCK(image)) {
 		SDL_LockSurface(image);
 	}
@@ -21,6 +36,15 @@ Matrix* GrayscaleToMatrix(SDL_Surface* image)
 	  if (SDL_MUSTLOCK(image)) {
 		SDL_UnlockSurface(image);
 	}
+	return res;
+}
+
+
+
+Matrix* GrayscaleToMatrix(SDL_Surface* image)
+{
+	Matrix* res = M_Create_2D(image->h,image->w);
+	GrayscaleToMatrix_C(image, res);
 	return res;
 }
 

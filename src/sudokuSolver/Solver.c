@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Solver.h"
+#include "sudokuSolver/Solver.h"
 
 /*
 *	Function : find_empty_cell

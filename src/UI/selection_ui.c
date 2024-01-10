@@ -1,6 +1,6 @@
-#include "selection_ui.h"
-#include "solver_ui.h"
-#include "training_ui.h"
+#include "UI/selection_ui.h"
+#include "UI/solver_ui.h"
+#include "UI/training_ui.h"
 
 /*
 *   Function: load_css

@@ -1,13 +1,13 @@
 #include <cairo.h>
 #include <gtk/gtk.h>
 #include <math.h>
-#include "../deepLearning/Mnist.h"
-#include "../deepLearning/Matrix.h"
-#include "../deepLearning/Network.h"
-#include "../deepLearning/Dataset.h"
-#include "../deepLearning/ImageProcessing.h"
-#include "../Tools.h"
-#include "../Downscale.h"
+#include "deepLearning/applications/Mnist.h"
+#include "matrix/Matrix.h"
+#include "deepLearning/Network.h"
+#include "deepLearning/Dataset.h"
+#include "imageProcessing/ImageProcessing.h"
+#include "tools/StringTools.h"
+#include "imageProcessing/Downscale.h"
 
 float* Pixels = NULL;
 const size_t PixelsWidth = 28;

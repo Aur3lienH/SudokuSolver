@@ -1,6 +1,6 @@
-#include "RandomInit.h"
-#include "Matrix.h"
-#include "BlockMatrix.h"
+#include "deepLearning/RandomInit.h"
+#include "matrix/Matrix.h"
+#include "matrix/BlockMatrix.h"
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>

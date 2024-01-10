@@ -1,8 +1,8 @@
-#include "Canny.h"
-#include "../deepLearning/Matrix.h"
-#include "../geometry/Square.h"
-#include "../geometry/Point.h"
-#include "Grayscale.h"
+#include "imageProcessing/Canny.h"
+#include "matrix/Matrix.h"
+#include "geometry/Square.h"
+#include "geometry/Point.h"
+#include "imageProcessing/Grayscale.h"
 #include <math.h>
 #include <err.h>
 

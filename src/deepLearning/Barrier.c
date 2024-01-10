@@ -1,4 +1,4 @@
-#include "Barrier.h"
+#include "deepLearning/Barrier.h"
 #ifdef __APPLE__
 
     int pthread_barrier_init(pthread_barrier_t *barrier, int count) {

@@ -1,4 +1,4 @@
-#include "Activation.h"
+#include "deepLearning/Activation.h"
 #include <math.h>
 #include <stdlib.h>
 

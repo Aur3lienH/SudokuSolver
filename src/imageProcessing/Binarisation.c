@@ -1,8 +1,8 @@
-#include "Binarisation.h"
+#include "imageProcessing/Binarisation.h"
 #include <stdlib.h>
-#include "../deepLearning/Matrix.h"
-#include "Grayscale.h"
-#include "Preprocessing.h"
+#include "matrix/Matrix.h"
+#include "imageProcessing/Grayscale.h"
+#include "imageProcessing/Preprocessing.h"
 #include <SDL2/SDL_image.h>
 
 

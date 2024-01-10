@@ -1,9 +1,9 @@
 #include "Sudoku.h"
 #include "deepLearning/Network.h"
 #include "deepLearning/Sudoku.h"
-#include "Downscale.h"
+#include "imageProcessing/Downscale.h"
 #include "sudokuSolver/Solver.h"
-#include "deepLearning/Mnist.h"
+#include "deepLearning/applications/Mnist.h"
 #include "imageProcessing/Preprocessing.h"
 #include "imageProcessing/Grayscale.h"
 #include "imageProcessing/SquareDetection.h"
@@ -25,7 +25,10 @@ int** ImageToSudoku(char* path)
 {
     Network* n = LoadBestRecognitionModel();
     SDL_Surface* image = IMG_Load(path);
-    Matrix* grayscaled = GrayscaleToMatrix(image);
+    Matrix* grayscaled = M_Create_2D(image->h,image->w);
+    time_t start = clock();
+    GrayscaleToMatrix_C(image, grayscaled);
+    printf("Grayscaling took %f seconds\n", (float)(clock() - start) / CLOCKS_PER_SEC);
     SaveMatrix(grayscaled,"images/export/preproc_0.jpg");
     Matrix* resized = resize(grayscaled, 500);
     Matrix* canny = Canny(resized, 1);

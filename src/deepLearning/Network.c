@@ -1,18 +1,18 @@
 #include <stdlib.h>
-#include "Network.h"
-#include "BlockMatrix.h"
-#include "FCL.h"
-#include "InputLayer.h"
-#include "ProgressBar.h"
+#include "deepLearning/Network.h"
+#include "matrix/BlockMatrix.h"
+#include "deepLearning/layer/FCL.h"
+#include "deepLearning/layer/InputLayer.h"
+#include "tools/ProgressBar.h"
 #include <pthread.h>
-#include "Barrier.h"
-#include "Mnist.h"
-#include "Dropout.h"
-#include "ReshapeLayer.h"
-#include "ConsoleTools.h"
-#include "MaxPoolLayer.h"
-#include "ReshapeLayer.h"
-#include "ConvLayer.h"
+#include "deepLearning/Barrier.h"
+#include "deepLearning/applications/Mnist.h"
+#include "deepLearning/layer/Dropout.h"
+#include "deepLearning/layer/ReshapeLayer.h"
+#include "tools/ConsoleTools.h"
+#include "deepLearning/layer/MaxPoolLayer.h"
+#include "deepLearning/layer/ReshapeLayer.h"
+#include "deepLearning/layer/ConvLayer.h"
 #include <gtk-3.0/gdk/gdk.h>
 
 
@@ -35,14 +35,6 @@ void N_Free(Network* n)
     free(n->loss);
     free(n->layers);
     free(n);
-}
-
-void L_Free(Layer* l)
-{
-    M_Free(l->outputs);
-
-    free(l->layerShape);
-    free(l);
 }
 
 void N_Compile_L2(Network* n,Loss* loss, float lambda)

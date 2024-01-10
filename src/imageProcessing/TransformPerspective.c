@@ -4,8 +4,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdio.h>
-#include "../geometry/Square.h"
-#include "../deepLearning/Matrix.h"
+#include "geometry/Square.h"
+#include "matrix/Matrix.h"
 
 #define DIST(x1,y1,x2,y2) sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))
 

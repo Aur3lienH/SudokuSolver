@@ -1,5 +1,5 @@
-#include "Loss.h"
-#include "Matrix.h"
+#include "deepLearning/Loss.h"
+#include "matrix/Matrix.h"
 #include <stdlib.h>
 #include <math.h>
 

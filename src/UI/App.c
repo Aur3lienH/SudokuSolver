@@ -1,7 +1,7 @@
-#include "App.h"
-#include "selection_ui.h"
-#include "solver_ui.h"
-#include "training_ui.h"
+#include "UI/App.h"
+#include "UI/selection_ui.h"
+#include "UI/solver_ui.h"
+#include "UI/training_ui.h"
 #include <gtk/gtk.h>
 
 void LaunchApp(int argc, char** argv) 

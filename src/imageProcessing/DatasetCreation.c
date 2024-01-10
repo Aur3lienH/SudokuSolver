@@ -1,19 +1,19 @@
 #include "DatasetCreation.h"
-#include "Hough.h"
+#include "imageProcessing/Hough.h"
 #include <stdio.h>
 #include <stdlib.h> 
 #include <dirent.h>
 #include <string.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include "../Downscale.h"
-#include "../geometry/Square.h"
-#include "../geometry/Point.h"
-#include "../deepLearning/ImageProcessing.h"
-#include "Grayscale.h"
-#include "Preprocessing.h"
-#include "Canny.h"
-#include "SquareDetection.h"
+#include "imageProcessing/Downscale.h"
+#include "geometry/Square.h"
+#include "geometry/Point.h"
+#include "deepLearning/ImageTransformation.h"
+#include "imageProcessing/Grayscale.h"
+#include "imageProcessing/Preprocessing.h"
+#include "imageProcessing/Canny.h"
+#include "imageProcessing/SquareDetection.h"
 
 
 

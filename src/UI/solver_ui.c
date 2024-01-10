@@ -1,9 +1,9 @@
 #include <gtk/gtk.h>
 #include <string.h>
-#include "solver_ui.h"
-#include "../sudokuSolver/Solver.h"
-#include "../Sudoku.h"
-#include "../imageProcessing/Hough.h"
+#include "UI/solver_ui.h"
+#include "sudokuSolver/Solver.h"
+#include "Sudoku.h"
+#include "imageProcessing/Hough.h"
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>

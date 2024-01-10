@@ -1,10 +1,10 @@
 #include <gtk/gtk.h>
 #include <string.h>
-#include "training_ui.h"
-#include "../deepLearning/Network.h"
-#include "../deepLearning/Mnist.h"
-#include "../deepLearning/Loss.h"
-#include "DrawDigit.h"
+#include "UI/training_ui.h"
+#include "deepLearning/Network.h"
+#include "deepLearning/applications/Mnist.h"
+#include "deepLearning/Loss.h"
+#include "UI/DrawDigit.h"
 
 // Global variables
 GtkWidget *window_train;

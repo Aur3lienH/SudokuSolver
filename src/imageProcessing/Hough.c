@@ -1,7 +1,7 @@
-#include "Hough.h"
-#include "../geometry/Line.h"
-#include "../geometry/Point.h"
-#include "../geometry/Square.h"
+#include "imageProcessing/Hough.h"
+#include "geometry/Line.h"
+#include "geometry/Point.h"
+#include "geometry/Square.h"
 #include <err.h>
 #include <math.h>
 

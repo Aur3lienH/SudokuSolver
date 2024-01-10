@@ -1,6 +1,6 @@
-#include "Point.h"
+#include "geometry/Point.h"
 #include <math.h>
-#include "../deepLearning/Matrix.h"
+#include "matrix/Matrix.h"
 
 const size_t POINT_RADIUS = 3;
 
