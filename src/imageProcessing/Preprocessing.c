@@ -7,8 +7,8 @@
 #include <SDL2/SDL.h>
 #include "geometry/Square.h"
 #include "geometry/Point.h"
-#include "imageProcessing/Downscale.h"
-#include "deepLearning/ImageTransformation.h"
+#include "imageProcessing/DigitProcess.h"
+#include "imageProcessing/ImageTransformation.h"
 #include "matrix/Matrix.h"
 #include <math.h>
 

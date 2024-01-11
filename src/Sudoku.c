@@ -1,7 +1,7 @@
 #include "Sudoku.h"
 #include "deepLearning/Network.h"
 #include "deepLearning/Sudoku.h"
-#include "imageProcessing/Downscale.h"
+#include "imageProcessing/DigitProcess.h"
 #include "sudokuSolver/Solver.h"
 #include "deepLearning/applications/Mnist.h"
 #include "imageProcessing/Preprocessing.h"

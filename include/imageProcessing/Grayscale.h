@@ -2,6 +2,9 @@
 #include "matrix/Matrix.h"
 #include <SDL2/SDL.h>
 
+//Downscale an image and convert it to a matrix, store it in res
+void DownGrayscaleToMatrix_C(SDL_Surface* image, Matrix* res);
+
 //Grayscale an image and store the result in res
 void GrayscaleToMatrix_C(SDL_Surface* image, Matrix* res);
 

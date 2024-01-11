@@ -142,6 +142,6 @@ void ReshapeLayer_Print(void* reshapeLayer, int* parametersCount)
 {
     ReshapeLayer* reshapeLayerPtr = (ReshapeLayer*)reshapeLayer;
     PrintCentered("Reshape Layer");
-    printf("Output shape %d: %zux%zux%zu\n",*parametersCount,reshapeLayerPtr->layer->layerShape->x,reshapeLayerPtr->layer->layerShape->y,reshapeLayerPtr->layer->layerShape->z);
+    printf("Output shape : %zux%zux%zu\n",reshapeLayerPtr->layer->layerShape->x,reshapeLayerPtr->layer->layerShape->y,reshapeLayerPtr->layer->layerShape->z);
     printf("Parameters Count: 0\n");
 }

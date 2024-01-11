@@ -4,8 +4,8 @@ TARGET_EXEC ?= solver
 BUILD_DIR ?= ./build
 SRC_DIR ?= ./src
 
-CFLAGS := -I./include -Ofast -mavx2 -march=native `pkg-config --cflags --libs gtk+-3.0 sdl2 SDL2_image cairo` -ffast-math -lSDL2
-LDFLAGS := -lm `pkg-config --cflags --libs gtk+-3.0 sdl2 SDL2_image cairo` -lSDL2 
+CFLAGS := -I./include -O3 -mavx2 -march=native `pkg-config --cflags --libs gtk+-3.0 sdl2 SDL2_image cairo` -ffast-math -lSDL2
+LDFLAGS := -lm `pkg-config --cflags --libs gtk+-3.0 sdl2 SDL2_image cairo` -lSDL2
 SRCS := $(shell find $(SRC_DIR) -name *.c)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)

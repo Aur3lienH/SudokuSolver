@@ -12,7 +12,7 @@
 #include "Sudoku.h"
 #include "imageProcessing/Preprocessing.h"
 #include "imageProcessing/ImageProcessing.h"
-#include "imageProcessing/Downscale.h"
+#include "imageProcessing/DigitProcess.h"
 #include "imageProcessing/Grayscale.h"
 #include "imageProcessing/DatasetCreation.h"
 #include "deepLearning/applications/GridDetection.h"

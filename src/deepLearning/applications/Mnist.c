@@ -5,7 +5,7 @@
 #include "deepLearning/Dataset.h"
 #include "deepLearning/Activation.h"
 #include "matrix/BlockMatrix.h"
-#include "deepLearning/ImageTransformation.h"
+#include "imageProcessing/ImageTransformation.h"
 #include "deepLearning/layer/ConvLayer.h"
 #include "deepLearning/layer/MaxPoolLayer.h"
 #include "deepLearning/layer/Dropout.h"

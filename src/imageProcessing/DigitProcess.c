@@ -1,4 +1,4 @@
-#include "imageProcessing/Downscale.h"
+#include "imageProcessing/DigitProcess.h"
 #include "matrix/Matrix.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

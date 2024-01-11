@@ -107,7 +107,7 @@ void BM_M_Mul(const Matrix* a, const Matrix* b, Matrix* c)
 #if DEBUG
     if(a->effectiveCols != b->rows || a->effectiveRows != c->rows || b->cols != c->cols || b->cols != 1)
     {
-        errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
+        errx(-1,"BM_M_Mul: Matrix dimensions do not match\n");
         return;
     }
 #endif
@@ -163,7 +163,10 @@ void BM_M_SSE_Mul(const Matrix* a, const Matrix* b, Matrix* c)
 #if DEBUG
     if(a->effectiveCols != b->rows || a->effectiveRows != c->rows || b->cols != c->cols || b->cols != 1)
     {
-        errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
+        M_Dim(a);
+        M_Dim(b);
+        M_Dim(c);
+        errx(-1,"BM_M_SSE_Mul: Matrix dimensions do not match\n");
         return;
     }
     if(BLOCK_SIZE % 4 != 0)
@@ -298,7 +301,7 @@ void BM_M_SSE_NCOND_Mul(const Matrix* a, const Matrix* b, Matrix* c)
 #if DEBUG
     if(a->effectiveCols != b->rows || a->effectiveRows != c->rows || b->cols != c->cols || b->cols != 1)
     {
-        errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
+        errx(-1,"BM_M_SSE_NCOND_Mul: Matrix dimensions do not match\n");
         return;
     }
     if(BLOCK_SIZE % 4 != 0)
@@ -379,7 +382,7 @@ void BM_M_AVX_Mul(const Matrix* a, const Matrix* b, Matrix* c)
 #if DEBUG
     if(a->effectiveCols != b->rows || a->effectiveRows != c->rows || b->cols != c->cols || b->cols != 1)
     {
-        errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
+        errx(-1,"BM_M_AVX_Mul: Matrix dimensions do not match\n");
         return;
     }
     if(BLOCK_SIZE % 8 != 0)
@@ -513,12 +516,12 @@ void BM_M_AVX_NCOND_Mul(const Matrix* a, const Matrix* b, Matrix* c)
     #if DEBUG
     if(a->effectiveCols != b->rows || a->effectiveRows != c->rows || b->cols != c->cols || b->cols != 1)
     {
-        errx(-1,"BM_To_M_Mul: Matrix dimensions do not match\n");
+        errx(-1,"BM_M_AVX_NCOND_Mul: Matrix dimensions do not match\n");
         return;
     }
     if(BLOCK_SIZE % 8 != 0)
     {
-        errx(-1,"BM_M_AVX_Transpose1Mul: BLOCK_SIZE must be a multiple of 8\n");
+        errx(-1,"BM_M_AVX_NCOND_Mul: BLOCK_SIZE must be a multiple of 8\n");
         return;
     }
 #endif

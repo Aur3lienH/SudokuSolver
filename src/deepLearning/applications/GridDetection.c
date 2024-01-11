@@ -31,12 +31,7 @@ void TrainGridRecognition(const char* datasetPath)
     LayerShape* inputShape = LS_Create2D(width, height);
     Network* network = N_CreateNetwork();
     N_AddLayer(network, I_Create_2D(inputShape));
-    N_AddLayer(network, Conv_Create(LS_Create3D(3,3,32)));
-    N_AddLayer(network, MaxPool_Create(2));
-    N_AddLayer(network, Conv_Create(LS_Create3D(3,3,16)));
-    N_AddLayer(network, MaxPool_Create(13));
     N_AddLayer(network, Flatten_Create());
-    N_AddLayer(network, FCL_Create(128, ReLU()));
     N_AddLayer(network, FCL_Create(8, Linear()));
     printf("Network created\n");
     N_Compile(network,MSE_Create());
@@ -46,7 +41,7 @@ void TrainGridRecognition(const char* datasetPath)
     //Get the thread count by getting the number of cores
     int threadCount = sysconf(_SC_NPROCESSORS_ONLN);
 
-    N_Train(network, dataset, 1, 10,1, 0.01f);
+    N_Train(network, dataset, 12, 100,1, 0.001f);
 
     N_Save(network, "./models/grid/kadir.model");
 
@@ -89,12 +84,9 @@ Dataset* LoadDataset(const char* path)
 
     for (size_t i = 0; i < numberOfImages; i++)
     {
-        printf("Loading image %ld\n", i);
         dataset->data[0][i] = M_Load(file);
         dataset->data[1][i] = M_Load(file);
-        M_Dim(dataset->data[0][i]);
-        M_Dim(dataset->data[1][i]);
-        printf("Loading image %ld\n", i);
+        M_ScalarMul(dataset->data[1][i], 1.0f / dataset->data[0][i]->cols, dataset->data[1][i]);
     }
 
     fclose(file);

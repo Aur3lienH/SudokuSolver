@@ -19,6 +19,8 @@ double MSE_Compute(const Matrix* output, const Matrix* desiredOutput, float* acc
     size_t matrixSize = M_GetSize3D(output);
     for (size_t i = 0; i < matrixSize; i++)
     {
+        printf("output %f\n", output->data[i]);
+        printf("desiredOutput %f\n", desiredOutput->data[i]);
         res += (desiredOutput->data[i] - output->data[i]) * (desiredOutput->data[i] - output->data[i]);
     }
     res += lambda * *accumulators;

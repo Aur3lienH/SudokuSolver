@@ -3,16 +3,30 @@
 #include "matrix/Matrix.h"
 
 
+
 void DownGrayscaleToMatrix_C(SDL_Surface* image, Matrix* res)
 {
+	printf("DownGrayscaleToMatrix_C\n");
+	size_t maximum = image->w > image->h ? image->w : image->h;
+	float ratio = (float)res->cols / (float)maximum;
 	SDL_Surface* convertedSurface = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_RGBA32, 0);
 	if (SDL_MUSTLOCK(image)) {
 		SDL_LockSurface(image);
 	}
 	Uint32 *pixels = (Uint32 *)convertedSurface->pixels;
+	for (size_t i = 0; i < res->rows; i++)
+	{
+		for(size_t j = 0; j < res->cols; j++)
+		{
+			Uint8 r, g, b, a;
 
-
-
+			float indexCol = floor(j / ratio);
+			float indexRow = floor(i / ratio);
+			SDL_GetRGBA(pixels[(int)indexRow * image->w + (int)indexCol], convertedSurface->format, &r, &g, &b, &a);
+			Uint8 average = (int)(0.2989 * r + 0.5870 * g + 0.1140 * b);
+			res->data[i * res->cols + j] = (float)average / 255.0f;
+		}
+	}
 	if (SDL_MUSTLOCK(image)) {
 		SDL_UnlockSurface(image);
 	}
@@ -36,7 +50,6 @@ void GrayscaleToMatrix_C(SDL_Surface* image, Matrix* res)
 	  if (SDL_MUSTLOCK(image)) {
 		SDL_UnlockSurface(image);
 	}
-	return res;
 }
 
 

@@ -7,7 +7,7 @@
 #include "deepLearning/Dataset.h"
 #include "imageProcessing/ImageProcessing.h"
 #include "tools/StringTools.h"
-#include "imageProcessing/Downscale.h"
+#include "imageProcessing/DigitProcess.h"
 
 float* Pixels = NULL;
 const size_t PixelsWidth = 28;

@@ -41,7 +41,6 @@ void Adam_Update(Adam* adam, float* parameters, float* gradients, float learning
 
         float momentum1Corrected = adam->momentum1[i] / (1 - adam->adjbeta1);
         float momentum2Corrected = adam->momentum2[i] / (1 - adam->adjbeta2);
-        
         parameters[i] -= learningRate * momentum1Corrected / (sqrtf(momentum2Corrected) + adam->epsilon);
         //printf("%f\n",learningRate * momentum1Corrected / (sqrtf(momentum2Corrected) + adam->epsilon));
         //parameters[i] -= learningRate * gradients[i];

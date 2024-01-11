@@ -20,8 +20,6 @@ void HeUniform(Matrix* m)
             SM_SetValue(m,j + i * m->effectiveRows,(float)rand() / RAND_MAX * 2 * std - std);
         }
     }
-
-    
 }
 
 void M_HeUniform(Matrix* m)

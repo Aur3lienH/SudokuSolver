@@ -1,4 +1,4 @@
-#include "DatasetCreation.h"
+#include "imageProcessing/DatasetCreation.h"
 #include "imageProcessing/Hough.h"
 #include <stdio.h>
 #include <stdlib.h> 
@@ -6,10 +6,10 @@
 #include <string.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include "imageProcessing/Downscale.h"
+#include "imageProcessing/DigitProcess.h"
 #include "geometry/Square.h"
 #include "geometry/Point.h"
-#include "deepLearning/ImageTransformation.h"
+#include "imageProcessing/ImageTransformation.h"
 #include "imageProcessing/Grayscale.h"
 #include "imageProcessing/Preprocessing.h"
 #include "imageProcessing/Canny.h"
