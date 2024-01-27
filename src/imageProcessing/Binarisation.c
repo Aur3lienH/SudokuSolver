@@ -1,7 +1,6 @@
 #include "imageProcessing/Binarisation.h"
 #include <stdlib.h>
 #include "matrix/Matrix.h"
-#include "imageProcessing/Grayscale.h"
 #include "imageProcessing/Preprocessing.h"
 
 

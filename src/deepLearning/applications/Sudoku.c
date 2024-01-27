@@ -4,7 +4,7 @@
 #include "matrix/Matrix.h"
 #include "deepLearning/applications/Mnist.h"
 #include "imageProcessing/Binarisation.h"
-#include "imageProcessing/Grayscale.h"
+#include "imageProcessing/Image.h"
 #include <stdlib.h>
 
 const int modelDetectingBlank = 0;
@@ -63,8 +63,8 @@ int** GetSudokuNumbers_File(Network* n)
     {
         path = (char*)malloc(sizeof(char) * 1024);
         snprintf(path, sizeof(path), "images/cells/cell_%li.jpg", i);
-        SDL_Surface* surface = IMG_Load(path);
-        img[i] = GrayscaleToMatrix(surface);
+        Image* image = Image_Load(path);
+        img[i] = ImageToMatrix(image);
         free(path);
     }
     int** res = GetSudokuNumbers(n, img);

@@ -2,7 +2,6 @@
 #include <math.h>
 #include "matrix/Matrix.h"
 #include "imageProcessing/Image.h"
-
 const size_t POINT_RADIUS = 3;
 
 
@@ -109,7 +108,7 @@ int P_Equals(Point* p1, Point* p2)
 }
 
 
-void P_DrawSDL(void* _image, Point* p, Uint32 _color)
+void P_DrawSDL(Image* _image, Point* p, Uint32 _color)
 {
 #if __ANDROID__
 
@@ -119,7 +118,7 @@ void P_DrawSDL(void* _image, Point* p, Uint32 _color)
     {
         for (size_t y = p->y - POINT_RADIUS; y < p->y + POINT_RADIUS; y++)
         {
-            size_t index = (x + y * image->width) * 3;
+            size_t index = (x + y * image->width) * 4;
             Uint32* color = (Uint32*)&image->pixels[index];
             *color = _color;
         }
@@ -130,29 +129,32 @@ void P_DrawSDL(void* _image, Point* p, Uint32 _color)
 
 
 
-    SDL_Surface* surface = (SDL_Surface*)_image;
     //Lock surface
-    if( SDL_MUSTLOCK( surface ) )
+    printf("start\n");
+    if( SDL_MUSTLOCK( _image ) )
     {
-        SDL_LockSurface( surface );
+        printf("here\n");
+        SDL_LockSurface( _image );
     }
-    Uint32* pixels = (Uint32*)surface->pixels;
-    
+    printf("here 2\n");
+    Uint32* pixels = (Uint32*)_image->pixels;
+    printf("here 3 \n");
     for (int x = p->x - POINT_RADIUS; x < p->x + POINT_RADIUS; x++)
     {
         for (int y = p->y - POINT_RADIUS; y < p->y + POINT_RADIUS; y++)
         {
-            if(x >= 0 && x < surface->w && y >= 0 && y < surface->h)
+            if(x >= 0 && x < _image->w && y >= 0 && y < _image->h)
             {
-                pixels[y * surface->w + x] = _color;
+                printf("x : %i y : %i\n",x,y);
+                pixels[y * _image->w + x] = _color;
             }
         }
     }
 
     //Unlock surface
-    if( SDL_MUSTLOCK( surface ) )
+    if( SDL_MUSTLOCK( _image ) )
     {
-        SDL_UnlockSurface( surface );
+        SDL_UnlockSurface( _image );
     }
 #endif
     

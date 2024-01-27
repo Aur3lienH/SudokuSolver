@@ -13,7 +13,7 @@
 #include "imageProcessing/Preprocessing.h"
 #include "imageProcessing/ImageProcessing.h"
 #include "imageProcessing/DigitProcess.h"
-#include "imageProcessing/Grayscale.h"
+#include "imageProcessing/SdlConverter.h"
 #include "imageProcessing/DatasetCreation.h"
 #include "deepLearning/applications/GridDetection.h"
 #include "imageProcessing/SpeedTest.h"
@@ -109,11 +109,9 @@ void HandleFlags(int argc, char* argv[])
                 SDL_Surface* img = IMG_Load(argv[i+1]);
 
                 Matrix* res = PreprocessToCanny(img,1);
-                SDL_Surface* surface = MatrixToSurface(res);
-                int result = IMG_SaveJPG(surface,"./images/export/export.jpg",100);
-                printf("Result : %d\n",result);
-                SDL_FreeSurface(img);
-                SDL_FreeSurface(surface);
+                Image* image = MatrixToImage(res);
+                Image_Save(image,"./images/export/export.jpg");
+                Image_Free(image);
             }
             else
             {
@@ -165,7 +163,7 @@ void HandleFlags(int argc, char* argv[])
 
         if(CompareStrings(argv[i],"--speed"))
         {
-            TestSpeedDownscaleGrayscale();
+            //TestSpeedDownscaleGrayscale();
         }
 
         

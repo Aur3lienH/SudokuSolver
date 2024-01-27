@@ -2,10 +2,7 @@
 #include "geometry/Point.h"
 #include "geometry/Square.h"
 #include "matrix/Matrix.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <math.h>
-#include "imageProcessing/Grayscale.h"
 
 typedef struct {
     Point point;

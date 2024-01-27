@@ -1,3 +1,8 @@
+
+#include "imageProcessing/SdlConverter.h"
+
+#ifndef __ANDROID__
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "matrix/Matrix.h"
@@ -86,9 +91,5 @@ SDL_Surface* MatrixToSurface(Matrix* matrix)
 	return res;
 }
 
-void M_SaveImage(const Matrix* matrix, const char* path)
-{
-	SDL_Surface* surface = MatrixToSurface(matrix);
-	IMG_SaveJPG(surface, path, 100);
-}
 
+#endif

@@ -1,11 +1,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <err.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include "geometry/Square.h"
 #include "matrix/Matrix.h"
+#include "imageProcessing/Image.h"
 
 #define DIST(x1,y1,x2,y2) sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))
 
@@ -14,77 +13,25 @@ float normalize(float min, float max, float val)
     return (val-min)/(max-min);
 }
 
-SDL_Surface* load_image(const char* path)
+
+float get_pixel(Matrix *matrix, int x, int y) 
 {
-    /*
-    LOADS AN IMAGE ONTO A SURFACE
-    */
-	SDL_Surface* surface = IMG_Load(path);
-	SDL_Surface* converted = 
-                SDL_ConvertSurfaceFormat(surface,SDL_PIXELFORMAT_RGB888,0);
-	SDL_FreeSurface(surface);
-	return converted;
+    return matrix->data[x + y * matrix->cols];
 }
 
-Uint32 get_pixel(SDL_Surface *surface, int x, int y) 
-{
-    /*
-    GET THE PIXEL OF A SURFACE USING COORDS (X,Y)
-    */
 
-    int bpp = surface->format->BytesPerPixel;
-    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
-    switch (bpp) {
-        case 1:
-            return *p;
-        case 2:
-            return *(Uint16 *)p;
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-                return p[0] << 16 | p[1] << 8 | p[2];
-            else
-                return p[0] | p[1] << 8 | p[2] << 16;
-        case 4:
-            return *(Uint32 *)p;
-        default:
-            return 0;
-    }
+void setPixel(Matrix* matrix, float value, size_t x, size_t y)
+{
+    matrix->data[x + y * matrix->cols] = value;
 }
 
-int save_image(SDL_Surface *surface, const char *file)
-{
-    /*
-    SAVE SURFACE AS A .JPG
-    */
-
-    if(IMG_SaveJPG(surface, file, 100))
-    {
-        return 1;
-    }
-    return 0; //fail to save
-}
-
-void setPixel(SDL_Surface *surface, 
-            Uint8 r, Uint8 g, Uint8 b, Uint8 a, size_t x, size_t y)
-{
-    /*
-    SET THE COLOR OF A PIXEL ON A SURFACE USING (r,g,b) & (x,y)
-    */
-
-    Uint32 *pixels = surface->pixels; 
-    Uint32 color = SDL_MapRGBA(surface->format, r, g, b, a);
-    pixels[y * surface->w + x] = color;
-}
-
-void surface_DrawLine(SDL_Surface *surface, int x1, int y1, int x2, int y2)
+void surface_DrawLine(Matrix* matrix, int x1, int y1, int x2, int y2)
 {
     /*
     MANUALY RENDER A LINE ON A SURFACE
     */
 
-    SDL_LockSurface(surface);
-
-    int w = surface->w, h = surface->h;
+    int w = matrix->cols, h = matrix->rows;
 
     //DRAW LINE BETWEEN TWO POINTS USING BRENSENHAM LINE ALGORITHM
     int dx = abs(x2-x1), sx = x1<x2 ? 1 : -1;
@@ -99,7 +46,7 @@ void surface_DrawLine(SDL_Surface *surface, int x1, int y1, int x2, int y2)
     {
         //CHECK IF POSITION IS INSIDE SURFACE
         if(x1 >= 0 && x1 < w && y1 >= 0 && y1 < h)
-            setPixel(surface, 255, 0, 0, 255, x1,y1);
+            setPixel(matrix, 255, x1,y1);
         if (x1==x2 && y1==y2) break;
         e2 = err;
         if (e2 >-dx) { err -= dy; x1 += sx; }
@@ -107,8 +54,6 @@ void surface_DrawLine(SDL_Surface *surface, int x1, int y1, int x2, int y2)
     }
 
     //if(j==i){printf("Line drawing overflow\n");}
-
-    SDL_UnlockSurface(surface);
 }
 
 void render_accumulator(unsigned int **accumulator_array, 
@@ -117,21 +62,9 @@ void render_accumulator(unsigned int **accumulator_array,
     /*
     EXPORT THE ACCUMULATOR ON A NEW SURFACE AND EXPORT THE SURFACE
     */
+    Matrix* matrix = M_Create_2D(height, width);
 
-    SDL_Surface* surface = SDL_CreateRGBSurface
-                                (0, width, height, 32,
-                                0, 0, 0, 0);
-    SDL_LockSurface(surface); 
-    int w_w = surface->w, w_h = surface->h;
-
-    //SET ALL PIXELS TO BLACK
-    for(int y = 0; y<w_h; y++)
-	{
-		for(int x = 0; x<w_w; x++)
-		{
-            setPixel(surface, 0, 0, 0, 255, x, y);
-        }
-    }
+    int w_w = matrix->cols, w_h = matrix->rows;
 
     //LOOP TO DRAW THE ACCUMULATOR
     for(size_t y = 0; y<height; y++)
@@ -147,45 +80,35 @@ void render_accumulator(unsigned int **accumulator_array,
             float norm_w = normalize(0, width/2, x);
             float norm_h = normalize(0, height, y);
 
-            setPixel(surface, col, col, col, 255, w_w*norm_w, w_h*norm_h);
+            setPixel(matrix, col, w_w*norm_w, w_h*norm_h);
         }
     }
 
     //AVERAGE ALL REMAINING PIXELS TO FILL GAPS (GET A BETTER IMAGE)
+    
     for(int y = 1; y<w_h-1; y++)
 	{
 		for(int x = 1; x<w_w-1; x++)
 		{
-            Uint32 inputPix = get_pixel(surface, x, y);
-            Uint8 r, g, b;
-            SDL_GetRGB(inputPix, surface->format, &r, &g, &b);
-            if(r==0 && g==0 && b==0)
+            float value = get_pixel(matrix, x, y);
+            if(value <= 0.00001f)
             {
-                Uint8 r1, g1, b1;
-                Uint32 p1 = get_pixel(surface, x-1, y);
-                SDL_GetRGB(p1, surface->format, &r1, &g1, &b1);
+                float p1 = get_pixel(matrix, x-1, y);
 
-                Uint8 r2, g2, b2;
-                Uint32 p2 = get_pixel(surface, x+1, y);
-                SDL_GetRGB(p2, surface->format, &r2, &g2, &b2);
+                float p2 = get_pixel(matrix, x+1, y);
 
-                Uint8 ra = r1/2 + r2/2, ga = g1/2 + g2/2, ba = b1/2 + b2/2;
+                float res = (p1+p2)/2.0f;
 
-                setPixel(surface, ra, ga, ba, 255, x, y);
+                matrix->data[x + y * matrix->cols] = res;
             }
         }
     } 
-
-    SDL_UnlockSurface(surface);
-
-    save_image(surface, "images/export/step_1.jpg");
 }
 
+
+/*
 SDL_Surface** extract_Squares(SDL_Surface *surface, Square s)
 {
-    /*
-    GIVEN A SURFACE THAT IS JUST THE GRID, EXPORT ALL SquareS SEPARATLY
-    */
 
     // FIRST, FIND LEFT-MOST CORNER
     // TO DO THIS, FIN THE PAIR OF COORDINATES WITH THE LOWEST RATIO x/y
@@ -247,6 +170,7 @@ SDL_Surface** extract_Squares(SDL_Surface *surface, Square s)
     SDL_UnlockSurface(surface);
     return Squares;
 } 
+*/
 
 /*-------------------------------------------------------------------------//
                 FROM THIS POINT, ALL FUNCTIONS ARE TO PERFORM 

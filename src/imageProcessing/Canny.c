@@ -2,7 +2,6 @@
 #include "matrix/Matrix.h"
 #include "geometry/Square.h"
 #include "geometry/Point.h"
-#include "imageProcessing/Grayscale.h"
 #include <math.h>
 #include <err.h>
 
@@ -160,6 +159,8 @@ void propagate(Matrix* input, size_t posX, size_t posY)
 
 Matrix* Canny(Matrix* input, float sigma)
 {
+    printf("here !\n");
+    M_Dim(input);
     Matrix* kernel = M_Create_2D(5,5);
 
     float factor = 1.0f / (2.0f * M_PI * sigma * sigma);

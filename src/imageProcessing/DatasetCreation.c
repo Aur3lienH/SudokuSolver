@@ -8,7 +8,6 @@
 #include "geometry/Square.h"
 #include "geometry/Point.h"
 #include "imageProcessing/ImageTransformation.h"
-#include "imageProcessing/Grayscale.h"
 #include "imageProcessing/Preprocessing.h"
 #include "imageProcessing/Canny.h"
 #include "imageProcessing/SquareDetection.h"
@@ -41,7 +40,7 @@ Matrix* SquareToMatrix(Square square)
 
 void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, const char* filename, size_t width)
 {
-    SDL_Surface* image = IMG_Load(path);
+    Image* image = Image_Load(path);
     if(image == NULL)
     {
         printf("Error while loading the image\n");
@@ -53,7 +52,7 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
     Square square = GetSquareWithContour(cannied);
     Matrix* saveMatrix = M_Complete(resized,width,width);
 
-    SDL_Surface* surface = MatrixToSurface(saveMatrix);
+    Image* surface = MatrixToSurface(saveMatrix);
     S_DrawSDL(surface, &square, 0xFF0000FF);
     char* savePath = malloc(sizeof(char) * 100);
     snprintf(savePath, 100,"%s/%s",outputPath,filename);

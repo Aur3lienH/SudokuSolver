@@ -1,46 +1,14 @@
 #include "imageProcessing/DigitProcess.h"
 #include "matrix/Matrix.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include "imageProcessing/ImageProcessing.h"
 #include "imageProcessing/ImageTransformation.h"
+#include "imageProcessing/Image.h"
 
 //const size_t REMOVE_CORNER_WIDTH = 4;
 const float REMOVE_CORNER_RATIO = 0.20f;
 
 
-SDL_Surface* Load(char* path)
-{
-    SDL_Surface* res = IMG_Load(path);
-    if (res == NULL)
-    {
-        printf("IMG_Load: %s\n", IMG_GetError());
-        exit(1);
-    }
-    return res;
-}
 
-
-Matrix* SurfaceToMatrix(SDL_Surface* surface)
-{
-    SDL_Surface* convertedSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
-    Matrix* res = M_Create_2D(surface->h,surface->w);
-    if (SDL_MUSTLOCK(surface)) {
-        SDL_LockSurface(surface);
-    }
-    Uint32 *pixels = (Uint32 *)convertedSurface->pixels;
-    for (int i = 0; i < surface->w * surface->h; i++) {
-        
-        Uint8 r, g, b, a;
-        SDL_GetRGBA(pixels[i], convertedSurface->format, &r, &g, &b, &a);
-        res->data[i] = (float)(r + g + b) / (3.0f * 255.0f);
-        
-    }
-      if (SDL_MUSTLOCK(surface)) {
-        SDL_UnlockSurface(surface);
-    }
-    return res;
-}
 
 void RemoveCorners(Matrix* input, size_t width)
 {
@@ -154,10 +122,10 @@ int IsBlank(const Matrix* m)
     
 }
 
-Matrix* SurfaceToDigit(SDL_Surface* surface, int* isBlankPtr)
+Matrix* SurfaceToDigit(Image* image, int* isBlankPtr)
 {
 
-    Matrix* res = SurfaceToMatrix(surface);
+    Matrix* res = ImageToMatrix(image);
     /*
     M_Dim(downSized);
     RemoveCorners(downSized,28);

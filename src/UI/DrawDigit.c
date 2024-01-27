@@ -254,11 +254,11 @@ int DrawDigit(int argc, char *argv[], Network* n) {
             SDL_Surface* surface;
             if(argc >= 1)
             {
-                surface = Load(argv[0]);
+                surface = IMG_Load(argv[0]);
             }
             else
             {
-                surface = Load("images/cells/cell_0.jpg");
+                surface = IMG_Load("images/cells/cell_0.jpg");
             }
             int isBlank = 0;
             temp = SurfaceToDigit(surface,&isBlank);

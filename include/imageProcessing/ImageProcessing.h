@@ -1,10 +1,9 @@
 #pragma once
-#include <SDL2/SDL.h>
 #include "matrix/Matrix.h"
+#include "imageProcessing/Image.h"
 
 
-
-SDL_Surface* SudokuImgProcessing(SDL_Surface* image);
+Image* SudokuImgProcessing(Image* image);
 
 Matrix** SplitCells(Matrix* image, size_t cellCount);
 

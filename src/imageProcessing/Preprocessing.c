@@ -1,4 +1,3 @@
-#include "imageProcessing/Grayscale.h"
 #include "imageProcessing/Canny.h"
 #include "imageProcessing/Hough.h"
 #include <time.h>

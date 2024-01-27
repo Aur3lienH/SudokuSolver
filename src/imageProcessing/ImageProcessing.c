@@ -1,6 +1,5 @@
 #include "imageProcessing/ImageProcessing.h"
 #include "imageProcessing/Preprocessing.h"
-#include "imageProcessing/Grayscale.h"
 #include "imageProcessing/Hough.h"
 #include "imageProcessing/SquareDetection.h"
 #include "geometry/Square.h"
@@ -15,7 +14,7 @@ Image* SudokuImgProcessing(Image* image)
     printf("Preprocessing took %f seconds\n", (float)(clock() - start) / CLOCKS_PER_SEC);
     Square square = GetSquareWithContour(res);
     //Square square2 = Hough(res);
-    Image* surface = MatrixToSurface(res);
+    Image* surface = MatrixToImage(res);
     M_Free(res);
     P_DrawSDL(surface,&square.points[0],0xFF0000);
     P_DrawSDL(surface,&square.points[1],0xFF0000);

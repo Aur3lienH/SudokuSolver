@@ -1,9 +1,7 @@
 #pragma once
 #include "matrix/Matrix.h"
+#include "imageProcessing/Image.h"
 
-#ifndef __ANDROID__
-#include "SDL2/SDL.h"
-#endif
 
 /*
 
@@ -32,6 +30,6 @@ int P_Equals(Point* p1, Point* p2);
 
 Point P_Add(Point* p1, Point* p2);
 
-void P_DrawSDL(void* image, Point* p, Uint32 color);
+void P_DrawSDL(Image* image, Point* p, Uint32 color);
 
 void P_Free(Point* point);

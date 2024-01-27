@@ -1,6 +1,10 @@
 #pragma once
 #include "matrix/Matrix.h"
+#include "imageProcessing/Image.h"
+#ifndef __ANDROID__
+
 #include <SDL2/SDL.h>
+
 
 //Downscale an image and convert it to a matrix, store it in res
 void DownGrayscaleToMatrix_C(SDL_Surface* image, Matrix* res);
@@ -17,5 +21,4 @@ Matrix* GrayscaleToMatrix(SDL_Surface* image);
 //Convert a matrix to a SDL_Surface
 SDL_Surface* MatrixToSurface(Matrix* matrix);
 
-//Save a matrix as an image
-void M_SaveImage(const Matrix* matrix, const char* path);
+#endif
