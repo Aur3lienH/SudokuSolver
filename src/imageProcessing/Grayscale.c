@@ -32,6 +32,13 @@ void DownGrayscaleToMatrix_C(SDL_Surface* image, Matrix* res)
 	}
 }
 
+Matrix* DownGrayscaleToMatrix(SDL_Surface* image, size_t width)
+{
+	Matrix* res = M_Create_2D(width,width);
+	DownGrayscaleToMatrix_C(image, res);
+	return res;
+}
+
 
 void GrayscaleToMatrix_C(SDL_Surface* image, Matrix* res)
 {

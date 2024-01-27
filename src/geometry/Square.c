@@ -23,6 +23,14 @@ void S_Draw(Matrix* matrix, Square* square, float value)
     P_DrawSegment(matrix, &square->points[3], &square->points[0], value);
 }
 
+void S_DrawSDL(SDL_Surface* surface, Square* square, Uint32 value)
+{
+    P_DrawSDL(surface, &square->points[0], value);
+    P_DrawSDL(surface, &square->points[1], value);
+    P_DrawSDL(surface, &square->points[2], value);
+    P_DrawSDL(surface, &square->points[3], value);
+}
+
 int S_IsSquare(Square* square, float threshold)
 {
     if (square == NULL)

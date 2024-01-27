@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "imageProcessing/ImageProcessing.h"
+#include "imageProcessing/ImageTransformation.h"
 
 //const size_t REMOVE_CORNER_WIDTH = 4;
 const float REMOVE_CORNER_RATIO = 0.20f;
@@ -193,7 +194,6 @@ Matrix* MatrixToDigit(Matrix* matrix, int* isBlankPtr)
     Matrix* downSized = Downsize(res,28,28);
     output = CenterDigit(output,28);
     */
-   
    RemoveCorners(matrix,matrix->rows);
    Matrix* input = M_ZoomI(matrix,matrix->rows,0.75);
    if(isBlankPtr != NULL) *isBlankPtr = IsBlank(input);

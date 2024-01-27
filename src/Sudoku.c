@@ -23,26 +23,31 @@ void SaveMatrix(Matrix* matrix, char* path)
 
 int** ImageToSudoku(char* path)
 {
+    // Load the best model to recognize digits
     Network* n = LoadBestRecognitionModel();
+
+    // Load the image
     SDL_Surface* image = IMG_Load(path);
-    Matrix* grayscaled = M_Create_2D(image->h,image->w);
-    time_t start = clock();
-    GrayscaleToMatrix_C(image, grayscaled);
-    printf("Grayscaling took %f seconds\n", (float)(clock() - start) / CLOCKS_PER_SEC);
-    SaveMatrix(grayscaled,"images/export/preproc_0.jpg");
-    Matrix* resized = resize(grayscaled, 500);
-    Matrix* canny = Canny(resized, 1);
+
+    //Convert the image to grayscale and downscale it
+    Matrix* grayscaled = DownGrayscaleToMatrix(image, 500);
+
+    Matrix* canny = Canny(grayscaled, 1);
     Square square = GetSquareWithContour(canny);
     S_Sort(&square, canny);
+
+    //Write the square on the image and save it 
     SDL_Surface* surface = MatrixToSurface(canny);
-    P_DrawSDL(surface,&square.points[0],0xFF0000);
-    P_DrawSDL(surface,&square.points[1],0xFF0000);
-    P_DrawSDL(surface,&square.points[2],0xFF0000);
-    P_DrawSDL(surface,&square.points[3],0xFF0000);
+    S_DrawSDL(surface,&square, 0xFF0000);
     IMG_SaveJPG(surface,"images/export/step_2.jpg",100);
-    Matrix* perspectiveCorrected = TransformPerspective(resized, square,540);
+
+    //Transform the image to a square
+    Matrix* perspectiveCorrected = TransformPerspective(grayscaled, square,540);
     SaveMatrix(perspectiveCorrected,"images/export/step_3.jpg");
 
+
+
+    //Split the image into 81 cells
     Matrix** cells = SplitCells(perspectiveCorrected, 9); 
 
     
@@ -62,8 +67,6 @@ int** ImageToSudoku(char* path)
         }
         printf("\n");
     }
-    
-
     
     return sudoku;
 }

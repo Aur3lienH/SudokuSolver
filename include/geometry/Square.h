@@ -19,6 +19,8 @@ Square* S_Create(Point* points);
 
 void S_Draw(Matrix* matrix, Square* square, float value);
 
+void S_DrawSDL(void* surface, Square* square, Uint32 value);
+
 float S_Area(Square* square);
 
 float S_Perimeter(Square* square);

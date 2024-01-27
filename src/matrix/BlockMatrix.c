@@ -164,6 +164,8 @@ void BM_M_SSE_Mul(const Matrix* a, const Matrix* b, Matrix* c)
     if(a->effectiveCols != b->rows || a->effectiveRows != c->rows || b->cols != c->cols || b->cols != 1)
     {
         M_Dim(a);
+        printf("effective cols : %li\n",a->effectiveCols);
+        printf("effective lines : %li\n",a->effectiveRows);
         M_Dim(b);
         M_Dim(c);
         errx(-1,"BM_M_SSE_Mul: Matrix dimensions do not match\n");

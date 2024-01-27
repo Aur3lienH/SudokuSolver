@@ -1,6 +1,4 @@
 #include "Sudoku.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include  "imageProcessing/DigitProcess.h"
 #include "deepLearning/Network.h"
 #include "matrix/Matrix.h"

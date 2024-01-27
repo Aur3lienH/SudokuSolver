@@ -1,14 +1,12 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include "imageProcessing/Grayscale.h"
 #include "imageProcessing/Canny.h"
 #include "imageProcessing/Hough.h"
 #include <time.h>
-#include <SDL2/SDL.h>
 #include "geometry/Square.h"
 #include "geometry/Point.h"
 #include "imageProcessing/DigitProcess.h"
 #include "imageProcessing/ImageTransformation.h"
+#include "imageProcessing/Image.h"
 #include "matrix/Matrix.h"
 #include <math.h>
 
@@ -20,7 +18,7 @@ Matrix* resize(const Matrix* input, size_t downSizeWidth)
 	return DownScale(input,ratio);
 }
 
-Matrix* PreprocessToCanny(SDL_Surface* input, size_t downSizeWidth)
+Matrix* PreprocessToCanny(Image* input, size_t downSizeWidth)
 {
 	Matrix* grayscaled = GrayscaleToMatrix(input);
 	Matrix* resized = resize(grayscaled, downSizeWidth);
@@ -62,4 +60,9 @@ Matrix* GaussianBlur(Matrix* input,float sigma)
 
 	M_Convolution_ZeroPad(input, kernel, blurred);
 	return blurred;
+}
+
+void StrechSudoku(Matrix* input, float* shape)
+{
+    
 }

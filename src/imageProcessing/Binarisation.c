@@ -3,7 +3,6 @@
 #include "matrix/Matrix.h"
 #include "imageProcessing/Grayscale.h"
 #include "imageProcessing/Preprocessing.h"
-#include <SDL2/SDL_image.h>
 
 
 

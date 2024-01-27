@@ -6,6 +6,7 @@
 #include "matrix/Matrix.h"
 
 
+//Transform a matrix to a digit
 Matrix* MatrixToDigit(Matrix* matrix, int* isBlankPtr);
 
 Matrix* SurfaceToDigit(SDL_Surface* surface, int* isBlankPtr);

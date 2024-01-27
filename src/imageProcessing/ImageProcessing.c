@@ -7,7 +7,7 @@
 #include <time.h>
 
 
-SDL_Surface* SudokuImgProcessing(SDL_Surface* image)
+Image* SudokuImgProcessing(Image* image)
 {
     printf("Starting preprocessing\n");
     time_t start = clock();
@@ -15,7 +15,7 @@ SDL_Surface* SudokuImgProcessing(SDL_Surface* image)
     printf("Preprocessing took %f seconds\n", (float)(clock() - start) / CLOCKS_PER_SEC);
     Square square = GetSquareWithContour(res);
     //Square square2 = Hough(res);
-    SDL_Surface* surface = MatrixToSurface(res);
+    Image* surface = MatrixToSurface(res);
     M_Free(res);
     P_DrawSDL(surface,&square.points[0],0xFF0000);
     P_DrawSDL(surface,&square.points[1],0xFF0000);

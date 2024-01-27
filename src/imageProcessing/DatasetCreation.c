@@ -4,8 +4,6 @@
 #include <stdlib.h> 
 #include <dirent.h>
 #include <string.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL.h>
 #include "imageProcessing/DigitProcess.h"
 #include "geometry/Square.h"
 #include "geometry/Point.h"
@@ -56,10 +54,7 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
     Matrix* saveMatrix = M_Complete(resized,width,width);
 
     SDL_Surface* surface = MatrixToSurface(saveMatrix);
-    P_DrawSDL(surface,&square.points[0],0xFF0000);
-    P_DrawSDL(surface,&square.points[1],0xFF0000);
-    P_DrawSDL(surface,&square.points[2],0xFF0000);
-    P_DrawSDL(surface,&square.points[3],0xFF0000);
+    S_DrawSDL(surface, &square, 0xFF0000FF);
     char* savePath = malloc(sizeof(char) * 100);
     snprintf(savePath, 100,"%s/%s",outputPath,filename);
     IMG_SaveJPG(surface,savePath,100);

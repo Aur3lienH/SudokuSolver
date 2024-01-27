@@ -5,6 +5,9 @@
 //Downscale an image and convert it to a matrix, store it in res
 void DownGrayscaleToMatrix_C(SDL_Surface* image, Matrix* res);
 
+//Downscale an image and convert it to a matrix, return the result
+Matrix* DownGrayscaleToMatrix(SDL_Surface* image, size_t width);
+
 //Grayscale an image and store the result in res
 void GrayscaleToMatrix_C(SDL_Surface* image, Matrix* res);
 

@@ -440,6 +440,8 @@ void M_Save(const Matrix* m, FILE* file)
 {
     fwrite(&m->rows,sizeof(size_t),1,file);
     fwrite(&m->cols,sizeof(size_t),1,file);
+    fwrite(&m->effectiveRows,sizeof(size_t),1,file);
+    fwrite(&m->effectiveCols,sizeof(size_t),1,file);
     fwrite(&m->dims,sizeof(size_t),1,file);
     fwrite(m->data,sizeof(float),M_GetSize3D(m),file);
 }
@@ -450,6 +452,8 @@ Matrix* M_Load(FILE* file)
     Matrix* m = (Matrix*)malloc(sizeof(Matrix));
     fread(&m->rows,sizeof(size_t),1,file);
     fread(&m->cols,sizeof(size_t),1,file);
+    fread(&m->effectiveRows,sizeof(size_t),1,file);
+    fread(&m->effectiveCols,sizeof(size_t),1,file);
     fread(&m->dims,sizeof(size_t),1,file);
     m->data = (float*)malloc(sizeof(float) * M_GetSize3D(m));
     fread(m->data,sizeof(float),M_GetSize3D(m),file);

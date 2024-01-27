@@ -91,14 +91,12 @@ void Mnist_Train()
 {
     temp = M_Create_2D(784,1);
     printf("Starting Training ... \n");
-    Dataset* trainDataset = LoadMnist(MNIST_TEST_DATA_PATH,MNIST_TEST_LABEL_PATH,2051,2049);
+    Dataset* trainDataset = LoadMnist(MNIST_DATA_PATH,MNIST_LABEL_PATH,2051,2049);
 
     Network* network = N_CreateNetwork();
     N_AddLayer(network, I_Create(784));
     N_AddLayer(network, FCL_Create(128,ReLU()));
-    N_AddLayer(network,Drop_Create(0.2));
     N_AddLayer(network, FCL_Create(64, ReLU())); 
-    N_AddLayer(network,Drop_Create(0.2));
     //N_AddLayer(network, FCL_Create(16, ReLU()));
     //N_AddLayer(network, FCL_Create(256, ReLU())); 
 

@@ -13,7 +13,6 @@
 #include "deepLearning/layer/MaxPoolLayer.h"
 #include "deepLearning/layer/ReshapeLayer.h"
 #include "deepLearning/layer/ConvLayer.h"
-#include <gtk-3.0/gdk/gdk.h>
 
 
 Network* N_CreateNetwork()
@@ -123,7 +122,7 @@ void N_Train(Network* n, Dataset* dataset, size_t batchSize, size_t epochsCount,
     pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t) * (threadsCount - 1));
 
     pthread_barrier_t barrier;
-    #ifdef __APPLE__
+    #ifdef __clang__
         pthread_barrier_init(&barrier, threadsCount);
     #else
         pthread_barrier_init(&barrier, NULL, threadsCount);
