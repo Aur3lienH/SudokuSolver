@@ -10,7 +10,6 @@ Matrix* TransformPerspectiveColor(Matrix* in, Matrix* out, double* h);
 Matrix* TransformPerspectiveColor_I(Matrix* in, size_t newWidth, double* h);
 
 //Calculate the homography matrix, necessary for the perspective transformation
-double* CalculateH(Square grid, size_t newWidth);
+double* CalculateH(Square from, Square to);
 
-//Calculate the inverse homography matrix
-double* InverseH(double* H_ID);
+Square WidthToSquare(size_t width);

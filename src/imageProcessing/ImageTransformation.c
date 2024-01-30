@@ -249,7 +249,7 @@ Matrix* DownScale3D(const Matrix* input, float ratio)
         {
             for (size_t k = 0; k < input->dims; k++)
             {
-                res->data[(i * newWidth + j) * 3 + k] = GetSurrondingAverage3D(input, j / ratio + k, i / ratio, input->cols, input->rows);
+                res->data[(i * newWidth + j) * 3 + k] = input->data[(int)(i / ratio) * input->cols * 3 + (int)(j / ratio) * 3 + k];
             }
         }
     }

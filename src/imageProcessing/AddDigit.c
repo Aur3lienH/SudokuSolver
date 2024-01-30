@@ -59,12 +59,12 @@ void AddDigit(stbtt_fontinfo* fontInfo,Matrix* image, int digit, int x, int y, C
         if(bitmap[i] != 0)
         {
             size_t index = ((y + i / width) * image->cols + x + i % width) * 3;
-            image->data[index] = color.r;
-            image->data[index + 1] = color.g;
-            image->data[index + 2] = color.b;
+            image->data[index] = color.r / 255.0f;
+            image->data[index + 1] = color.g / 255.0f;
+            image->data[index + 2] = color.b / 255.0f;
         }
     }
-        stbtt_FreeBitmap(bitmap, NULL);
+    stbtt_FreeBitmap(bitmap, NULL);
 }
 
 

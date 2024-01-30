@@ -28,19 +28,25 @@ char* GetResolvedSudoku(char* path)
     //Convert the image to grayscale and downscale it
     Matrix* matrix = ImageTo3DMatrix(image);
 
-    Matrix* resized = resize3D(matrix,500);
+    M_SaveImage3D(matrix, "images/export/initial.jpg");
+
+    Matrix* resized = resize3D(matrix,540);
+
+    M_SaveImage3D(resized, "images/export/resized1.jpg");
 
     Matrix* grayscaled = M_Grayscale(resized);
 
     Matrix* canny = Canny(grayscaled, 1);
 
     Square square = GetSquareWithContour(canny);
+    S_Print(&square);
     
 
-    double* h = CalculateH(square, 540);
-    double* inversedH = InverseH(h);
+    double* hForward = CalculateH(square, WidthToSquare(PERSPECTIVE_WIDTH));
 
-    Matrix* perspectiveCorrected = TransformPerspectiveColor_I(resized, PERSPECTIVE_WIDTH, inversedH);
+    M_SaveImage3D(resized, "images/export/resized.jpg");
+
+    Matrix* perspectiveCorrected = TransformPerspectiveColor_I(resized, PERSPECTIVE_WIDTH, hForward);
 
     M_SaveImage3D(perspectiveCorrected, "images/export/corrected.jpg");
 
@@ -58,7 +64,7 @@ char* GetResolvedSudoku(char* path)
     {
         for (size_t j = 0; j <9; j++)
         {
-            grid[i][j] = 0;
+            grid[i][j] = sudoku[i][j];
         }
         
     }
@@ -82,12 +88,15 @@ char* GetResolvedSudoku(char* path)
         printf("Sudoku not resolved\n");
     }
 
-    printf("sovled\n");
     AddMissingDigits(perspectiveCorrected,missingDigits,PERSPECTIVE_WIDTH / 9,Color_Create(0,255,0));
 
-    TransformPerspectiveColor(perspectiveCorrected, resized, h);
+    M_SaveImage3D(perspectiveCorrected, "images/export/prevFinal.jpg");
 
-    M_SaveImage(resized, "images/export/final.jpg");
+    double* hReverse = CalculateH(WidthToSquare(PERSPECTIVE_WIDTH), square);
+
+    TransformPerspectiveColor(perspectiveCorrected, resized, hReverse);
+
+    M_SaveImage3D(resized, "images/export/final.jpg");
     
 }
 

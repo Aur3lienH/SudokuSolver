@@ -99,13 +99,13 @@ Matrix* ImageMobileTo3DMatrix(Image* image)
     size_t length = image->height * image->width;
     for (size_t i = 0; i < length; i++)
     {
+
         size_t index = i * 4;
         res->data[i*3] = image->pixels[index] / 255.0f;
         res->data[i*3+1] = image->pixels[index+1] / 255.0f;
         res->data[i*3+2] = image->pixels[index+2] / 255.0f;
     }
     return res;
-
 }
 
 
@@ -151,9 +151,9 @@ Image* Matrix3DToImage(Matrix* matrix)
     for (size_t i = 0; i < length; i++)
     {
         size_t index = i * 3;
-        image->pixels[i*4] = matrix->data[index] * 255;
-        image->pixels[i*4+1] = matrix->data[index+1] * 255;
-        image->pixels[i*4+2] = matrix->data[index+2] * 255;
+        image->pixels[i*4] = (unsigned char)(matrix->data[index] * 255.0f);
+        image->pixels[i*4+1] = (unsigned char)(matrix->data[index+1] * 255.0f);
+        image->pixels[i*4+2] = (unsigned char)(matrix->data[index+2] * 255.0f);
         image->pixels[i*4+3] = 255;
     }
     return image;

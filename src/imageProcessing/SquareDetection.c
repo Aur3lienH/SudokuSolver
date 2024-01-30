@@ -261,5 +261,6 @@ Square GetSquareWithContour(Matrix* img)
         }
     }
     M_SaveImage(flag,"images/export/step_1.jpg");
+    S_Sort(&res, img);
     return res;
 }

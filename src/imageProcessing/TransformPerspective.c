@@ -344,47 +344,36 @@ int isInsideSquare(point p, Square s)
     return 1;
 }*/
 
-double* CalculateH(Square grid, size_t newWidth)
+
+Square WidthToSquare(size_t width)
 {
-    Square from;
-    //Top left corner
-    from.points[0].x = grid.points[0].x;
-    from.points[0].y = grid.points[0].y;
-    //Top right corner
-    from.points[1].x = grid.points[1].x;
-    from.points[1].y = grid.points[1].y;
-    //Bottom left corner
-    from.points[2].x = grid.points[3].x;
-    from.points[2].y = grid.points[3].y;
-    //Bottom right corner
-    from.points[3].x = grid.points[2].x;
-    from.points[3].y = grid.points[2].y;
+    Square square;
+    square.points[0].x = 0;
+    square.points[0].y = 0;
 
-    // DEFINE OUTPUT CORNER COORDINATES
-    Square to;
-        //Top left corner
-    to.points[0].x = 0;
-    to.points[0].y = 0;
-    //Top right corner
-    to.points[1].x = newWidth;
-    to.points[1].y = 0;
-    //Bottom left corner
-    to.points[2].x = 0;
-    to.points[2].y = newWidth;
-    //Bottom right corner
-    to.points[3].x = newWidth;
-    to.points[3].y = newWidth;
+    square.points[1].x = width;
+    square.points[1].y = 0;
 
+    square.points[2].x = width;
+    square.points[2].y = width;
+
+    square.points[3].x = 0;
+    square.points[3].y = width;
+    return square;
+}
+
+double* CalculateH(Square from, Square to)
+{
     // OTHER WAY TO REPRESENT THE COORDS
     int x1 = from.points[0].x, y1 = from.points[0].y;
     int x2 = from.points[1].x, y2 = from.points[1].y; 
-    int x3 = from.points[2].x, y3 = from.points[2].y; 
-    int x4 = from.points[3].x, y4 = from.points[3].y;
+    int x3 = from.points[3].x, y3 = from.points[3].y; 
+    int x4 = from.points[2].x, y4 = from.points[2].y;
 
     int _x1 = to.points[0].x, _y1 = to.points[0].y;
     int _x2 = to.points[1].x, _y2 = to.points[1].y; 
-    int _x3 = to.points[2].x, _y3 = to.points[2].y; 
-    int _x4 = to.points[3].x, _y4 = to.points[3].y;  
+    int _x3 = to.points[3].x, _y3 = to.points[3].y; 
+    int _x4 = to.points[2].x, _y4 = to.points[2].y;  
 
 
     size_t p_col = 9, p_row = 9; 
@@ -420,15 +409,9 @@ double* CalculateH(Square grid, size_t newWidth)
     // WE NOW CONSIDER H IS A 3X3 MATRIX
     double* H_ID = malloc(sizeof(double) * 9);
     double* h_invert = malloc(sizeof(double) * 3 * 3);
+    copy_matrix(H, 3, 3, H_ID);
     invert(H_ID, 3, 3, h_invert);
-    return H_ID;
-}
-
-double* InverseH(double* H_ID)
-{
-    double* h_reverse = malloc(sizeof(double) * 3 * 3);
-    invert(H_ID, 3, 3, h_reverse);
-    return h_reverse;
+    return h_invert;
 }
 
 Matrix* TransformPerspective(Matrix* in,size_t newWidth, double* h)
@@ -493,7 +476,7 @@ void TransformPerspectiveColor(Matrix* in, Matrix* out, double* h)
             }
             else
             {
-                M_SetValue(out, x, y, 0);
+                //M_SetValue(out, x, y, 0);
             }
         }
     }

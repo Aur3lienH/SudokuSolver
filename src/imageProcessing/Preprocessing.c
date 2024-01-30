@@ -35,8 +35,6 @@ Matrix* PreprocessToCanny(Image* input, size_t downSizeWidth)
 }
 
 
-
-
 Matrix* PreprocessSquare(Matrix* input)
 {
 	

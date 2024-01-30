@@ -53,12 +53,7 @@ Matrix** SplitCells(Matrix* image, size_t cellCount)
 
 Matrix* M_Grayscale(Matrix* image)
 {
-    printf("hello there\n");
-    printf("image cols %zu\n",image->cols);
-    printf("image rows %zu\n",image->rows);
     Matrix* res = M_Create_2D(image->rows,image->cols);
-    printf("there again \n");
-    M_Dim(res);
     for (size_t i = 0; i < image->rows; i++)
     {
         for (size_t j = 0; j < image->cols; j++)
