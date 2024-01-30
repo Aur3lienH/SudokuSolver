@@ -3,7 +3,8 @@
 #include <math.h>
 #include <err.h>
 #include <string.h>
-#ifdef __arm__
+
+#ifdef __ANDROID__ 
     #define SSE 0
 #elif defined(__aarch64__)
     #define SSE 0

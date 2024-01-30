@@ -74,8 +74,8 @@ void render_accumulator(unsigned int **accumulator_array,
             // SET THE COLOR OF THE DRAWING OPERATION 
             // TO NORMALIZED VALUE OF ACCUMULATOR 
             // (SHADE OF GREY BASED OF VALUE)
-            Uint8 col = 
-                    (Uint8)(255*normalize(min,max, accumulator_array[y][x]));
+            __uint8_t col = 
+                    (__uint8_t)(255*normalize(min,max, accumulator_array[y][x]));
 
             float norm_w = normalize(0, width/2, x);
             float norm_h = normalize(0, height, y);
@@ -344,10 +344,8 @@ int isInsideSquare(point p, Square s)
     return 1;
 }*/
 
-Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
+double* CalculateH(Square grid, size_t newWidth)
 {
-    Matrix* out = M_Create_2D(newWidth, newWidth);
-
     Square from;
     //Top left corner
     from.points[0].x = grid.points[0].x;
@@ -420,14 +418,24 @@ Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
     mul(p_invert, R, p_row, p_col, 1, H);
 
     // WE NOW CONSIDER H IS A 3X3 MATRIX
-    double h_invert[9];
-    double H_ID[3*3];
-    copy_matrix(H, 3, 3, H_ID);
+    double* H_ID = malloc(sizeof(double) * 9);
+    double* h_invert = malloc(sizeof(double) * 3 * 3);
     invert(H_ID, 3, 3, h_invert);
+    return H_ID;
+}
 
-    // GET THE AREA OF THE Square BIM BIM BAM BAM
-    // I AM GOING INSANE
-    // <_>
+double* InverseH(double* H_ID)
+{
+    double* h_reverse = malloc(sizeof(double) * 3 * 3);
+    invert(H_ID, 3, 3, h_reverse);
+    return h_reverse;
+}
+
+Matrix* TransformPerspective(Matrix* in,size_t newWidth, double* h)
+{
+    Matrix* out = M_Create_2D(newWidth, newWidth);
+    
+
 
     for(int y = 0; y<newWidth; y++)
     {
@@ -435,7 +443,7 @@ Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
         {
             double OUT[] = {0, 0, 1};
             double IN[] = {x, y, 1};
-            mul(h_invert, IN, 3, 3, 1, OUT);
+            mul(h, IN, 3, 3, 1, OUT);
             OUT[0] /= OUT[2];
             OUT[1] /= OUT[2];
             size_t x_int = (int)OUT[0];
@@ -447,9 +455,55 @@ Matrix* TransformPerspective(Matrix* in, Square grid, size_t newWidth)
             }
             else
             {
-                M_SetValue(out, x, y, 0);
+                //M_SetValue(out, x, y, 0);
             }
         }
     }
     return out;
 }
+
+
+
+void TransformPerspectiveColor(Matrix* in, Matrix* out, double* h)
+{
+
+    for(int y = 0; y< out->rows; y++)
+    {
+        for(int x = 0; x< out->cols; x++)
+        {
+            double OUT[] = {0, 0, 1};
+            double IN[] = {x, y, 1};
+            mul(h, IN, 3, 3, 1, OUT);
+            OUT[0] /= OUT[2];
+            OUT[1] /= OUT[2];
+            size_t x_int = (int)OUT[0];
+            size_t y_int = (int)OUT[1];
+            if(x_int >= 0 && x_int < in->cols && y_int>= 0 && y_int < in->rows)
+            {
+                size_t inputIndex = (y_int * in->cols + x_int) * 3;
+
+                float valR = in->data[inputIndex];
+                float valG = in->data[inputIndex + 1];
+                float valB = in->data[inputIndex + 2];
+                
+                size_t outputIndex = (y * out->cols + x) * 3;
+                out->data[outputIndex] = valR;
+                out->data[outputIndex + 1] = valG;
+                out->data[outputIndex + 2] = valB;
+            }
+            else
+            {
+                M_SetValue(out, x, y, 0);
+            }
+        }
+    }
+
+}
+
+Matrix* TransformPerspectiveColor_I(Matrix* in, size_t newWidth, double* h)
+{
+    Matrix* out = M_Create_3D(newWidth, newWidth,3);
+    TransformPerspectiveColor(in, out, h);
+    return out;
+}
+

@@ -122,7 +122,7 @@ void N_Train(Network* n, Dataset* dataset, size_t batchSize, size_t epochsCount,
     pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t) * (threadsCount - 1));
 
     pthread_barrier_t barrier;
-    #ifdef __clang__
+    #if CUSTOM_BARRIER
         pthread_barrier_init(&barrier, threadsCount);
     #else
         pthread_barrier_init(&barrier, NULL, threadsCount);
@@ -192,7 +192,8 @@ void N_Train(Network* n, Dataset* dataset, size_t batchSize, size_t epochsCount,
             N_Update(networks[0],learningRate);
             i += auxBatchSize;
         }
-        //Reco_Save(networks[0]);
+        //Automatically save the model at each model, only works for Mnist at the moment
+        Reco_Save(networks[0]);
 
 
     }

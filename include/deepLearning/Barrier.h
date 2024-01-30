@@ -7,9 +7,15 @@ THANX APPLE !
 
 */
 
+#ifdef __ANDROID__
+#define CUSTOM_BARRIER 1
+#else
+#define CUSTOM_BARRIER 0
+#endif
 
 
-#ifdef __APPLE__
+
+#if CUSTOM_BARRIER
 
 #include <pthread.h>
 #include <stdio.h>

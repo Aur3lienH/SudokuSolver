@@ -7,15 +7,20 @@
 //Structure of image used for mobile
 typedef struct ImageMobile
 {
-    size_t width;
-    size_t height;
-    size_t channels;
+    int width;
+    int height;
+    int channels;
     unsigned char* pixels;
 } ImageMobile;
 
-#include "imageProcessing/stb_image_write.h"
-#include "imageProcessing/stb_image.h"
-#if 0
+typedef struct Color
+{
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+} Color;
+
+#if 1
 #define MOBILE 1
 typedef ImageMobile Image;
 #else
@@ -25,6 +30,8 @@ typedef SDL_Surface Image;
 #define MOBILE 0
 #endif
 
+
+Color Color_Create(unsigned char r, unsigned char g, unsigned char b);
 
 Image* Image_Create(size_t width, size_t height, size_t channels);
 
@@ -39,3 +46,9 @@ Matrix* ImageToMatrix(Image* image);
 void Image_Free(Image* image);
 
 void M_SaveImage(const Matrix* matrix, const char* path);
+
+Matrix* ImageTo3DMatrix(Image* image);
+
+Image* Matrix3DToImage(Matrix* matrix);
+
+void M_SaveImage3D(const Matrix* matrix, const char* path);

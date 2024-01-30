@@ -46,17 +46,17 @@ void ImageProcess(const char* path,const char* outputPath,FILE* datasetFile, con
         printf("Error while loading the image\n");
         exit(-1);
     }
-    Matrix* grayscaled = GrayscaleToMatrix(image);
+    Matrix* grayscaled = ImageToMatrix(image);
 	Matrix* resized = resize(grayscaled,width);
     Matrix* cannied = Canny(resized, 2);
     Square square = GetSquareWithContour(cannied);
     Matrix* saveMatrix = M_Complete(resized,width,width);
 
-    Image* surface = MatrixToSurface(saveMatrix);
+    Image* surface = MatrixToImage(saveMatrix);
     S_DrawSDL(surface, &square, 0xFF0000FF);
     char* savePath = malloc(sizeof(char) * 100);
     snprintf(savePath, 100,"%s/%s",outputPath,filename);
-    IMG_SaveJPG(surface,savePath,100);
+    Image_Save(surface,savePath);
 
     //Write the matrix after it has been resized
     M_Save(saveMatrix,datasetFile);

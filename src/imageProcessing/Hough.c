@@ -4,7 +4,7 @@
 #include "geometry/Square.h"
 #include <err.h>
 #include <math.h>
-
+#include <string.h>
 
 const float drawThreshold = 0.99f;
 const size_t houghThreshold = 130;

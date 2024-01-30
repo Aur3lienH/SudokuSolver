@@ -30,6 +30,6 @@ int P_Equals(Point* p1, Point* p2);
 
 Point P_Add(Point* p1, Point* p2);
 
-void P_DrawSDL(Image* image, Point* p, Uint32 color);
+void P_DrawSDL(Image* image, Point* p, __uint32_t color);
 
 void P_Free(Point* point);

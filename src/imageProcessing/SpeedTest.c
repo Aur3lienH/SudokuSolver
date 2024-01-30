@@ -1,7 +1,7 @@
 #include "imageProcessing/SdlConverter.h"
 #include <time.h>
 
-#if MOBILE
+#ifndef MOBILE
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 

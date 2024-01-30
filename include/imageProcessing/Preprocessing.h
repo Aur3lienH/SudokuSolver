@@ -13,3 +13,5 @@ Matrix* PreprocessSquare(Matrix* input);
 Matrix* GaussianBlur(Matrix* input,float sigma);
 
 void StrechSudoku(Matrix* input);
+
+Matrix* resize3D(const Matrix* input, size_t downSizeWidth);

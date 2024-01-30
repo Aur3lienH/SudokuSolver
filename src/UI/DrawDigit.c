@@ -1,5 +1,7 @@
 #include <cairo.h>
 #include <gtk/gtk.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <math.h>
 #include "deepLearning/applications/Mnist.h"
 #include "matrix/Matrix.h"

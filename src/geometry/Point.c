@@ -108,9 +108,9 @@ int P_Equals(Point* p1, Point* p2)
 }
 
 
-void P_DrawSDL(Image* _image, Point* p, Uint32 _color)
+void P_DrawSDL(Image* _image, Point* p, __uint32_t _color)
 {
-#if __ANDROID__
+#if MOBILE
 
     Image* image = (Image*)_image;
     
@@ -119,8 +119,11 @@ void P_DrawSDL(Image* _image, Point* p, Uint32 _color)
         for (size_t y = p->y - POINT_RADIUS; y < p->y + POINT_RADIUS; y++)
         {
             size_t index = (x + y * image->width) * 4;
-            Uint32* color = (Uint32*)&image->pixels[index];
-            *color = _color;
+            if(index >= 0 && index < image->width * image->height * 4)
+            {
+                __uint32_t* color = (__uint32_t*)&image->pixels[index];
+                *color = _color;
+            }
         }
         
     }
@@ -146,7 +149,7 @@ void P_DrawSDL(Image* _image, Point* p, Uint32 _color)
             if(x >= 0 && x < _image->w && y >= 0 && y < _image->h)
             {
                 printf("x : %i y : %i\n",x,y);
-                pixels[y * _image->w + x] = _color;
+                pixels[y * _image->w + x] = (Uint32)_color;
             }
         }
     }

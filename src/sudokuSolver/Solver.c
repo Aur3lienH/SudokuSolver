@@ -125,6 +125,37 @@ int solver(int grid[9][9])
 	return 0;
 }
 
+
+//Return in missing digits the digits that were not in the original grid
+int solverMissingDigits(int grid[9][9], int** missingDigits)
+{
+	int row = 0;
+	int col = 0;
+	
+	if (!find_empty_cell(grid, &row, &col))
+	{
+		return 1;
+	}
+	
+	for (int digit = 1; digit <= 9; digit++)
+	{
+		if (is_valid(grid, row, col, digit))
+		{
+			grid[row][col] = digit;
+			missingDigits[row][col] = digit;
+			
+			if (solverMissingDigits(grid, missingDigits))
+			{
+				return 1;
+			}
+			
+			grid[row][col] = 0;
+		}
+	}
+	
+	return 0;
+}
+
 /*
 *	Function : load_grid
 *	--------------------

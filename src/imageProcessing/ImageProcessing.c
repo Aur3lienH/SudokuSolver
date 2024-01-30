@@ -3,6 +3,7 @@
 #include "imageProcessing/Hough.h"
 #include "imageProcessing/SquareDetection.h"
 #include "geometry/Square.h"
+#include "matrix/Matrix.h"
 #include <time.h>
 
 
@@ -47,4 +48,27 @@ Matrix** SplitCells(Matrix* image, size_t cellCount)
     
     
     return cells;
+}
+
+
+Matrix* M_Grayscale(Matrix* image)
+{
+    printf("hello there\n");
+    printf("image cols %zu\n",image->cols);
+    printf("image rows %zu\n",image->rows);
+    Matrix* res = M_Create_2D(image->rows,image->cols);
+    printf("there again \n");
+    M_Dim(res);
+    for (size_t i = 0; i < image->rows; i++)
+    {
+        for (size_t j = 0; j < image->cols; j++)
+        {
+            size_t index = (i * image->cols + j) * 3;
+            float r = image->data[index];
+            float g = image->data[index + 1];
+            float b = image->data[index + 2];
+            res->data[i * image->cols + j] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        }
+    }
+    return res;
 }

@@ -4,7 +4,8 @@
 #include "imageProcessing/Image.h"
 #include <math.h>
 #include <stdlib.h>
-
+#include <limits.h>
+#include <float.h>  
 
 Square* S_Create(Point* points)
 {
@@ -24,7 +25,7 @@ void S_Draw(Matrix* matrix, Square* square, float value)
     P_DrawSegment(matrix, &square->points[3], &square->points[0], value);
 }
 
-void S_DrawSDL(Image* image, Square* square, Uint32 value)
+void S_DrawSDL(Image* image, Square* square, __uint32_t value)
 {
     P_DrawSDL(image, &square->points[0], value);
     P_DrawSDL(image, &square->points[1], value);

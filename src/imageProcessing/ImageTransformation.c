@@ -36,6 +36,27 @@ float GetSurrondingAverage(Matrix* image, size_t x, size_t y, size_t width, size
     return sum / count;
 }
 
+float GetSurrondingAverage3D(Matrix* image, size_t x, size_t y, size_t width, size_t height)
+{
+    float sum = 0;
+    size_t count = 0;
+    for (int i = -1; i < 2; i++) {
+        size_t xIndex = x + i;
+        if (xIndex < 0 || xIndex >= width) {
+            continue;
+        }
+        for (int j = -1; j < 2; j++) {
+            size_t yIndex = y + j;
+            if (yIndex < 0 || yIndex >= height) {
+                continue;
+            }
+            sum += image->data[((int)(xIndex) + (int)(yIndex) * width) * 3];
+            count++;
+        }
+    }
+    return sum / count;
+}
+
 float GetSurrondingMinimum(Matrix* image, size_t x, size_t y, size_t width)
 {
     float min = 1;
@@ -212,6 +233,24 @@ Matrix* DownScale(const Matrix* input, float ratio)
         for (size_t j = 0; j < newWidth; j++)
         {
             res->data[i * newWidth + j] = GetSurrondingAverage((Matrix *)input, j / ratio, i / ratio, input->cols, input->rows);
+        }
+    }
+    return res;
+}
+
+Matrix* DownScale3D(const Matrix* input, float ratio)
+{
+    size_t newWidth = (size_t)(input->cols * ratio);
+    size_t newHeight = (size_t)(input->rows * ratio);
+    Matrix* res = M_Create_3D(newHeight, newWidth, input->dims);
+    for (size_t i = 0; i < newHeight; i++)
+    {
+        for (size_t j = 0; j < newWidth; j++)
+        {
+            for (size_t k = 0; k < input->dims; k++)
+            {
+                res->data[(i * newWidth + j) * 3 + k] = GetSurrondingAverage3D(input, j / ratio + k, i / ratio, input->cols, input->rows);
+            }
         }
     }
     return res;

@@ -17,9 +17,16 @@ Matrix* resize(const Matrix* input, size_t downSizeWidth)
 	return DownScale(input,ratio);
 }
 
+Matrix* resize3D(const Matrix* input, size_t downSizeWidth)
+{
+    size_t maximum = input->cols > input->rows ? input->cols : input->rows;
+    float ratio = (float)downSizeWidth / (float)maximum;
+    return DownScale3D(input,ratio);
+}
+
 Matrix* PreprocessToCanny(Image* input, size_t downSizeWidth)
 {
-	Matrix* grayscaled = GrayscaleToMatrix(input);
+	Matrix* grayscaled = ImageToMatrix(input);
 	Matrix* resized = resize(grayscaled, downSizeWidth);
 	Matrix* canny = Canny(resized, 1);
 	M_Free(grayscaled);
