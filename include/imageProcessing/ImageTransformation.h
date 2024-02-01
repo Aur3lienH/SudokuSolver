@@ -38,7 +38,9 @@ Matrix* M_Stretch(const Matrix* input, size_t width, size_t height);
 //Blur the image
 Matrix* M_Blur(const Matrix* input);
 
-Matrix* DownScale3D(const Matrix* input, float ratio);
+Matrix* DownScale3D(const Matrix* input, float ratio);\
+
+Matrix* M_GaussianBlur(const Matrix* input, float sigma);
 
 
 

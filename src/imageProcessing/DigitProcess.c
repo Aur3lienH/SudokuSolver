@@ -3,7 +3,7 @@
 #include "imageProcessing/ImageProcessing.h"
 #include "imageProcessing/ImageTransformation.h"
 #include "imageProcessing/Image.h"
-
+#include <math.h>
 //const size_t REMOVE_CORNER_WIDTH = 4;
 const float REMOVE_CORNER_RATIO = 0.20f;
 
@@ -139,11 +139,11 @@ Matrix* SurfaceToDigit(Image* image, int* isBlankPtr)
     Matrix* downSized = Downsize(res,28,28);
     output = CenterDigit(output,28);
     */
-   RemoveCorners(res,res->rows);
-   Matrix* input = M_ZoomI(res,res->rows,0.75);
-   if(isBlankPtr != NULL) *isBlankPtr = IsBlank(input);
-   Matrix* centered = CenterDigit(input,res->rows);
-   Matrix* downSized = Downsize(centered,28,28);
+    RemoveCorners(res,res->rows);
+    Matrix* input = M_ZoomI(res,res->rows,0.75);
+    if(isBlankPtr != NULL) *isBlankPtr = IsBlank(input);
+    Matrix* centered = CenterDigit(input,res->rows);
+    Matrix* downSized = Downsize(centered,28,28);
     return downSized;
 }
 

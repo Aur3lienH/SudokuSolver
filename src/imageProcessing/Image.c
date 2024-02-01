@@ -31,10 +31,11 @@ Image* Image_Create(size_t width, size_t height, size_t channels)
 Image* Image_Load(const char* path)
 {
 #if MOBILE
+    //Load the image with stb_image and put it in the orientation of the image
     ImageMobile* img = malloc(sizeof(ImageMobile));
     img->pixels = stbi_load(path, &img->width, &img->height, &img->channels, 4);
-    img->channels = (int)4;
-    printf("Loaded image with width %i, height %i and %i channels\n", img->width, img->height, img->channels);
+    img->channels = (int)3;
+
     return img;
 #else
     return IMG_Load(path);

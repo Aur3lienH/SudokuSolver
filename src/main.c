@@ -17,6 +17,7 @@
 #include "imageProcessing/DatasetCreation.h"
 #include "deepLearning/applications/GridDetection.h"
 #include "imageProcessing/SpeedTest.h"
+#include "TestSudoku.h"
 
 void HandleFlags(int argc, char* argv[])
 {
@@ -166,7 +167,18 @@ void HandleFlags(int argc, char* argv[])
             //TestSpeedDownscaleGrayscale();
         }
 
-        
+        if(CompareStrings(argv[i], "--test-image"))
+        {
+            if(argc >= 3)
+            {
+                TestSudoku(argv[i+1]);
+            }
+            else
+            {
+                printf("No folder provided\n");
+            }
+        }
+
         i++;
     }
 }

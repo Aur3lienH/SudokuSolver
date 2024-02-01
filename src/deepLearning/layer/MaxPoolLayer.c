@@ -116,7 +116,6 @@ Layer* MaxPool_Load(FILE* file)
 {
     size_t size;
     fread(&size,sizeof(size_t),1,file);
-    printf("Loaded size %ld\n",size);
     return MaxPool_Create(size);
 }
 

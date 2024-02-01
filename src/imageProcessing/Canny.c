@@ -2,6 +2,7 @@
 #include "matrix/Matrix.h"
 #include "geometry/Square.h"
 #include "geometry/Point.h"
+#include "imageProcessing/ImageTransformation.h"
 #include <math.h>
 #include <err.h>
 
@@ -159,35 +160,8 @@ void propagate(Matrix* input, size_t posX, size_t posY)
 
 Matrix* Canny(Matrix* input, float sigma)
 {
-    printf("here !\n");
-    M_Dim(input);
-    Matrix* kernel = M_Create_2D(5,5);
 
-    float factor = 1.0f / (2.0f * M_PI * sigma * sigma);
-    for (size_t i = 0; i < kernel->rows; i++)
-    {
-        for (size_t j = 0; j < kernel->cols; j++)
-        {
-            int distCenterX = abs((int)i - 2);
-            int distCenterY = abs((int)j - 2);
-            kernel->data[i * kernel->cols + j] = factor * exp(-(distCenterX * distCenterX + distCenterY * distCenterY) / (2.0f * sigma * sigma));
-        }
-    }
-    float sum = M_GetSum(kernel);
-    M_ScalarMul(kernel, 1.0f / sum, kernel);
-
-    
-
-
-    //Perform the convolution with valid padding
-    Matrix* blurred = M_Create_2D(input->rows, input->cols);
-
-    //Need to be implemented
-    M_Convolution_ZeroPad(input, kernel, blurred);
-    M_Dim(blurred);
-    M_Dim(kernel);
-    M_Dim(input);
-
+    Matrix* blurred = M_GaussianBlur(input, sigma);
 
 
     Matrix* gX = M_Create_2D(1,3);

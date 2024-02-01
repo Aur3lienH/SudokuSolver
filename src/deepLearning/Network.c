@@ -277,27 +277,21 @@ Network* N_Load(const char* path)
         switch (layerType)
         {
         case 0:
-            printf("Loading Input\n");
             network->layers[i] = I_Load(file);
             break;
         case 1:
-            printf("Loading FCL\n");
             network->layers[i] = FCL_Load(file);
             break;
         case 2:
-            printf("loading Dropout\n");
             network->layers[i] = Drop_Load(file);
             break;
         case 3:
-            printf("loading MaxPooling\n");
             network->layers[i] = MaxPool_Load(file);
             break;
         case 4:
-            printf("loading Reshape\n");
             network->layers[i] = ReshapeLayer_Load(file);
             break;
         case 5:
-            printf("loading Convolutional\n");
             network->layers[i] = Conv_Load(file);
             break;
         default:
@@ -307,7 +301,6 @@ Network* N_Load(const char* path)
             break;
         }
     }
-    printf("network pointer : %p\n",network);
     fclose(file);
     return network;
 }

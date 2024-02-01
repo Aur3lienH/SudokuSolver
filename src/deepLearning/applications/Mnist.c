@@ -57,8 +57,13 @@ void Mnist_Train_ConvLayers()
     N_AddLayer(network, Conv_Create(LS_Create3D(3, 3, 64))); 
     N_AddLayer(network, MaxPool_Create(2));
     N_AddLayer(network, Flatten_Create());
+    N_AddLayer(network, Drop_Create(0.2));
     N_AddLayer(network, FCL_Create(512, ReLU())); 
-    N_AddLayer(network, Drop_Create(0.35)); 
+    N_AddLayer(network, Drop_Create(0.2)); 
+    N_AddLayer(network, FCL_Create(256, ReLU())); 
+    N_AddLayer(network, Drop_Create(0.2)); 
+    N_AddLayer(network, FCL_Create(128, ReLU())); 
+    N_AddLayer(network, Drop_Create(0.2)); 
     N_AddLayer(network, FCL_Create(10, Softmax()));
 
     N_Compile(network, CE_Create());
@@ -69,7 +74,7 @@ void Mnist_Train_ConvLayers()
 
     printf("Number of logical processors : %d\n",num_of_logical_processors);
 
-    N_Train(network,trainDataset,128,30,num_of_logical_processors,0.001);
+    N_Train(network,trainDataset,128,60,num_of_logical_processors,0.001);
 
     Dataset* testDataset = LoadMnist(MNIST_TEST_DATA_PATH,MNIST_TEST_LABEL_PATH,2051,2049);
 
@@ -80,10 +85,6 @@ void Mnist_Train_ConvLayers()
     printf("🍔 Test accuracy : %.2f%% 🍔\n",testAccuracy);
 
     N_Free(network);
-
-    
-
-
 }
 
 
@@ -421,7 +422,6 @@ char* FindBestModel(char* folder)
         printf("No model found !\n");
         exit(-1);
     }
-    printf("Number of models : %d\n",n);
     char* bestModel = namelist[n-1]->d_name;
     //free
     for (size_t i = 0; i < n-1; i++)
@@ -437,12 +437,10 @@ char* FindBestModel(char* folder)
 Network* LoadBestRecognitionModel()
 {
     char* bestModel = FindBestModel("./models/recognition");
-    printf("Best model : %s\n",bestModel);
     char path[1024];
     snprintf(path, sizeof(path), "./models/recognition/%s",bestModel);
 
 
-    printf("load model : %s\n", path);
     Network* network = N_Load(path);
     N_Compile(network,CE_Create());
     return network;

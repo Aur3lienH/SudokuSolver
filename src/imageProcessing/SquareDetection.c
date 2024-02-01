@@ -248,6 +248,9 @@ Square GetSquareWithContour(Matrix* img)
             }
             PointSet* pointSet = GetOneSquare(img,flag,(Point){j,i});
             Square square = getSquareFromPointSet(pointSet,img);
+
+            free(pointSet->points);
+            free(pointSet);
             S_Sort(&square,img);
             if(S_IsSquareComplete(img,&square,5))
             {

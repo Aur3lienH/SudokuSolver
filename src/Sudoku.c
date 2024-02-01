@@ -19,7 +19,7 @@
 
 const size_t PERSPECTIVE_WIDTH = 540;
 
-char* GetResolvedSudoku(char* path)
+char* GetResolvedSudoku(char* path, int* success)
 {
     //Load the model
     Network* n = LoadBestRecognitionModel();
@@ -39,7 +39,6 @@ char* GetResolvedSudoku(char* path)
     Matrix* canny = Canny(grayscaled, 1);
 
     Square square = GetSquareWithContour(canny);
-    S_Print(&square);
     
 
     double* hForward = CalculateH(square, WidthToSquare(PERSPECTIVE_WIDTH));
@@ -50,7 +49,6 @@ char* GetResolvedSudoku(char* path)
 
     M_SaveImage3D(perspectiveCorrected, "images/export/corrected.jpg");
 
-    M_Dim(perspectiveCorrected);
 
     Matrix* perspectiveCorrectedGrayscale = M_Grayscale(perspectiveCorrected);
 
@@ -81,12 +79,9 @@ char* GetResolvedSudoku(char* path)
         
     }
 
-    int resolved = solverMissingDigits(grid, missingDigits);
+    print_grid(grid);
 
-    if(resolved == 0)
-    {
-        printf("Sudoku not resolved\n");
-    }
+    int resolved = solverMissingDigits(grid, missingDigits);
 
     AddMissingDigits(perspectiveCorrected,missingDigits,PERSPECTIVE_WIDTH / 9,Color_Create(0,255,0));
 
@@ -97,13 +92,32 @@ char* GetResolvedSudoku(char* path)
     TransformPerspectiveColor(perspectiveCorrected, resized, hReverse);
 
     M_SaveImage3D(resized, "images/export/final.jpg");
+
+    *success = 1;
+    for (size_t i = 0; i < 9; i++)
+    {
+        for (size_t j = 0; j < 9; j++)
+        {
+            if(grid[i][j] == 0)
+            {
+                *success = 0;
+            }
+        }
+    }
+
+    return "images/export/final.jpg";
+    
+
     
 }
 
+
+
+
 int** ImageToSudoku(char* path)
 {
-
-    GetResolvedSudoku(path);
+    int success = 0;
+    GetResolvedSudoku(path, &success);
 
     return NULL;
     /*
@@ -129,7 +143,6 @@ int** ImageToSudoku(char* path)
     //Transform the image to a square
     Matrix* perspectiveCorrected = TransformPerspective(resized, square,PERSPECTIVE_WIDTH);
     M_SaveImage(perspectiveCorrected,"images/export/step_3.jpg");
-
 
     //Split the image into 81 cells
     Matrix** cells = SplitCells(perspectiveCorrected, 9); 
