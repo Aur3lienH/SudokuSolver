@@ -2,6 +2,7 @@
 #include <math.h>
 #include "matrix/Matrix.h"
 #include "imageProcessing/Image.h"
+#include "imageProcessing/SquareDetection.h"
 const size_t POINT_RADIUS = 3;
 
 
@@ -167,4 +168,35 @@ void P_DrawSDL(Image* _image, Point* p, __uint32_t _color)
 void P_Free(Point* point)
 {
     free(point);
+}
+
+
+PointSet* P_GetAllPointBetween(Point a, Point b)
+{
+    PointSet* pointSet = malloc(sizeof(PointSet));
+    pointSet->size = 0;
+    pointSet->points = malloc(sizeof(Point) * (abs(a.x - b.x) + abs(a.y - b.y)));
+    float dx = b.x - a.x;
+    float dy = b.y - a.y;
+    float steps = 0;
+    if(fabsf(dx) > fabsf(dy))
+    {
+        steps = fabsf(dx);
+    }
+    else
+    {
+        steps = fabsf(dy);
+    }
+    float xInc = dx / steps;
+    float yInc = dy / steps;
+    float x = a.x;
+    float y = a.y;
+    for (size_t i = 0; i < steps; i++)
+    {
+        pointSet->points[i] = (Point){x,y};
+        x += xInc;
+        y += yInc;
+        pointSet->size++;
+    }
+    return pointSet;
 }

@@ -5,6 +5,7 @@
 #include "geometry/Square.h"
 #include "matrix/Matrix.h"
 #include "imageProcessing/Image.h"
+#include "imageProcessing/SquareDetection.h"
 
 #define DIST(x1,y1,x2,y2) sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))
 
@@ -488,5 +489,20 @@ Matrix* TransformPerspectiveColor_I(Matrix* in, size_t newWidth, double* h)
     Matrix* out = M_Create_3D(newWidth, newWidth,3);
     TransformPerspectiveColor(in, out, h);
     return out;
+}
+
+//Adjust the square with the point of the square
+Matrix* Adjust(Matrix* img, SquareDetectionResult sdr)
+{
+    Square square = sdr.square;
+    PointSet* pointSet = sdr.pointSet;
+
+    //Get all the ponits on the edges of the square
+    Point p1 = square.points[0];
+    Point p2 = square.points[1];
+    Point p3 = square.points[2];    
+    Point p4 = square.points[3];
+
+    
 }
 

@@ -162,11 +162,11 @@ Matrix* MatrixToDigit(Matrix* matrix, int* isBlankPtr)
     Matrix* downSized = Downsize(res,28,28);
     output = CenterDigit(output,28);
     */
-   RemoveCorners(matrix,matrix->rows);
-   Matrix* input = M_ZoomI(matrix,matrix->rows,0.75);
-   if(isBlankPtr != NULL) *isBlankPtr = IsBlank(input);
-   Matrix* centered = CenterDigit(input,input->rows);
-   Matrix* downSized = Downsize(centered,28,28);
+   //RemoveCorners(matrix,matrix->rows);
+   //Matrix* input = M_ZoomI(matrix,matrix->rows,0.75);
+   if(isBlankPtr != NULL) *isBlankPtr = IsBlank(matrix);
+   //Matrix* centered = CenterDigit(input,input->rows);
+   Matrix* downSized = Downsize(matrix,28,28);
     return downSized;
 }
 

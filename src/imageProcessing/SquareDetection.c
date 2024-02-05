@@ -229,14 +229,18 @@ Square getSquareFromPointSet(PointSet* pointSet, Matrix* img)
 }
 
 
-Square GetSquareWithContour(Matrix* img)
+SquareDetectionResult GetSquareWithContour(Matrix* img)
 {
+    SquareDetectionResult result;
+    result.pointSet = NULL;
+    Square square;
+    square.points[0] = (Point){0,0};
+    square.points[1] = (Point){0,0};
+    square.points[2] = (Point){0,0};
+    square.points[3] = (Point){0,0};
+    result.square = square;
     Matrix* flag = M_Create_2D(img->rows,img->cols);
-    Square res;
-    res.points[0] = (Point){0,0};
-    res.points[1] = (Point){0,0};
-    res.points[2] = (Point){0,0};
-    res.points[3] = (Point){0,0};
+
 
     for (size_t i = 0; i < img->rows; i++)
     {
@@ -254,16 +258,15 @@ Square GetSquareWithContour(Matrix* img)
             S_Sort(&square,img);
             if(S_IsSquareComplete(img,&square,10))
             {
-                if(S_Perimeter(&square) > S_Perimeter(&res))
+                if(S_Perimeter(&square) > S_Perimeter(&result.square))
                 {
-                    res = square;
+                    result.square = square;
+                    result.pointSet = pointSet;
                 }
             }
-
-            
         }
     }
     M_SaveImage(flag,"images/export/step_1.jpg");
-    S_Sort(&res, img);
-    return res;
+    S_Sort(&result.square, img);
+    return result;
 }

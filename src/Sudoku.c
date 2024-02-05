@@ -38,10 +38,11 @@ char* GetResolvedSudoku(char* path, int* success)
 
     Matrix* canny = Canny(grayscaled, 1);
 
-    Square square = GetSquareWithContour(canny);
+    SquareDetectionResult sdr = GetSquareWithContour(canny);
+
     
 
-    double* hForward = CalculateH(square, WidthToSquare(PERSPECTIVE_WIDTH));
+    double* hForward = CalculateH(sdr.square, WidthToSquare(PERSPECTIVE_WIDTH));
 
     M_SaveImage3D(resized, "images/export/resized.jpg");
 
