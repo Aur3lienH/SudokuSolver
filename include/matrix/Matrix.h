@@ -103,6 +103,11 @@ int M_Equals(const Matrix* a, const Matrix* b);
 //Save the matrix in a file
 void M_Save(const Matrix* m, FILE* file);
 
+//Get the size neccesary to save the matrix in a file
+size_t M_SaveSize(const Matrix* m);
+
+size_t M_SaveSizeDim(size_t rows, size_t cols, size_t dims);
+
 //Load the matrix from a file
 Matrix* M_Load(FILE* file);
 

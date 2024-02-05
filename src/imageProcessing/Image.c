@@ -1,5 +1,6 @@
 #include "imageProcessing/Image.h"
 #include "imageProcessing/SdlConverter.h"
+#include "imageProcessing/exifReader.h"
 #include <err.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +14,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #endif
+
+
+
 
 Image* Image_Create(size_t width, size_t height, size_t channels)
 {
@@ -28,15 +32,92 @@ Image* Image_Create(size_t width, size_t height, size_t channels)
 #endif
 }
 
+
+ImageMobile* rotate90(ImageMobile* image)
+{
+    ImageMobile* newImage = Image_Create(image->height,image->width,4);
+    for (size_t i = 0; i < image->height; i++)
+    {
+        for (size_t j = 0; j < image->width; j++)
+        {
+            size_t newIndex = (image->height - i - 1) + j * image->height;
+            size_t oldIndex = i * image->width + j;
+            newImage->pixels[newIndex*4] = image->pixels[oldIndex*4];
+            newImage->pixels[newIndex*4+1] = image->pixels[oldIndex*4+1];
+            newImage->pixels[newIndex*4+2] = image->pixels[oldIndex*4+2];
+            newImage->pixels[newIndex*4+3] = image->pixels[oldIndex*4+3];
+        }
+    }
+    return newImage;
+}
+
+ImageMobile* rotate180(ImageMobile* image)
+{
+    ImageMobile* newImage = Image_Create(image->width,image->height,4);
+    for (size_t i = 0; i < image->height; i++)
+    {
+        for (size_t j = 0; j < image->width; j++)
+        {
+            size_t newIndex = (image->height - i - 1) + (image->width - j - 1) * image->height;
+            size_t oldIndex = i * image->width + j;
+            newImage->pixels[newIndex*4] = image->pixels[oldIndex*4];
+            newImage->pixels[newIndex*4+1] = image->pixels[oldIndex*4+1];
+            newImage->pixels[newIndex*4+2] = image->pixels[oldIndex*4+2];
+            newImage->pixels[newIndex*4+3] = image->pixels[oldIndex*4+3];
+        }
+    }
+    return newImage;
+}
+
+ImageMobile* rotate270(ImageMobile* image)
+{
+    ImageMobile* newImage = Image_Create(image->height,image->width,4);
+    for (size_t i = 0; i < image->height; i++)
+    {
+        for (size_t j = 0; j < image->width; j++)
+        {
+            size_t newIndex = i + (image->width - j - 1) * image->height;
+            size_t oldIndex = i * image->width + j;
+            newImage->pixels[newIndex*4] = image->pixels[oldIndex*4];
+            newImage->pixels[newIndex*4+1] = image->pixels[oldIndex*4+1];
+            newImage->pixels[newIndex*4+2] = image->pixels[oldIndex*4+2];
+            newImage->pixels[newIndex*4+3] = image->pixels[oldIndex*4+3];
+        }
+    }
+    return newImage;
+}
+
 Image* Image_Load(const char* path)
 {
 #if MOBILE
+    __uint16_t orientation = getExifOrientation(path);
+    printf("Orientation: %d\n",orientation);
+
     //Load the image with stb_image and put it in the orientation of the image
     ImageMobile* img = malloc(sizeof(ImageMobile));
     img->pixels = stbi_load(path, &img->width, &img->height, &img->channels, 4);
     img->channels = (int)3;
 
+    if(orientation == 6)
+    {
+        ImageMobile* rotated = rotate90(img);
+        Image_Free(img);
+        img = rotated;
+    }
+    else if(orientation == 3)
+    {
+        ImageMobile* rotated = rotate180(img);
+        Image_Free(img);
+        img = rotated;
+    }
+    else if(orientation == 8)
+    {
+        ImageMobile* rotated = rotate270(img);
+        Image_Free(img);
+        img = rotated;
+    }
     return img;
+
 #else
     return IMG_Load(path);
 #endif

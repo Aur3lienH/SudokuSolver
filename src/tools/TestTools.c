@@ -1,5 +1,5 @@
 #include "tools/TestTools.h"
-
+#include <stdio.h>
 
 void PrintTestResult(char* testName, int result)
 {

@@ -4,7 +4,8 @@
 #include "imageProcessing/stb_truetype.h"
 
 const char* fontPath = "fonts/roboto.ttf";
-
+const float FONT_FORCE = 0.5f;
+const float OVERLIGN_FORCE = 0.5f;
 
 
 stbtt_fontinfo* initFont()
@@ -59,12 +60,44 @@ void AddDigit(stbtt_fontinfo* fontInfo,Matrix* image, int digit, int x, int y, C
         if(bitmap[i] != 0)
         {
             size_t index = ((y + i / width) * image->cols + x + i % width) * 3;
-            image->data[index] = color.r / 255.0f;
-            image->data[index + 1] = color.g / 255.0f;
-            image->data[index + 2] = color.b / 255.0f;
+            image->data[index] = (color.r / 255.0f) * (bitmap[i] / 255.0f) * FONT_FORCE + image->data[index] * (1 - FONT_FORCE);
+            image->data[index + 1] = (color.g / 255.0f) * (bitmap[i] / 255.0f) * FONT_FORCE + image->data[index + 1] * (1 - FONT_FORCE);
+            image->data[index + 2] = (color.b / 255.0f) * (bitmap[i] / 255.0f) * FONT_FORCE + image->data[index + 2] * (1 - FONT_FORCE);
         }
     }
     stbtt_FreeBitmap(bitmap, NULL);
+}
+
+void OverlignDigit(Matrix* input, size_t rowIndex, size_t colIndex,size_t cellWidth ,Color color)
+{
+    size_t startRow = rowIndex * cellWidth;
+    size_t startCol = colIndex * cellWidth;
+
+    for (size_t i = startRow; i < startRow + cellWidth; i++)
+    {
+        for (size_t j = startCol; j < startCol + cellWidth; j++)
+        {
+            size_t index = (i * input->cols + j) * 3;
+            input->data[index] = input->data[index] * (1 - OVERLIGN_FORCE) + color.r / 255.0f * OVERLIGN_FORCE;
+            input->data[index + 1] = input->data[index + 1] * (1 - OVERLIGN_FORCE) + color.g / 255.0f * OVERLIGN_FORCE;
+            input->data[index + 2] = input->data[index + 2] * (1 - OVERLIGN_FORCE) + color.b / 255.0f * OVERLIGN_FORCE;
+        }
+    }
+}
+
+
+void OverlignMatrix(Matrix* input, int** error)
+{
+    for (size_t i = 0; i < 9; i++)
+    {
+        for (size_t j = 0; j < 9; j++)
+        {
+            if(error[i][j] == -1)
+            {
+                OverlignDigit(input,i,j,input->cols / 9,Color_Create(255,0,0));
+            }
+        }
+    }
 }
 
 

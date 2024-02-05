@@ -5,7 +5,7 @@
 #include "imageProcessing/Image.h"
 #include <math.h>
 //const size_t REMOVE_CORNER_WIDTH = 4;
-const float REMOVE_CORNER_RATIO = 0.20f;
+const float REMOVE_CORNER_RATIO = 0.05f;
 
 
 

@@ -1,7 +1,15 @@
 #pragma once
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
 #include "matrix/Matrix.h"
 #include "deepLearning/Network.h"
 #include "deepLearning/Dataset.h"
+
+
+
+
+
 
 
 /*
@@ -45,7 +53,11 @@ char S_MatrixToLabel(const Matrix* m);
 float TestAccuracy(Network* network, Dataset* dataset);
 
 //Save a mnist model using his accuracy as title
-void Reco_Save(Network* network);
+void Reco_Save(Network* network,Dataset* trainSet, Dataset* testSet);
 
 //Load the model with the best test accuracy
 Network* LoadBestRecognitionModel();
+
+void SaveDigit(const Matrix* matrix, uint8_t label, FILE* file);
+
+Dataset* LoadHandWritten(const char* path);

@@ -11,12 +11,20 @@
 #include "tools/StringTools.h"
 #include "imageProcessing/DigitProcess.h"
 
+GtkWidget *darea;
+const char* READING_DIGIT_PATH = "datasets/unsure.data";
+const char* PADDING = "datasets/padding.p";
 float* Pixels = NULL;
 const size_t PixelsWidth = 28;
 const size_t PixelsCount = PixelsWidth * PixelsWidth;
 const float FillingSpeed = 0.5;
 Network* network = NULL;
 Matrix* input = NULL;
+int testingDigits = 0;
+FILE* outputFile = NULL;
+FILE* readerFile = NULL;
+FILE* paddingFILE = NULL;
+size_t padding = 0;
 
 /*
 *   Function: dd_load_css
@@ -103,7 +111,6 @@ static gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data
     char* text = (char*)malloc(sizeof(char) * 2);
     text[1] = '\0';
     const Matrix* res = N_Process(network,input);
-    M_Print(res, "res");
         
     for (size_t i = 0; i < 10; i++)
     {
@@ -216,11 +223,55 @@ static gboolean on_mouse_move(GtkWidget *widget, GdkEventMotion *event, gpointer
     return FALSE;
 }
 
+void NextDigit()
+{
+    if(readerFile == NULL)
+    {
+        printf("Error opening the file !\n");
+        return;
+    }
+    else
+    {
+        Matrix* temp = M_Load(readerFile);
+        if(temp != NULL)
+        {
+            M_Copy(temp,input);
+            M_Free(temp);
+            gtk_widget_queue_draw(darea);
+        }
+        else
+        {
+            printf("Error loading the digit !\n");
+        }
+    }
+    padding++;
+}
 
+void validate_button(GtkWidget *widget, gpointer data) {
+    //Get the label given by the network
+    const Matrix* res = N_Process(network,input);
+    size_t maxIndex = 0;
+    for (size_t i = 0; i < 10; i++)
+    {
+        if(res->data[i] > res->data[maxIndex])
+        {
+            maxIndex = i;
+        }
+    }
+    uint8_t byteIndex = (uint8_t)maxIndex;
+    SetTheNumber(widget, (gpointer)byteIndex);
+}
+
+void SetTheNumber(GtkWidget* widget, gpointer data)
+{
+    size_t number = (size_t)data;
+    SaveDigit(input, number, outputFile);
+    NextDigit();
+}
 
 int DrawDigit(int argc, char *argv[], Network* n) {
+
     GtkWidget *window;
-    GtkWidget *darea;
     Dataset* dataset = NULL;
     Pixels = (float*)malloc(sizeof(float) * PixelsCount);
     for (size_t i = 0; i < PixelsCount; i++)
@@ -269,6 +320,23 @@ int DrawDigit(int argc, char *argv[], Network* n) {
             M_Free(temp);
 
         }
+        else if(CompareStrings(argv[0], "--filter"))
+        {
+            testingDigits = 1;
+            argc--;
+            argv++;
+            if(argc >= 1)
+            {
+                network = N_Load(argv[0]);
+            }
+            else
+            {
+                printf("loading best model\n");
+                network = LoadBestRecognitionModel();
+            }
+            input = M_Create_2D_Data(PixelsCount,1,Pixels);
+
+        }
         else{
             input = M_Create_2D_Data(PixelsCount,1,Pixels); 
         }
@@ -311,17 +379,30 @@ int DrawDigit(int argc, char *argv[], Network* n) {
     // Create a new window.
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+    // Create a container box.
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(window), box);
+
+
+    GtkWidget* drawingAreaBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_widget_set_size_request(drawingAreaBox, -1, PixelsWidth * 20 + 250); // Height as padding
+    gtk_box_pack_start(GTK_BOX(box), drawingAreaBox, FALSE, FALSE, 0);
+
+    GtkWidget* buttonBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(box), buttonBox, FALSE, FALSE, 0);
+
+
     // Create a drawing area.
     darea = gtk_drawing_area_new();
-    gtk_container_add(GTK_CONTAINER(window), darea);
+    gtk_box_pack_start(GTK_BOX(drawingAreaBox), darea, TRUE, TRUE,0);
 
-    // Connect the "draw" event to a signal handler (this calls the on_draw_event function when the window needs to be redrawn).
+    // Connect the "draw" event to a signal handler.
     g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
 
-    // Connect the "motion-notify-event" event to a signal handler (this calls the on_mouse_move function when the mouse moves over the window).
+    // Connect the "motion-notify-event" event to a signal handler.
     g_signal_connect(G_OBJECT(window), "motion-notify-event", G_CALLBACK(on_mouse_move), NULL);
 
-    // Connect the "destroy" event to the main GTK loop to make sure the application is terminated if we close the window.
+    // Connect the "destroy" event to exit the application.
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), NULL);
@@ -330,16 +411,78 @@ int DrawDigit(int argc, char *argv[], Network* n) {
 
     // Set the default size of the window.
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(window), PixelsWidth * 20, PixelsWidth * 20 + 100); // Window size
+
+    size_t height = testingDigits ? PixelsWidth * 20 + 200 : PixelsWidth * 20 + 100;
+    gtk_window_set_default_size(GTK_WINDOW(window), PixelsWidth * 20, height); // Window size
     gtk_window_set_title(GTK_WINDOW(window), "Digit Drawing");
+
+    if(testingDigits)
+    {
+        GtkWidget* button = gtk_button_new_with_label("valid");
+        g_signal_connect(button, "clicked", G_CALLBACK(validate_button), NULL);
+        gtk_box_pack_start(GTK_BOX(buttonBox), button, FALSE, FALSE, 0);
+        for (size_t i = 0; i < 10; i++)
+        {
+            char* label = (char*)malloc(sizeof(char) * 2);
+            label[1] = '\0';
+            label[0] = i + '0';
+            GtkWidget* digitButton = gtk_button_new_with_label(label);
+
+            g_signal_connect(digitButton, "clicked", G_CALLBACK(SetTheNumber), (gpointer)i);
+            gtk_box_pack_start(GTK_BOX(buttonBox), digitButton, FALSE,FALSE, 0);
+
+
+        }
+
+        GtkWidget* skipButton = gtk_button_new_with_label("skip");
+        g_signal_connect(skipButton, "clicked", G_CALLBACK(NextDigit), NULL);
+        gtk_box_pack_start(GTK_BOX(buttonBox), skipButton, FALSE, FALSE, 0);
+        
+
+        outputFile = fopen("datasets/digits.data","awb");
+        readerFile = fopen(READING_DIGIT_PATH,"rb");
+        if(readerFile == NULL)
+        {
+            printf("Error opening the file !\n");
+            exit(EXIT_FAILURE);
+        }
+        if(outputFile == -1)
+        {
+            printf("Error opening the file !\n");
+            exit(EXIT_FAILURE);
+        }
+
+        paddingFILE = fopen(PADDING,"rb");
+        if(paddingFILE != NULL)
+        {
+            fread(&padding,sizeof(size_t),1,paddingFILE);
+            fclose(paddingFILE);
+
+            size_t index = (M_SaveSizeDim(28,28,1)) * padding;
+            fseek(readerFile,index,SEEK_SET);
+            printf("padding : %ld\n",padding);
+        }
+        
+    }
 
     gtk_widget_set_events(window, gtk_widget_get_events(window) | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
 
     // Display the widgets.
     gtk_widget_show_all(window);
+    
 
     // GTK main loop.
     gtk_main();
+    if(outputFile != NULL)
+    {
+        fclose(outputFile);
+    }
+    paddingFILE = fopen(PADDING,"wb");
+    if(paddingFILE != NULL)
+    {
+        fwrite(&padding,sizeof(size_t),1,paddingFILE);
+        fclose(paddingFILE);
+    }
     free(Pixels);
     N_Free(network);
     if(dataset != NULL)

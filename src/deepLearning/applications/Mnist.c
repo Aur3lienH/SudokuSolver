@@ -19,11 +19,14 @@
 #include <stdint.h>
 
 
+
+
 const char* MNIST_DATA_PATH = "datasets/train-images.idx3-ubyte";
 const char* MNIST_LABEL_PATH = "datasets/train-labels.idx1-ubyte";
 const char* MNIST_TEST_DATA_PATH = "datasets/t10k-images.idx3-ubyte";
 const char* MNIST_TEST_LABEL_PATH = "datasets/t10k-labels.idx1-ubyte";
 const char* SUDOKU_DATA_PATH = "datasets/datasetCreation/processed/all_digits_images.bin";
+const char* HANDWRITTEN_DATA_PATH = "datasets/digits.data";
 
 Matrix* temp = NULL;
 
@@ -52,18 +55,12 @@ void Mnist_Train_ConvLayers()
 
     Network* network = N_CreateNetwork();
     N_AddLayer(network, I_Create_2D(LS_Create3D(28, 28, 1)));
-    N_AddLayer(network, Conv_Create(LS_Create3D(5, 5, 128))); 
+    N_AddLayer(network, Conv_Create(LS_Create3D(5, 5, 64))); 
     N_AddLayer(network, MaxPool_Create(2));
     N_AddLayer(network, Conv_Create(LS_Create3D(3, 3, 64))); 
     N_AddLayer(network, MaxPool_Create(2));
     N_AddLayer(network, Flatten_Create());
-    N_AddLayer(network, Drop_Create(0.2));
-    N_AddLayer(network, FCL_Create(512, ReLU())); 
-    N_AddLayer(network, Drop_Create(0.2)); 
-    N_AddLayer(network, FCL_Create(256, ReLU())); 
-    N_AddLayer(network, Drop_Create(0.2)); 
-    N_AddLayer(network, FCL_Create(128, ReLU())); 
-    N_AddLayer(network, Drop_Create(0.2)); 
+    N_AddLayer(network, FCL_Create(128, ReLU()));
     N_AddLayer(network, FCL_Create(10, Softmax()));
 
     N_Compile(network, CE_Create());
@@ -74,7 +71,7 @@ void Mnist_Train_ConvLayers()
 
     printf("Number of logical processors : %d\n",num_of_logical_processors);
 
-    N_Train(network,trainDataset,128,60,num_of_logical_processors,0.001);
+    N_Train(network,trainDataset,1000,128,60,num_of_logical_processors,0.001);
 
     Dataset* testDataset = LoadMnist(MNIST_TEST_DATA_PATH,MNIST_TEST_LABEL_PATH,2051,2049);
 
@@ -110,7 +107,7 @@ void Mnist_Train()
     printf("Number of logical processors : %d\n",num_of_logical_processors);
 
 
-    N_Train(network,trainDataset,128,20,num_of_logical_processors,0.001);
+    N_Train(network,trainDataset,1000,128,20,num_of_logical_processors,0.001);
 
 
     Dataset* testDataset = LoadMnist(MNIST_TEST_DATA_PATH,MNIST_TEST_LABEL_PATH,2051,2049);
@@ -124,6 +121,7 @@ void Mnist_Train()
     
 
     char* path;
+
     asprintf(&path,"./models/recognition/model_%.4f.model",testAccuracy);
     N_Save(network,path);
     free(path);
@@ -132,10 +130,16 @@ void Mnist_Train()
     N_Free(network);
 }
 
-void Reco_Save(Network* network)
+void Reco_Save(Network* network,Dataset* trainSet,Dataset* testSet)
 {
     char* path;
-    float testAccuracy = TestAccuracy(network,LoadMnist(MNIST_TEST_DATA_PATH,MNIST_TEST_LABEL_PATH,2051,2049));
+    size_t trainSetSize = trainSet->size;
+    trainSet->size = trainSet->size < 10000 ? trainSet->size : 10000;
+    float trainAccuray = TestAccuracy(network,trainSet);
+    printf("🍔 Train accuracy : %.2f%% 🍔\n",trainAccuray);
+    trainSet->size = trainSetSize;
+    float testAccuracy = TestAccuracy(network,testSet);
+    printf("🍔 Test accuracy : %.2f%% 🍔\n",testAccuracy);
     asprintf(&path,"./models/recognition/model_%.4f.model",testAccuracy);
     N_Save(network,path);
     free(path);
@@ -178,7 +182,7 @@ void Rotation_Train()
 
     trainDataset->size = 50000;
 
-    N_Train(network,trainDataset,128,10,1,0.001);
+    N_Train(network,trainDataset,1000,128,10,1,0.001);
 
     float trainAccuray = TestAccuracy(network,trainDataset);
     printf("🍔 Train accuracy : %.2f%% 🍔\n",trainAccuray);
@@ -248,9 +252,15 @@ Matrix* S_LabelToMatrix(char label,size_t size)
 Dataset* LoadCombinedTrainDataset()
 {
     Dataset* mnistTrain = LoadMnist(MNIST_DATA_PATH,MNIST_LABEL_PATH,2051,2049);
-    Dataset* sudokuTrain = LoadSudokuDigitDataset();
+    printf("Size of the mnist dataset : %zu\n",mnistTrain->size);
+    Dataset* sudokuTrain = LoadSudokuDigitDataset(SUDOKU_DATA_PATH,1);
+    printf("Size of the sudoku dataset : %zu\n",sudokuTrain->size);
+    Dataset* handMadeSudoku = LoadHandWritten(HANDWRITTEN_DATA_PATH);
+    printf("Size of the hand made dataset : %zu\n",handMadeSudoku->size);
+
+
     Dataset* res = (Dataset*)malloc(sizeof(Dataset));
-    res->size = mnistTrain->size + sudokuTrain->size;
+    res->size = mnistTrain->size + sudokuTrain->size + handMadeSudoku->size;
     res->data = (Matrix***)malloc(sizeof(Matrix**) * 2);
     res->data[0] = (Matrix**)malloc(sizeof(Matrix*) * res->size);
     res->data[1] = (Matrix**)malloc(sizeof(Matrix*) * res->size);
@@ -264,6 +274,14 @@ Dataset* LoadCombinedTrainDataset()
         res->data[0][i + mnistTrain->size] = sudokuTrain->data[0][i];
         res->data[1][i + mnistTrain->size] = sudokuTrain->data[1][i];
     }
+    for (size_t i = 0; i < handMadeSudoku->size; i++)
+    {
+        res->data[0][i + mnistTrain->size + sudokuTrain->size] = handMadeSudoku->data[0][i];
+        res->data[1][i + mnistTrain->size + sudokuTrain->size] = handMadeSudoku->data[1][i];
+    }
+
+    printf("Size of the dataset : %zu\n",res->size);
+
     free(mnistTrain->data[0]);
     free(mnistTrain->data[1]);
     free(mnistTrain->data);
@@ -272,6 +290,9 @@ Dataset* LoadCombinedTrainDataset()
     free(sudokuTrain->data[1]);
     free(sudokuTrain->data);
     free(sudokuTrain);
+    free(handMadeSudoku->data[0]);
+    free(handMadeSudoku->data[1]);
+    free(handMadeSudoku->data);
     return res;
 }
 
@@ -493,6 +514,59 @@ Dataset* LoadSudokuDigitDataset()
             }
             dataset[0][i]->data[j] = value / 255.0;
         }
+    }
+
+    Dataset* res = (Dataset*)malloc(sizeof(Dataset));
+    res->data = dataset;
+    res->size = datasetSize;
+
+    return res;
+}
+void SaveDigit(const Matrix* matrix, uint8_t label, FILE* file)
+{
+    fwrite(&label,sizeof(label),1,file);
+    M_Save(matrix,file);
+    printf("%d saved \n",label);
+
+}
+
+Dataset* LoadHandWritten(const char* path)
+{
+    Matrix*** dataset = (Matrix***)malloc(sizeof(Matrix**) * 2);
+    FILE* datasetFile = fopen(path,"rb");
+
+    if(datasetFile == NULL)
+    {
+        printf("Dataset file cannot be open !\n");
+        exit(-1);
+    }
+    __uint32_t datasetSize;
+    size_t read;
+
+
+    //Get the length of the file in bytes 
+    size_t length;
+    fseek(datasetFile, 0, SEEK_END);
+    length = ftell(datasetFile);
+    fseek(datasetFile, 0, SEEK_SET);
+    datasetSize = length / ((M_SaveSizeDim(28,28,1) + 1));
+
+
+    dataset[0] = (Matrix**)malloc(sizeof(Matrix*) * datasetSize);
+    dataset[1] = (Matrix**)malloc(sizeof(Matrix*) * datasetSize);
+
+    for (size_t i = 0; i < datasetSize; i++)
+    {
+        uint8_t label;
+        read = fread(&label,sizeof(label),1,datasetFile);
+        if(read != 1)
+        {
+            printf("Error while reading dataset size !\n");
+            exit(-1);
+        }
+        dataset[1][i] = S_LabelToMatrix(label,10);
+
+        dataset[0][i] =  M_Load(datasetFile);
     }
 
     Dataset* res = (Dataset*)malloc(sizeof(Dataset));

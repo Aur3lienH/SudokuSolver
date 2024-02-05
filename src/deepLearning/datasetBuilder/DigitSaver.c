@@ -5,6 +5,9 @@
 #include <time.h>
 
 
+const char* UNSURE_DIGIT_PATH = "datasets/unsure.data";
+
+
 char* timeToFilename()
 {
     time_t t = time(NULL);
@@ -17,10 +20,8 @@ char* timeToFilename()
 
 void SaveDigits(Matrix** matrix, unsigned char* supposedDigit, size_t matrixCount)
 {
-    printf("Saving digits\n");
-    char* time = timeToFilename();
-    printf("Time : %s\n", time);
-    FILE* file = fopen(time, "wb");
+
+    FILE* file = fopen(UNSURE_DIGIT_PATH, "awb");
     if(file == NULL)
     {
         printf("Error while opening file\n");
@@ -28,11 +29,8 @@ void SaveDigits(Matrix** matrix, unsigned char* supposedDigit, size_t matrixCoun
     }
     for (size_t i = 0; i < matrixCount; i++)
     {
-        printf("hello\n");
-        printf("Saving digit %d\n", supposedDigit[i]);
         M_Dim(matrix[i]);
         M_Save(matrix[i], file); 
-        fprintf(file, "%d\n", supposedDigit[i]);
     }
     fclose(file);
     

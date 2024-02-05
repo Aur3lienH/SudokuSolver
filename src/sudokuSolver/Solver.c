@@ -125,6 +125,64 @@ int solver(int grid[9][9])
 	return 0;
 }
 
+int getErrorSudoku(int grid[9][9], int** errorFound)
+{
+	int error = 0;
+	for (size_t i = 0; i < 9; i++)
+	{
+		for (size_t j = 0; j < 9; j++)
+		{
+			for (size_t k = j+1; k < 9; k++)
+			{
+				if(grid[i][j] == grid[i][k] && grid[i][j] != 0)
+				{
+					error = 1;
+					errorFound[i][j] = -1;
+					errorFound[i][k] = -1;
+				}
+			}
+		}
+	}
+
+
+	for (size_t i = 0; i < 9; i++)
+	{
+		for (size_t j = 0; j < 9; j++)
+		{
+			for (size_t k = j+1; k < 9; k++)
+			{
+				if(grid[j][i] == grid[k][i] && grid[j][i] != 0)
+				{
+					error = 1;
+					errorFound[j][i] = -1;
+					errorFound[k][i] = -1;
+				}
+			}
+		}
+	}
+
+	for (size_t i = 0; i < 9; i+=3)
+	{
+		for (size_t j = 0; j < 9; j+=3)
+		{
+			for (size_t k = 0; k < 9; k++)
+			{
+				for (size_t l = k+1; l < 9; l++)
+				{
+					if(grid[i+k/3][j+k%3] == grid[i+l/3][j+l%3] && grid[i+k/3][j+k%3] != 0)
+					{
+						error = 1;
+						errorFound[i+k/3][j+k%3] = -1;
+						errorFound[i+l/3][j+l%3] = -1;
+					}
+				}
+			}
+		}
+	}
+	return error;
+}
+
+
 
 //Return in missing digits the digits that were not in the original grid
 int solverMissingDigits(int grid[9][9], int** missingDigits)

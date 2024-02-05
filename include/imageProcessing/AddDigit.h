@@ -9,3 +9,4 @@
 void AddMissingDigits(Matrix* image, int** digits, int cellWidth, Color color);
 
 
+void OverlignMatrix(Matrix* input, int** error);

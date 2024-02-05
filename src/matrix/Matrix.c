@@ -446,6 +446,15 @@ void M_Save(const Matrix* m, FILE* file)
     fwrite(m->data,sizeof(float),M_GetSize3D(m),file);
 }
 
+size_t M_SaveSize(const Matrix* m)
+{
+    return sizeof(size_t) * 5 + sizeof(float) * M_GetSize3D(m);
+}
+
+size_t M_SaveSizeDim(size_t rows, size_t cols, size_t dims)
+{
+    return sizeof(size_t) * 5 + sizeof(float) * rows * cols * dims;
+}
 
 Matrix* M_Load(FILE* file)
 {

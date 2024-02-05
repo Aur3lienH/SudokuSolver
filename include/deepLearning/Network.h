@@ -92,7 +92,7 @@ void* N_BackpropagationThread(void* args);
 /// @brief 
 /// @param n the network
 /// @param dataset Points to two array : the input data array and desired output array
-void N_Train(Network* n, Dataset* dataset, size_t batchSize, size_t epochsCount, size_t threadsCount, float learningRate);
+void N_Train(Network* n, Dataset* dataset,size_t testSetSize, size_t batchSize, size_t epochsCount, size_t threadsCount, float learningRate);
 
 //Update weigths and biases
 void N_Update(Network* n, float learningRate);

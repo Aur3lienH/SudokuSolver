@@ -252,7 +252,7 @@ Square GetSquareWithContour(Matrix* img)
             free(pointSet->points);
             free(pointSet);
             S_Sort(&square,img);
-            if(S_IsSquareComplete(img,&square,5))
+            if(S_IsSquareComplete(img,&square,10))
             {
                 if(S_Perimeter(&square) > S_Perimeter(&res))
                 {

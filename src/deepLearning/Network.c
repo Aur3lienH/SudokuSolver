@@ -108,13 +108,28 @@ double N_Backpropagation(Network* n, Matrix* input, Matrix* desiredOutput)
     return loss;
 }
 
-void N_Train(Network* n, Dataset* dataset, size_t batchSize, size_t epochsCount, size_t threadsCount, float learningRate)
+void N_Train(Network* n, Dataset* dataset,size_t testSetSize, size_t batchSize, size_t epochsCount, size_t threadsCount, float learningRate)
 {
+    if(dataset->size < testSetSize)
+    {
+        printf("The test set size is bigger than the dataset size\n");
+        exit(-1);
+    }
+
     size_t dividedDatasetSize = dataset->size / threadsCount;
     size_t auxBatchSize = batchSize / threadsCount;
     size_t batchCount = dividedDatasetSize / auxBatchSize;
     ProgressBar* progressBar = PB_Create(batchCount * epochsCount);
     pthread_t* threads = (pthread_t*)malloc(sizeof(pthread_t) * (threadsCount - 1));
+
+    N_ShuffleDataset(dataset);
+    Dataset* testSet = malloc(sizeof(Dataset));
+    testSet->size = testSetSize;
+    testSet->data = (Matrix***)malloc(sizeof(Matrix**) * 2);
+    testSet->data[0] = dataset->data[0] + dataset->size - testSet->size;
+    testSet->data[1] = dataset->data[1] + dataset->size - testSet->size;
+
+    dataset->size -= testSet->size;
 
     Network** networks = (Network**)malloc(sizeof(Network*) * threadsCount);
     Dataset** datasets = (Dataset**)malloc(sizeof(Dataset*) * (threadsCount - 1));
@@ -193,7 +208,7 @@ void N_Train(Network* n, Dataset* dataset, size_t batchSize, size_t epochsCount,
             i += auxBatchSize;
         }
         //Automatically save the model at each model, only works for Mnist at the moment
-        Reco_Save(networks[0]);
+        Reco_Save(networks[0],dataset,testSet);
 
 
     }

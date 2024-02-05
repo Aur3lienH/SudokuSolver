@@ -75,33 +75,39 @@ int calculate_mean(int histogram[], int num_pixels) {
   return sum / num_pixels;
 }
 
+double calculateMean(int* histogram, int startThreshold, int endThreshold, int* _numPixels)
+{
+    double sum = 0;
+    double numPixels = 0;
+    for (size_t i = startThreshold; i < endThreshold; i++)
+    {
+        sum += i * histogram[i];
+        numPixels += histogram[i];
+    }
+    if(numPixels == 0) return 0;
+    *_numPixels = numPixels;
+    return sum / numPixels;
+}
+
 // Function to calculate the variance of a grayscale image for a specific threshold
-double calculateDifferenceOfMean(int histogram[], int num_pixels, int threshold) {
-  double mean1 = 0, mean2 = 0;
-  double numberOfPixels1 = 0, numberOfPixels2 = 0;
-  for (size_t i = 0; i < threshold; i++)
-  {
-      mean1 += (double)i * histogram[i];
-      numberOfPixels1 += histogram[i];
-  }
+double calculateDifferenceOfMean(int* histogram, int num_pixels, int threshold) {
+    int numberOfPixels1, numberOfPixels2;
+    double mean1 = calculateMean(histogram, 0, threshold, &numberOfPixels1);
+    double mean2 = calculateMean(histogram, threshold, 256, &numberOfPixels2);
+    return (mean1 - mean2) * (mean1 - mean2) * sqrt(numberOfPixels1 * numberOfPixels2);
+}
 
-  for (size_t i = threshold; i < 256; i++)
-  {
-      mean2 += (double)i * histogram[i];
-      numberOfPixels2 += histogram[i];
-  }
-
-
-
-  if (numberOfPixels1 == 0 || numberOfPixels2 == 0) return 0; 
-  mean1 /= numberOfPixels1;
-  mean2 /= numberOfPixels2;
-
-  return (mean1 - mean2) * (mean1 - mean2) * sqrt(numberOfPixels1 * numberOfPixels2);
+double calculateDifferenceOfMean3(int* histogram, int num_pixels, int threshold1, int threshold2)
+{
+    int numberOfPixels1, numberOfPixels2, numberOfPixels3;
+    double mean1 = calculateMean(histogram, 0, threshold1, &numberOfPixels1);
+    double mean2 = calculateMean(histogram, threshold1, threshold2, &numberOfPixels2);
+    double mean3 = calculateMean(histogram, threshold2, 256, &numberOfPixels3);
+    return (mean1 - mean2) * (mean1 - mean2) * sqrt(numberOfPixels1 * numberOfPixels2) + (mean2 - mean3) * (mean2 - mean3) * sqrt(numberOfPixels2 * numberOfPixels3);
 }
 
 // Function to find the optimal threshold using Otsu's method
-int otsu_threshold(int histogram[], int num_pixels) {
+int otsu_threshold(int* histogram, int num_pixels) {
   int bestThreshold = 0;
   double bestVariance = 0;
   for (size_t i = 0; i < 256; i++)
@@ -116,10 +122,9 @@ int otsu_threshold(int histogram[], int num_pixels) {
   return bestThreshold;
 }
 
-
-float M_GetOtsu(Matrix* input)
+int* M_GetHistogram(Matrix* input)
 {
-    int histogram[256];
+    int* histogram = (int*)malloc(sizeof(int) * 256);
     for (size_t i = 0; i < 256; i++)
     {
         histogram[i] = 0;
@@ -132,13 +137,36 @@ float M_GetOtsu(Matrix* input)
             histogram[(size_t)(input->data[j + i * input->cols] * 255)]++;
         }
     }
+    return histogram;
+}
 
-
-    
-
-    
-    
+float M_GetOtsu(Matrix* input)
+{
+    int* histogram = M_GetHistogram(input);
     return otsu_threshold(histogram, input->rows * input->cols) / 255.0f;
+}
+
+
+float M_GetOtsu3(Matrix* input)
+{
+    int* histogram = M_GetHistogram(input);
+    int bestThreshold = 0;
+    double bestVariance = 0;
+
+    for (size_t i = 0; i < 256; i++)
+    {
+        for (size_t j = i; j < 256; j++)
+        {
+            double variance = calculateDifferenceOfMean3(histogram, input->rows * input->cols, i, j);
+            if(variance >= bestVariance)
+            {
+                bestVariance = variance;
+                bestThreshold = j;
+            }
+        }
+    }
+    return bestThreshold / 255.0f;
+    
 }
 
 
@@ -155,13 +183,14 @@ Matrix* M_OptimalBinarisation(Matrix* input)
 {
     Matrix* gaussian = GaussianBlur(input, 1.0f);
 
-    float otsu = M_GetOtsu(gaussian);
+    float otsu = M_Mean(gaussian);
+    printf("Otsu: %f\n", otsu);
     //Mean adaptive threshold
     Matrix* binarised = Binarisation(gaussian, otsu);
     //Variance adaptive threshold
 
     M_Inverse(binarised);
-    return binarised;
+    return gaussian;
 }
 
 

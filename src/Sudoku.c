@@ -80,10 +80,16 @@ char* GetResolvedSudoku(char* path, int* success)
     }
 
     print_grid(grid);
-
-    int resolved = solverMissingDigits(grid, missingDigits);
-
-    AddMissingDigits(perspectiveCorrected,missingDigits,PERSPECTIVE_WIDTH / 9,Color_Create(0,255,0));
+    int error = getErrorSudoku(grid, missingDigits);
+    if(error == 1)
+    {
+        OverlignMatrix(perspectiveCorrected, missingDigits);
+    }
+    else
+    {
+        int resolved = solverMissingDigits(grid, missingDigits);
+        AddMissingDigits(perspectiveCorrected,missingDigits,PERSPECTIVE_WIDTH / 9,Color_Create(0,255,0));   
+    }
 
     M_SaveImage3D(perspectiveCorrected, "images/export/prevFinal.jpg");
 

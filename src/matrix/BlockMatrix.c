@@ -19,7 +19,7 @@
 
 
 
-#define DEBUG 1
+#define DEBUG 0
 
 const size_t BLOCK_SIZE = 32;
 const size_t BLOCK_SIZE_SQUARED = BLOCK_SIZE * BLOCK_SIZE;
