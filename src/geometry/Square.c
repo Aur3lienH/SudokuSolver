@@ -17,12 +17,13 @@ Square* S_Create(Point* points)
     return square;
 }
 
-void S_Draw(Matrix* matrix, Square* square, float value)
+void S_Draw(Matrix* matrix, Square* square, Color color, int grayscale)
 {
-    P_DrawSegment(matrix, &square->points[0], &square->points[1], value);
-    P_DrawSegment(matrix, &square->points[1], &square->points[2], value);
-    P_DrawSegment(matrix, &square->points[2], &square->points[3], value);
-    P_DrawSegment(matrix, &square->points[3], &square->points[0], value);
+
+    P_DrawSegment(matrix, &square->points[0], &square->points[1], color,grayscale);
+    P_DrawSegment(matrix, &square->points[1], &square->points[2], color,grayscale);
+    P_DrawSegment(matrix, &square->points[2], &square->points[3], color,grayscale);
+    P_DrawSegment(matrix, &square->points[3], &square->points[0], color,grayscale);
 }
 
 void S_DrawSDL(Image* image, Square* square, __uint32_t value)

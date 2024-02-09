@@ -252,9 +252,8 @@ SquareDetectionResult GetSquareWithContour(Matrix* img)
             }
             PointSet* pointSet = GetOneSquare(img,flag,(Point){j,i});
             Square square = getSquareFromPointSet(pointSet,img);
+            
 
-            free(pointSet->points);
-            free(pointSet);
             S_Sort(&square,img);
             if(S_IsSquareComplete(img,&square,10))
             {
@@ -268,5 +267,6 @@ SquareDetectionResult GetSquareWithContour(Matrix* img)
     }
     M_SaveImage(flag,"images/export/step_1.jpg");
     S_Sort(&result.square, img);
+    printf("pointSet size : %i\n",result.pointSet->size);
     return result;
 }

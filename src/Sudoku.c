@@ -39,8 +39,10 @@ char* GetResolvedSudoku(char* path, int* success)
     Matrix* canny = Canny(grayscaled, 1);
 
     SquareDetectionResult sdr = GetSquareWithContour(canny);
+    S_Draw(resized, &sdr.square, Color_Create(0,0,255), 0);
+    printf("size of pointSet : %i\n",sdr.pointSet->size);
 
-    
+    M_AdjustBorder(resized, sdr);
 
     double* hForward = CalculateH(sdr.square, WidthToSquare(PERSPECTIVE_WIDTH));
 
@@ -94,7 +96,7 @@ char* GetResolvedSudoku(char* path, int* success)
 
     M_SaveImage3D(perspectiveCorrected, "images/export/prevFinal.jpg");
 
-    double* hReverse = CalculateH(WidthToSquare(PERSPECTIVE_WIDTH), square);
+    double* hReverse = CalculateH(WidthToSquare(PERSPECTIVE_WIDTH), sdr.square);
 
     TransformPerspectiveColor(perspectiveCorrected, resized, hReverse);
 

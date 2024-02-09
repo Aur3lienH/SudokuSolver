@@ -184,7 +184,7 @@ Matrix* M_OptimalBinarisation(Matrix* input)
     Matrix* gaussian = GaussianBlur(input, 1.0f);
 
     float otsu = M_Mean(gaussian);
-    printf("Otsu: %f\n", otsu);
+    //printf("Otsu: %f\n", otsu);
     //Mean adaptive threshold
     Matrix* binarised = Binarisation(gaussian, otsu);
     //Variance adaptive threshold

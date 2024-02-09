@@ -2,7 +2,6 @@
 #include "Point.h"
 #include "matrix/Matrix.h"
 
-
 /*
 
 Represent a square with 4 points
@@ -17,7 +16,7 @@ typedef struct Square
 
 Square* S_Create(Point* points);
 
-void S_Draw(Matrix* matrix, Square* square, float value);
+void S_Draw(Matrix* matrix, Square* square, Color color, int grayscale);
 
 void S_DrawSDL(Image* surface, Square* square, __uint32_t value);
 

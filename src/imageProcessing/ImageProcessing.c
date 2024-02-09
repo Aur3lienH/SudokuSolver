@@ -13,14 +13,11 @@ Image* SudokuImgProcessing(Image* image)
     time_t start = clock();
     Matrix* res = PreprocessToCanny(image, 1);
     printf("Preprocessing took %f seconds\n", (float)(clock() - start) / CLOCKS_PER_SEC);
-    Square square = GetSquareWithContour(res);
+    SquareDetectionResult sdr = GetSquareWithContour(res);
     //Square square2 = Hough(res);
     Image* surface = MatrixToImage(res);
     M_Free(res);
-    P_DrawSDL(surface,&square.points[0],0xFF0000);
-    P_DrawSDL(surface,&square.points[1],0xFF0000);
-    P_DrawSDL(surface,&square.points[2],0xFF0000);
-    P_DrawSDL(surface,&square.points[3],0xFF0000);
+    S_DrawSDL(surface, &sdr.square, 0xFF0000FF);
 
     
     return surface;

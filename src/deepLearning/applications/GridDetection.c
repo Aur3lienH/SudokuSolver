@@ -41,7 +41,7 @@ void TrainGridRecognition(const char* datasetPath)
     //Get the thread count by getting the number of cores
     int threadCount = sysconf(_SC_NPROCESSORS_ONLN);
 
-    N_Train(network, dataset, 12, 100,1, 0.001f);
+    N_Train(network, dataset,1000, 12, 100,1, 0.001f);
 
     N_Save(network, "./models/grid/kadir.model");
 

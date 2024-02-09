@@ -491,18 +491,4 @@ Matrix* TransformPerspectiveColor_I(Matrix* in, size_t newWidth, double* h)
     return out;
 }
 
-//Adjust the square with the point of the square
-Matrix* Adjust(Matrix* img, SquareDetectionResult sdr)
-{
-    Square square = sdr.square;
-    PointSet* pointSet = sdr.pointSet;
-
-    //Get all the ponits on the edges of the square
-    Point p1 = square.points[0];
-    Point p2 = square.points[1];
-    Point p3 = square.points[2];    
-    Point p4 = square.points[3];
-
-    
-}
 
