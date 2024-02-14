@@ -3,8 +3,8 @@
 #include "imageProcessing/Image.h"
 
 
-Image* SudokuImgProcessing(Image* image);
+Image* SudokuImgProcessing(const Image* image);
 
-Matrix** SplitCells(Matrix* image, size_t cellCount);
+Matrix** SplitCells(const Matrix* image, size_t cellCount);
 
-Matrix* M_Grayscale(Matrix* image);
+Matrix* M_Grayscale(const Matrix* image);

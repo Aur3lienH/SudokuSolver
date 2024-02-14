@@ -33,3 +33,5 @@ void S_Print(Square* square);
 void S_Sort(Square* square, Matrix* img);
 
 void S_Free(Square* square);
+
+void S_Extend(Square* square, float factor, Matrix* img);

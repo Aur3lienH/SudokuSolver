@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include "tools/TestTools.h"
-
+#include <string.h>
 
 
 int JPGfilter(const struct dirent* name)
@@ -34,7 +34,7 @@ void TestSudoku(char* folder)
     }
     for (size_t i = 0; i < n; i++)
     {
-        char* path = malloc(sizeof(char) * 100);
+        char* path = malloc(sizeof(char) * 300);
         sprintf(path,"%s/%s",folder,namelist[i]->d_name);
         int success = 0;
         char* result = GetResolvedSudoku(path, &success);

@@ -7,6 +7,7 @@
 #include "deepLearning/Activation.h"
 #include "deepLearning/RandomInit.h"
 #include "tools/ConsoleTools.h"
+#include "tools/FileTools.h"
 #include <stdio.h>
 #include <err.h>
 #include <stdlib.h>
@@ -181,9 +182,9 @@ Layer* FCL_Load(FILE* file)
 {
     unsigned int neuronsCount;
     Activation* activation = NULL;
-    fread(&neuronsCount,sizeof(unsigned int),1,file);
+    CheckRead(fread(&neuronsCount,sizeof(unsigned int),1,file));
     unsigned char activationType;
-    fread(&activationType,sizeof(unsigned char),1,file);
+    CheckRead(fread(&activationType,sizeof(unsigned char),1,file));
 
     switch (activationType)
     {

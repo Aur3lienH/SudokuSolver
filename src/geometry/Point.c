@@ -14,7 +14,7 @@ Point* P_Create(int x, int y)
     return point;
 }
 
-P_DrawPixelFrom3D(Matrix* img,size_t fromX, size_t fromY, size_t toX, size_t toY)
+void P_DrawPixelFrom3D(Matrix* img,size_t fromX, size_t fromY, size_t toX, size_t toY)
 {
     size_t inputIndex = (fromX + fromY * img->cols) * 3;
     size_t outputIndex = (toX + toY * img->cols) * 3;
@@ -192,56 +192,42 @@ void P_Free(Point* point)
     free(point);
 }
 
-PointSet* P_GetAllPointBetween(Point a, Point b, Point* direction) {
+PointSet* P_GetAllPointBetween(Matrix* matrix, Point* p1, Point* p2) {
     PointSet* res = malloc(sizeof(PointSet));
-    if (!res) return NULL;
 
-    int dx = abs(b.x - a.x), sx = a.x < b.x ? 1 : -1;
-    int dy = -abs(b.y - a.y), sy = a.y < b.y ? 1 : -1;
-    int err = dx + dy, e2; /* error value e_xy */
-
-    // Set direction
-    if (dx > dy) {
-        direction->x = sx;
-        direction->y = 0;
-    } else if (dy > dx) {
-        direction->x = 0;
-        direction->y = sy;
-    } else {
-        direction->x = sx;
-        direction->y = sy;
+    float dx = p2->x - p1->x;
+    float dy = p2->y - p1->y;
+    float steps = 0;
+    if(fabsf(dx) > fabsf(dy))
+    {
+        steps = fabsf(dx);
     }
-
-    size_t capacity = 1;
-    size_t n = 0;
-    res->points = malloc(capacity * sizeof(Point));
-    if (!res->points) {
-        free(res);
-        return NULL;
+    else
+    {
+        steps = fabsf(dy);
     }
-
-    while (1) {
-        if (n >= capacity) {
-            capacity *= 2;
-            Point* temp = realloc(res->points, capacity * sizeof(Point));
-            if (!temp) {
-                free(res->points);
-                free(res);
-                return NULL;
-            }
-            res->points = temp;
+    float xInc = dx / steps;
+    float yInc = dy / steps;
+    float x = p1->x;
+    float y = p1->y;
+    res->points = NULL;
+    res->size = 0;
+    for (size_t i = 0; i < steps; i++)
+    {
+        
+        size_t x_int = (int)x;
+        size_t y_int = (int)y;
+        
+        if(x_int >= 0 && x_int < matrix->cols && y_int >= 0 && y_int < matrix->rows)
+        {
+            Point* p = P_Create(x_int, y_int);
+            res->points = realloc(res->points, sizeof(Point) * (res->size + 1));
+            res->points[res->size] = *p;
+            res->size++;
         }
-        res->points[n].x = a.x;
-        res->points[n].y = a.y;
-        n++;
-
-        if (a.x == b.x && a.y == b.y) break;
-        e2 = 2 * err;
-        if (e2 >= dy) { err += dy; a.x += sx; }
-        if (e2 <= dx) { err += dx; a.y += sy; }
+        x += xInc;
+        y += yInc;
     }
-
-    res->size = n;
     return res;
 }
 
@@ -273,4 +259,56 @@ void P_PointSetDraw(Matrix* image, PointSet* pointSet, Color color, int grayscal
             }
         }
     }
+}
+
+
+void P_DrawPixel(Matrix* img, size_t x, size_t y, Color color)
+{
+    size_t x_int = (size_t)x;
+    size_t y_int = (size_t)y;
+    if(x_int >= 0 && x_int < img->cols && y_int >= 0 && y_int < img->rows)
+    {
+        x_int *= 3;
+        y_int *= 3;
+        img->data[y_int * img->cols + x_int] = color.r / 255.0f;
+        img->data[y_int * img->cols + x_int + 1] = color.g / 255.0f;
+        img->data[y_int * img->cols + x_int + 2] = color.b / 255.0f;
+    }
+}
+
+
+Color P_GetColor(Matrix* img, size_t x, size_t y)
+{
+    size_t x_int = (size_t)x;
+    size_t y_int = (size_t)y;
+    x_int *= 3;
+    y_int *= 3;
+    Color color = {img->data[y_int * img->cols + x_int] * 255.0f, img->data[y_int * img->cols + x_int + 1] * 255.0f, img->data[y_int * img->cols + x_int + 2] * 255.0f};
+    return color;
+}
+
+
+Point P_Center(Point* points, size_t size)
+{
+    Point center = {0, 0};
+    for (size_t i = 0; i < size; i++)
+    {
+        center.x += points[i].x;
+        center.y += points[i].y;
+    }
+    center.x /= size;
+    center.y /= size;
+    return center;
+}
+
+void P_Mult(Point* p, float factor)
+{
+    p->x *= factor;
+    p->y *= factor;
+}
+
+void P_Sub(Point* p1, Point* p2)
+{
+    p1->x -= p2->x;
+    p1->y -= p2->y;
 }

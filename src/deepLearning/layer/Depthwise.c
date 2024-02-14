@@ -39,7 +39,7 @@ Matrix* Conv_Depth_FeedForward(void* layerPtr, Matrix* input)
 {
     Conv_Depth* depthWise = (Conv_Depth*)layerPtr;
     depthWise->ConvDepthWise(input,depthWise->filterDepthWise,depthWise->interMat);
-    M_PointWiseConvolution(depthWise->interMat,depthWise->filterPointWise,depthWise);
+    //M_PointWiseConvolution(depthWise->interMat,depthWise->filterPointWise,depthWise);
 }
 
 Matrix* Conv_Depth_Process(void* layerPtr, Matrix* input)

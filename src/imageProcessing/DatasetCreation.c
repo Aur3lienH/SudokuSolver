@@ -103,10 +103,10 @@ void CreateDataset(const char* inputFolder, const char* outputFolder, size_t wid
     }
     for (int i = 0; i < n; i++)
     {
-        char* path = malloc(sizeof(char) * 100);
+        char* path = malloc(sizeof(char) * 300);
         printf("Processing %s\n",namelist[i]->d_name);
-
-        snprintf(path, 100,"%s/%s",inputFolder,namelist[i]->d_name);
+        sprintf(path, "%s/%s",inputFolder,namelist[i]->d_name);
+        //snprintf(path, 100,"%s/%s",inputFolder,namelist[i]->d_name);
         printf("Processing %s\n",path);
         ImageProcess(path,outputFolderCopy,datasetFile,namelist[i]->d_name,width);  
         free(path);

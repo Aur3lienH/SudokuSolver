@@ -12,7 +12,7 @@ void L_AverageDelta(void* layer, const size_t size)
     return;
 }
 
-Matrix* L_BackPropagate(void* layer, const Matrix* input, Matrix* delta)
+Matrix* L_BackPropagate(void* layer, Matrix* input, Matrix* delta)
 {
     return delta;
 }

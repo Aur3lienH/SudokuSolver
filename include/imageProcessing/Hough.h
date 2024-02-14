@@ -5,4 +5,4 @@
 #include "../geometry/Square.h"
 
 //Return the Square detected by the hough transform
-Square Hough(Matrix* img);
+Square Hough(const Matrix* img);

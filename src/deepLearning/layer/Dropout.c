@@ -4,6 +4,7 @@
 #include "deepLearning/LayerShape.h"
 #include "deepLearning/layer/Layer.h"
 #include "tools/ConsoleTools.h"
+#include "tools/FileTools.h"
 #include <stdlib.h>
 
 
@@ -63,13 +64,13 @@ Layer* Drop_Copy(void* layerPtr)
 void Drop_Save(void* layerPtr, FILE* file)
 {
     Dropout* drop = (Dropout*)layerPtr;
-    fwrite(&drop->dropout_rate, sizeof(double), 1, file);
+    CheckRead(fwrite(&drop->dropout_rate, sizeof(double), 1, file));
 }
 
 Layer* Drop_Load(FILE* file)
 {
     double dropout_rate;
-    fread(&dropout_rate, sizeof(double), 1, file);
+    CheckRead(fread(&dropout_rate, sizeof(double), 1, file));
     return Drop_Create(dropout_rate);
 }
 
@@ -79,7 +80,7 @@ void Drop_Free(void* layerPtr)
     free(drop);
 }
 
-void Drop_Print(void* drop)
+void Drop_Print(void* drop, int* parametersCount)
 {
     PrintCentered("Dropout Layer");
     printf("Dropout Rate: %f\n", ((Dropout*)drop)->dropout_rate);

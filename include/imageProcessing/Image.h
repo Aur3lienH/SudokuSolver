@@ -37,18 +37,18 @@ Image* Image_Create(size_t width, size_t height, size_t channels);
 
 Image* Image_Load(const char* path);
 
-void Image_Save(Image* image, const char* path);
+void Image_Save(const Image* image, const char* path);
 
-Image* MatrixToImage(Matrix* matrix);
+Image* MatrixToImage(const Matrix* matrix);
 
-Matrix* ImageToMatrix(Image* image);
+Matrix* ImageToMatrix(const Image* image);
 
 void Image_Free(Image* image);
 
 void M_SaveImage(const Matrix* matrix, const char* path);
 
-Matrix* ImageTo3DMatrix(Image* image);
+Matrix* ImageTo3DMatrix(const Image* image);
 
-Image* Matrix3DToImage(Matrix* matrix);
+Image* Matrix3DToImage(const Matrix* matrix);
 
 void M_SaveImage3D(const Matrix* matrix, const char* path);

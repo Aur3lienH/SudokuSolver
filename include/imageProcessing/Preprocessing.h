@@ -6,12 +6,12 @@
 
 Matrix* resize(const Matrix* input, size_t downSizeWidth);
 
-Matrix* PreprocessToCanny(Image* input, size_t downSizeWidth);
+Matrix* PreprocessToCanny(const Image* input, size_t downSizeWidth);
 
-Matrix* PreprocessSquare(Matrix* input);
+Matrix* PreprocessSquare(const Matrix* input);
 
-Matrix* GaussianBlur(Matrix* input,float sigma);
+Matrix* GaussianBlur(const Matrix* input,float sigma);
 
-void StrechSudoku(Matrix* input);
+void StrechSudoku(const Matrix* input);
 
 Matrix* resize3D(const Matrix* input, size_t downSizeWidth);

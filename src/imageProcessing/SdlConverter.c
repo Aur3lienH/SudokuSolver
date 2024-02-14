@@ -74,7 +74,7 @@ Matrix* GrayscaleToMatrix(SDL_Surface* image)
 }
 
 
-SDL_Surface* MatrixToSurface(Matrix* matrix)
+SDL_Surface* MatrixToSurface(const Matrix* matrix)
 {
 	SDL_Surface* res = SDL_CreateRGBSurface(0, matrix->cols, matrix->rows, 32, 0, 0, 0, 0);
 	if (SDL_MUSTLOCK(res)) {
@@ -91,22 +91,22 @@ SDL_Surface* MatrixToSurface(Matrix* matrix)
 	return res;
 }
 
-Matrix* SurfaceTo3DImage(SDL_Surface surface)
+Matrix* SurfaceTo3DImage(SDL_Surface* surface)
 {
-	Matrix* res = M_Create_3D(surface.h, surface.w, 3);
-	if (SDL_MUSTLOCK(&surface)) {
-		SDL_LockSurface(&surface);
+	Matrix* res = M_Create_3D(surface->h, surface->w, 3);
+	if (SDL_MUSTLOCK(surface)) {
+		SDL_LockSurface(surface);
 	}
-	Uint32 *pixels = (Uint32 *)surface.pixels;
-	for (int i = 0; i < surface.w * surface.h; i++) {
+	Uint32 *pixels = (Uint32 *)surface->pixels;
+	for (int i = 0; i < surface->w * surface->h; i++) {
 		Uint8 r, g, b, a;
-		SDL_GetRGBA(pixels[i], surface.format, &r, &g, &b, &a);
+		SDL_GetRGBA(pixels[i], surface->format, &r, &g, &b, &a);
 		res->data[i * 3] = (float)r / 255.0f;
 		res->data[i * 3 + 1] = (float)g / 255.0f;
 		res->data[i * 3 + 2] = (float)b / 255.0f;
 	}
-	  if (SDL_MUSTLOCK(&surface)) {
-		SDL_UnlockSurface(&surface);
+	  if (SDL_MUSTLOCK(surface)) {
+		SDL_UnlockSurface(surface);
 	}
 	return res;
 }

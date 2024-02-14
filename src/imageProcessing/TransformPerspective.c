@@ -415,7 +415,7 @@ double* CalculateH(Square from, Square to)
     return h_invert;
 }
 
-Matrix* TransformPerspective(Matrix* in,size_t newWidth, double* h)
+Matrix* TransformPerspective(const Matrix* in,size_t newWidth, double* h)
 {
     Matrix* out = M_Create_2D(newWidth, newWidth);
     
@@ -448,7 +448,7 @@ Matrix* TransformPerspective(Matrix* in,size_t newWidth, double* h)
 
 
 
-void TransformPerspectiveColor(Matrix* in, Matrix* out, double* h)
+void TransformPerspectiveColor(const Matrix* in, Matrix* out, double* h)
 {
 
     for(int y = 0; y< out->rows; y++)
@@ -484,7 +484,7 @@ void TransformPerspectiveColor(Matrix* in, Matrix* out, double* h)
 
 }
 
-Matrix* TransformPerspectiveColor_I(Matrix* in, size_t newWidth, double* h)
+Matrix* TransformPerspectiveColor_I(const Matrix* in, size_t newWidth, double* h)
 {
     Matrix* out = M_Create_3D(newWidth, newWidth,3);
     TransformPerspectiveColor(in, out, h);

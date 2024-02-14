@@ -33,7 +33,7 @@ Image* Image_Create(size_t width, size_t height, size_t channels)
 }
 
 
-ImageMobile* rotate90(ImageMobile* image)
+ImageMobile* rotate90(const ImageMobile* image)
 {
     ImageMobile* newImage = Image_Create(image->height,image->width,4);
     for (size_t i = 0; i < image->height; i++)
@@ -51,7 +51,7 @@ ImageMobile* rotate90(ImageMobile* image)
     return newImage;
 }
 
-ImageMobile* rotate180(ImageMobile* image)
+ImageMobile* rotate180(const ImageMobile* image)
 {
     ImageMobile* newImage = Image_Create(image->width,image->height,4);
     for (size_t i = 0; i < image->height; i++)
@@ -69,7 +69,7 @@ ImageMobile* rotate180(ImageMobile* image)
     return newImage;
 }
 
-ImageMobile* rotate270(ImageMobile* image)
+ImageMobile* rotate270(const ImageMobile* image)
 {
     ImageMobile* newImage = Image_Create(image->height,image->width,4);
     for (size_t i = 0; i < image->height; i++)
@@ -134,7 +134,7 @@ void Image_Free(Image* image)
 #endif
 }
 
-ImageMobile* MatrixToImageMobile(Matrix* matrix)
+ImageMobile* MatrixToImageMobile(const Matrix* matrix)
 {
     ImageMobile* imageMobile = Image_Create(matrix->cols,matrix->rows,4);
 	
@@ -149,7 +149,7 @@ ImageMobile* MatrixToImageMobile(Matrix* matrix)
     return imageMobile;
 }
 
-Image* MatrixToImage(Matrix* matrix)
+Image* MatrixToImage(const Matrix* matrix)
 {
 #if MOBILE
     return MatrixToImageMobile(matrix);
@@ -158,7 +158,7 @@ Image* MatrixToImage(Matrix* matrix)
 #endif
 }
 
-Matrix* ImageMobileToMatrix(ImageMobile* imageMobile)
+Matrix* ImageMobileToMatrix(const ImageMobile* imageMobile)
 {
     Matrix* res = M_Create_2D(imageMobile->height,imageMobile->width);
     size_t length = M_GetSize2D(res);
@@ -175,7 +175,7 @@ Matrix* ImageMobileToMatrix(ImageMobile* imageMobile)
 }
 
 
-Matrix* ImageMobileTo3DMatrix(Image* image)
+Matrix* ImageMobileTo3DMatrix(const Image* image)
 {
     Matrix* res = M_Create_3D(image->height,image->width,3);
     size_t length = image->height * image->width;
@@ -191,7 +191,7 @@ Matrix* ImageMobileTo3DMatrix(Image* image)
 }
 
 
-Matrix* ImageTo3DMatrix(Image* image)
+Matrix* ImageTo3DMatrix(const Image* image)
 {
 #if MOBILE
     return ImageMobileTo3DMatrix(image);
@@ -201,7 +201,7 @@ Matrix* ImageTo3DMatrix(Image* image)
 }
 
 
-Matrix* ImageToMatrix(Image* image)
+Matrix* ImageToMatrix(const Image* image)
 {
 #if MOBILE
     return ImageMobileToMatrix(image);
@@ -225,7 +225,7 @@ void M_SaveImage3D(const Matrix* matrix, const char* path)
 }
 
 
-Image* Matrix3DToImage(Matrix* matrix)
+Image* Matrix3DToImage(const Matrix* matrix)
 {
 #if MOBILE
     Image* image = Image_Create(matrix->cols,matrix->rows,4);
@@ -244,7 +244,7 @@ Image* Matrix3DToImage(Matrix* matrix)
 #endif
 }
 
-void Image_Save(Image* image, const char* path)
+void Image_Save(const Image* image, const char* path)
 {
 #if MOBILE
     stbi_write_jpg(path,image->width,image->height,4,image->pixels,100);

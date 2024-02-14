@@ -165,7 +165,7 @@ Point* SortPointByDistance(Point* intersections, size_t intersection_count, Poin
     return sortedPoints;
 }
 
-Square GetSquare(Point* intersections,size_t intersectionsCount, Matrix* input)
+Square GetSquare(Point* intersections,size_t intersectionsCount,const Matrix* input)
 {
     //Sorted by upper left corner
     Point* sortedUpLeft = SortPointByDistance(intersections,intersectionsCount,(Point){.x = 0, .y = 0});
@@ -305,7 +305,7 @@ Line* GetLines(unsigned int** accumulator, size_t thetaSize, size_t rhoSize, siz
 }
 
 
-unsigned int** AccumulatorArray(Matrix* image, size_t thetaSize, size_t rhoSize)
+unsigned int** AccumulatorArray(const Matrix* image, size_t thetaSize, size_t rhoSize)
 {
     unsigned int** accumulator = (unsigned int**) malloc(thetaSize * sizeof(unsigned int*));
     for (size_t i = 0; i < thetaSize; i++)
@@ -331,7 +331,7 @@ unsigned int** AccumulatorArray(Matrix* image, size_t thetaSize, size_t rhoSize)
 }
 
 
-Square Hough(Matrix* img)
+Square Hough(const Matrix* img)
 {
     size_t thetaSize = 180;
     size_t rhoSize = (size_t) (sqrt(img->cols*img->cols + img->rows*img->rows) * 2);

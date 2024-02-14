@@ -40,7 +40,7 @@ void L_AddDelta(void* layer, void* layer2);
 //Default functions to do nothing
 void L_AverageDelta(void* layer, const size_t size);
 //Default functions to do nothing
-Matrix* L_BackPropagate(void* layer, const Matrix* input, Matrix* delta);
+Matrix* L_BackPropagate(void* layer, Matrix* input, Matrix* delta);
 //Default functions to do nothing
 void L_Update(void* layer,const float learningRate, float* accumulator, float lambda);
 //Default functions to do nothing

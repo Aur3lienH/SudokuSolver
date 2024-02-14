@@ -13,6 +13,7 @@
 #include "deepLearning/layer/MaxPoolLayer.h"
 #include "deepLearning/layer/ReshapeLayer.h"
 #include "deepLearning/layer/ConvLayer.h"
+#include "tools/FileTools.h"
 
 
 Network* N_CreateNetwork()
@@ -283,12 +284,12 @@ Network* N_Load(const char* path)
 {
     FILE* file = fopen(path,"rb");
     Network* network = (Network*)malloc(sizeof(Network));
-    fread(&network->layersCount,sizeof(size_t),1,file);
+    CheckRead(fread(&network->layersCount,sizeof(size_t),1,file));
     network->layers = (Layer**)malloc(sizeof(Layer*) * network->layersCount);
     for (size_t i = 0; i < network->layersCount; i++)
     {
         unsigned char layerType;
-        fread(&layerType,sizeof(unsigned char),1,file);
+        CheckRead(fread(&layerType,sizeof(unsigned char),1,file));
         switch (layerType)
         {
         case 0:

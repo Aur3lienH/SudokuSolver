@@ -5,6 +5,7 @@
 #include "deepLearning/Adam.h"
 #include "deepLearning/RandomInit.h"
 #include "tools/ConsoleTools.h"
+#include "tools/FileTools.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -288,7 +289,7 @@ Layer* Conv_Load(FILE* file)
         printf("Error Allocating Memory\n");
         exit(1);
     }
-    fread(convLayer->biases,sizeof(float),filterShape->z,file);
+    CheckRead(fread(convLayer->biases,sizeof(float),filterShape->z,file));
     return convLayer->layer;
 }
 

@@ -1,4 +1,5 @@
 #include "deepLearning/LayerShape.h"
+#include "tools/FileTools.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -36,8 +37,8 @@ void LS_Save(LayerShape* layerShape, FILE* file)
 LayerShape* LS_Load(FILE* file)
 {
     LayerShape* layerShape = (LayerShape*)malloc(sizeof(LayerShape));
-    fread(&layerShape->x,sizeof(size_t),1,file);
-    fread(&layerShape->y,sizeof(size_t),1,file);
-    fread(&layerShape->z,sizeof(size_t),1,file);
+    CheckRead(fread(&layerShape->x,sizeof(size_t),1,file));
+    CheckRead(fread(&layerShape->y,sizeof(size_t),1,file));
+    CheckRead(fread(&layerShape->z,sizeof(size_t),1,file));
     return layerShape;
 }

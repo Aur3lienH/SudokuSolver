@@ -3,4 +3,4 @@
 
 
 //Return a mean binarised image
-Matrix* M_OptimalBinarisation(Matrix* input);
+Matrix* M_OptimalBinarisation(const Matrix* input);

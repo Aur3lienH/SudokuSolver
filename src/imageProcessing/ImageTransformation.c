@@ -18,7 +18,7 @@ void rotatePoint(float* pointX, float* pointY, const float centerX, const float 
     *pointY = rotatedY + centerY;
 }
 
-float GetSurrondingAverage(Matrix* image, size_t x, size_t y, size_t width, size_t height) {
+float GetSurrondingAverage(const Matrix* image, size_t x, size_t y, size_t width, size_t height) {
     float sum = 0;
     size_t count = 0;
     for (int i = -1; i < 2; i++) {
@@ -36,7 +36,7 @@ float GetSurrondingAverage(Matrix* image, size_t x, size_t y, size_t width, size
     return sum / count;
 }
 
-float GetSurrondingAverage3D(Matrix* image, size_t x, size_t y, size_t width, size_t height)
+float GetSurrondingAverage3D(const Matrix* image, size_t x, size_t y, size_t width, size_t height)
 {
     float sum = 0;
     size_t count = 0;
@@ -57,7 +57,7 @@ float GetSurrondingAverage3D(Matrix* image, size_t x, size_t y, size_t width, si
     return sum / count;
 }
 
-float GetSurrondingMinimum(Matrix* image, size_t x, size_t y, size_t width)
+float GetSurrondingMinimum(const Matrix* image, size_t x, size_t y, size_t width)
 {
     float min = 1;
     for (int i = -1; i < 2; i++) {
@@ -82,7 +82,7 @@ float linear_interpolation(float value1, float value2, float distance)
     return value1 * (1 - distance) + value2 * distance;
 }
 
-float getValue(int x, int y, size_t width, Matrix* image)
+float getValue(int x, int y, size_t width,const Matrix* image)
 {
     int isCorrect = x >= 0 && x < width && y >= 0 && y < width;
     if(!isCorrect)
@@ -92,7 +92,7 @@ float getValue(int x, int y, size_t width, Matrix* image)
     return image->data[x + y * width];
 }
 
-float billinear_interpolation(float x, float y, Matrix* image, size_t width)
+float billinear_interpolation(float x, float y, const Matrix* image, size_t width)
 {
     int x1 = floor(x);
     int x2 = ceil(x);
@@ -110,7 +110,7 @@ float billinear_interpolation(float x, float y, Matrix* image, size_t width)
 }
 
 
-void M_RotateImage_1D(Matrix* image, Matrix* output, float angle, size_t width) {
+void M_RotateImage_1D(const Matrix* image, Matrix* output, float angle, size_t width) {
     size_t xOrigin = width / 2;
     size_t yOrigin = width / 2;
 
@@ -142,13 +142,13 @@ void M_RotateImage_1D(Matrix* image, Matrix* output, float angle, size_t width) 
     
 }
 
-Matrix* M_RotateImage_1DI(Matrix* image,float angle, size_t width) {
+Matrix* M_RotateImage_1DI(const Matrix* image,float angle, size_t width) {
     Matrix* output = M_Create_2D(width* width,1);
     M_RotateImage_1D(image,output,angle,width);
     return output;
 }
 
-void M_Zoom(Matrix* image, Matrix* output,float ratio)
+void M_Zoom(const Matrix* image, Matrix* output,float ratio)
 {
     size_t width = image->rows; // assuming the image is square, so the width = sqrt(rows)
     
@@ -176,14 +176,14 @@ void M_Zoom(Matrix* image, Matrix* output,float ratio)
     
 }
 
-Matrix* M_ZoomI(Matrix* image,size_t width, float ratio)
+Matrix* M_ZoomI(const Matrix* image,size_t width, float ratio)
 {
     Matrix* output = M_Create_2D(width, width);
     M_Zoom(image, output, ratio);
     return output;
 }
 
-void M_BillinearInterpolation(Matrix* image, Matrix* output)
+void M_BillinearInterpolation(const Matrix* image, Matrix* output)
 {
     for (size_t i = 0; i < 28; i++)
     {
@@ -194,7 +194,7 @@ void M_BillinearInterpolation(Matrix* image, Matrix* output)
     }
 }
 
-Matrix* M_IBillinearInterpolation(Matrix* image)
+Matrix* M_IBillinearInterpolation(const Matrix* image)
 {
     Matrix* res = M_Create_2D(28 * 28, 1);
     M_BillinearInterpolation(image, res);
@@ -203,7 +203,7 @@ Matrix* M_IBillinearInterpolation(Matrix* image)
 
 
 
-void M_MinTransformation(Matrix* input, Matrix* output, size_t width)
+void M_MinTransformation(const Matrix* input, Matrix* output, size_t width)
 {
     for (size_t i = 0; i < width; i++)
     {
@@ -214,7 +214,7 @@ void M_MinTransformation(Matrix* input, Matrix* output, size_t width)
     }
 }
 
-Matrix* M_IMinTransformation(Matrix* input, size_t width)
+Matrix* M_IMinTransformation(const Matrix* input, size_t width)
 {
     Matrix* res = M_Create_2D(width * width, 1);
     M_MinTransformation(input, res, width);

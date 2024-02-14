@@ -35,4 +35,4 @@ Layer* Drop_Load(FILE* file);
 
 void Drop_Free(void* drop);
 
-void Drop_Print(void* drop);
+void Drop_Print(void* drop, int* parametersCount);

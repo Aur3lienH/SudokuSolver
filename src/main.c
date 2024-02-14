@@ -76,10 +76,6 @@ void HandleFlags(int argc, char* argv[])
             break;
         }
 
-        if(CompareStrings(argv[i],"--toSudoku"))
-        {
-            ToSudoku();
-        }
 
         if(CompareStrings(argv[i],"--train-conv"))
         {
@@ -103,39 +99,7 @@ void HandleFlags(int argc, char* argv[])
             }
         }
 
-        if(CompareStrings(argv[i],"--preprocess"))
-        {
-            if(argc >= 3)
-            {
-                SDL_Surface* img = IMG_Load(argv[i+1]);
-
-                Matrix* res = PreprocessToCanny(img,1);
-                Image* image = MatrixToImage(res);
-                Image_Save(image,"./images/export/export.jpg");
-                Image_Free(image);
-            }
-            else
-            {
-                printf("No file provided\n");
-            }
-            return;
-        }
-
-        if(CompareStrings(argv[i], "--process"))
-        {
-            if(argc >= 3)
-            {
-                SDL_Surface* img = IMG_Load(argv[i+1]);
-                SDL_Surface* res = SudokuImgProcessing(img);
-                int result = IMG_SaveJPG(res,"./images/export/export.jpg",100);
-                SDL_FreeSurface(img);
-            }
-            else
-            {
-                printf("No file provided\n");
-            }
-            return;
-        }
+       
 
         if(CompareStrings(argv[i],"--dataset"))
         {

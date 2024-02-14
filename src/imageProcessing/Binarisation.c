@@ -6,7 +6,7 @@
 
 
 
-Matrix* Binarisation(Matrix* input, float threshold)
+Matrix* Binarisation(const Matrix* input, float threshold)
 {
     Matrix* output = M_Create_2D(input->cols, input->rows);
     for (size_t i = 0; i < input->rows; i++)
@@ -27,7 +27,7 @@ Matrix* Binarisation(Matrix* input, float threshold)
 }
 
 
-float M_Mean(Matrix* input)
+float M_Mean(const Matrix* input)
 {
     float mean = 0;
     for (size_t i = 0; i < input->rows; i++)
@@ -40,7 +40,7 @@ float M_Mean(Matrix* input)
     return mean / (input->rows * input->cols);
 }
 
-float M_Variance(Matrix* input)
+float M_Variance(const Matrix* input)
 {
     float mean = M_Mean(input);
     float variance = 0;
@@ -122,7 +122,7 @@ int otsu_threshold(int* histogram, int num_pixels) {
   return bestThreshold;
 }
 
-int* M_GetHistogram(Matrix* input)
+int* M_GetHistogram(const Matrix* input)
 {
     int* histogram = (int*)malloc(sizeof(int) * 256);
     for (size_t i = 0; i < 256; i++)
@@ -140,14 +140,14 @@ int* M_GetHistogram(Matrix* input)
     return histogram;
 }
 
-float M_GetOtsu(Matrix* input)
+float M_GetOtsu(const Matrix* input)
 {
     int* histogram = M_GetHistogram(input);
     return otsu_threshold(histogram, input->rows * input->cols) / 255.0f;
 }
 
 
-float M_GetOtsu3(Matrix* input)
+float M_GetOtsu3(const Matrix* input)
 {
     int* histogram = M_GetHistogram(input);
     int bestThreshold = 0;
@@ -173,13 +173,13 @@ float M_GetOtsu3(Matrix* input)
 
 
 
-float findThreshold(Matrix* input)
+float findThreshold(const Matrix* input)
 {
     float mean = M_Mean(input);
     return mean;
 }
 
-Matrix* M_OptimalBinarisation(Matrix* input)
+Matrix* M_OptimalBinarisation(const Matrix* input)
 {
     Matrix* gaussian = GaussianBlur(input, 1.0f);
 
@@ -190,7 +190,7 @@ Matrix* M_OptimalBinarisation(Matrix* input)
     //Variance adaptive threshold
 
     M_Inverse(binarised);
-    return gaussian;
+    return binarised;
 }
 
 

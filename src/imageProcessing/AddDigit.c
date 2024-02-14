@@ -68,7 +68,7 @@ void AddDigit(stbtt_fontinfo* fontInfo,Matrix* image, int digit, int x, int y, C
     stbtt_FreeBitmap(bitmap, NULL);
 }
 
-void OverlignDigit(Matrix* input, size_t rowIndex, size_t colIndex,size_t cellWidth ,Color color)
+void OverlignDigit(Matrix* input, size_t rowIndex, size_t colIndex,size_t cellWidth ,const Color color)
 {
     size_t startRow = rowIndex * cellWidth;
     size_t startCol = colIndex * cellWidth;
@@ -86,7 +86,7 @@ void OverlignDigit(Matrix* input, size_t rowIndex, size_t colIndex,size_t cellWi
 }
 
 
-void OverlignMatrix(Matrix* input, int** error)
+void OverlignMatrix(Matrix* input,int** error)
 {
     for (size_t i = 0; i < 9; i++)
     {
@@ -101,7 +101,7 @@ void OverlignMatrix(Matrix* input, int** error)
 }
 
 
-void AddMissingDigits(Matrix* image, int** digits, int cellWidth, Color color)
+void AddMissingDigits(Matrix* image,int** digits, int cellWidth,const Color color)
 {
     stbtt_fontinfo* fontInfo = initFont();
     for (size_t i = 0; i < 9; i++)

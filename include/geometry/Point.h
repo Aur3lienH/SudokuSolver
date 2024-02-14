@@ -41,10 +41,20 @@ void P_DrawSDL(Image* image, Point* p, __uint32_t color);
 
 void P_Free(Point* point);
 
-PointSet* P_GetAllPointBetween(Point a, Point b,Point* direction);
+PointSet* P_GetAllPointBetween(Matrix* matrix, Point* p1, Point* p2);
 
 void P_GetPerpendicular(Point* direction);
 
 void P_PointSetDraw(Matrix* image, PointSet* pointSet, Color color, int grayscale);
 
-P_DrawPixelFrom3D(Matrix* img,size_t fromX, size_t fromY, size_t toX, size_t toY);
+void P_DrawPixelFrom3D(Matrix* img,size_t fromX, size_t fromY, size_t toX, size_t toY);
+
+void P_DrawPixel(Matrix* img, size_t x, size_t y, Color color);
+
+Color P_GetColor(Matrix* img, size_t x, size_t y);
+
+Point P_Center(Point* points, size_t size);
+
+void P_Mult(Point* p, float factor);
+
+void P_Sub(Point* p1, Point* p2);

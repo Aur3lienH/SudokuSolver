@@ -110,7 +110,6 @@ int getExifOrientation(const char* filename)
                 return EXIT_FAILURE;
             }
             unsigned short orientation = read_2_bytes(file, big_endian);
-            printf("Orientation found : %d\n",orientation);
             fclose(file);
             return orientation;
         } else {
@@ -118,7 +117,6 @@ int getExifOrientation(const char* filename)
         }
     }
 
-    fprintf(stderr, "Orientation tag not found\n");
     fclose(file);
     return EXIT_FAILURE;
 

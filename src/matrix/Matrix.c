@@ -1,6 +1,7 @@
 #include "matrix/Matrix.h"
 #include "matrix/BlockMatrix.h"
 #include "deepLearning/Allocator.h"
+#include "tools/FileTools.h"
 #include <stdlib.h>
 #include <math.h>
 #include <err.h>
@@ -459,13 +460,13 @@ size_t M_SaveSizeDim(size_t rows, size_t cols, size_t dims)
 Matrix* M_Load(FILE* file)
 {
     Matrix* m = (Matrix*)malloc(sizeof(Matrix));
-    fread(&m->rows,sizeof(size_t),1,file);
-    fread(&m->cols,sizeof(size_t),1,file);
-    fread(&m->effectiveRows,sizeof(size_t),1,file);
-    fread(&m->effectiveCols,sizeof(size_t),1,file);
-    fread(&m->dims,sizeof(size_t),1,file);
+    CheckRead(fread(&m->rows,sizeof(size_t),1,file));
+    CheckRead(fread(&m->cols,sizeof(size_t),1,file));
+    CheckRead(fread(&m->effectiveRows,sizeof(size_t),1,file));
+    CheckRead(fread(&m->effectiveCols,sizeof(size_t),1,file));
+    CheckRead(fread(&m->dims,sizeof(size_t),1,file));
     m->data = (float*)malloc(sizeof(float) * M_GetSize3D(m));
-    fread(m->data,sizeof(float),M_GetSize3D(m),file);
+    CheckRead(fread(m->data,sizeof(float),M_GetSize3D(m),file));
     return m;
 }
 

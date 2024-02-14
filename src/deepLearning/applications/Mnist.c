@@ -10,6 +10,7 @@
 #include "deepLearning/layer/MaxPoolLayer.h"
 #include "deepLearning/layer/Dropout.h"
 #include "deepLearning/layer/ReshapeLayer.h"
+#include "tools/FileTools.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -120,9 +121,9 @@ void Mnist_Train()
 
     
 
-    char* path;
+    char* path = malloc(sizeof(char) * 300);
 
-    asprintf(&path,"./models/recognition/model_%.4f.model",testAccuracy);
+    sprintf(path,"./models/recognition/model_%.4f.model",testAccuracy);
     N_Save(network,path);
     free(path);
     Dataset_Free(trainDataset);
@@ -132,7 +133,7 @@ void Mnist_Train()
 
 void Reco_Save(Network* network,Dataset* trainSet,Dataset* testSet)
 {
-    char* path;
+    char* path = malloc(sizeof(char) * 300);
     size_t trainSetSize = trainSet->size;
     trainSet->size = trainSet->size < 10000 ? trainSet->size : 10000;
     float trainAccuray = TestAccuracy(network,trainSet);
@@ -140,7 +141,7 @@ void Reco_Save(Network* network,Dataset* trainSet,Dataset* testSet)
     trainSet->size = trainSetSize;
     float testAccuracy = TestAccuracy(network,testSet);
     printf("🍔 Test accuracy : %.2f%% 🍔\n",testAccuracy);
-    asprintf(&path,"./models/recognition/model_%.4f.model",testAccuracy);
+    sprintf(path,"./models/recognition/model_%.4f.model",testAccuracy);
     N_Save(network,path);
     free(path);
 }
@@ -195,8 +196,8 @@ void Rotation_Train()
     float testAccuracy = TestAccuracy(network,trainDataset);
     printf("🍔 Test accuracy : %.2f%% 🍔\n",testAccuracy);
 
-    char* path;
-    asprintf(&path,"./models/orientation/model_%.4f.model",testAccuracy);
+    char* path = malloc(sizeof(char) * 3000);
+    sprintf(path,"./models/orientation/model_%.4f.model",testAccuracy);
 
     N_Save(network,path);
 
@@ -319,7 +320,7 @@ Dataset* LoadMnist(const char* dataFilename,const char* labelFilename, int magic
         exit(-1);
     }
 
-    fread(Ibuffer,sizeof(int),1,dataFile);
+    CheckRead(fread(Ibuffer,sizeof(int),1,dataFile));
 
     if (ReverseInt(Ibuffer[0]) != magicNumberData)
     {
@@ -327,7 +328,7 @@ Dataset* LoadMnist(const char* dataFilename,const char* labelFilename, int magic
         return NULL;
     }
 
-    fread(Ibuffer,sizeof(int),1,labelFile);
+    CheckRead(fread(Ibuffer,sizeof(int),1,labelFile));
 
     if (ReverseInt(Ibuffer[0]) != magicNumberLabel)
     {
@@ -336,16 +337,16 @@ Dataset* LoadMnist(const char* dataFilename,const char* labelFilename, int magic
     }
 
 
-    fread(Ibuffer,sizeof(int),1,dataFile);
+    CheckRead(fread(Ibuffer,sizeof(int),1,dataFile));
     size_t numberOfMatrix = ReverseInt(*Ibuffer);
 
 
 
-    fread(Ibuffer,sizeof(int),1,dataFile);
+    CheckRead(fread(Ibuffer,sizeof(int),1,dataFile));
     size_t n_rows = ReverseInt(*Ibuffer);
     
     
-    fread(Ibuffer,sizeof(int),1,dataFile);
+    CheckRead(fread(Ibuffer,sizeof(int),1,dataFile));
     size_t n_cols = ReverseInt(*Ibuffer);
     
     
@@ -353,19 +354,19 @@ Dataset* LoadMnist(const char* dataFilename,const char* labelFilename, int magic
     res[0] = (Matrix**)malloc(sizeof(Matrix*) * numberOfMatrix);
     res[1] = (Matrix**)malloc(sizeof(Matrix*) * numberOfMatrix);
 
-    fread(Ibuffer,sizeof(int),1,labelFile);
+    CheckRead(fread(Ibuffer,sizeof(int),1,labelFile));
 
     size_t i = 0;
     while (i < numberOfMatrix)
     {
-        fread(Cbuffer,sizeof(unsigned char),1,labelFile);
+        CheckRead(fread(Cbuffer,sizeof(unsigned char),1,labelFile));
         res[1][i] = S_LabelToMatrix(Cbuffer[0],10);
         res[0][i] = M_Create_2D(n_cols * n_rows,1);
 
         size_t j = 0;
         while (j < n_rows * n_cols)
         {
-            fread(Cbuffer,sizeof(char),1,dataFile);
+            CheckRead(fread(Cbuffer,sizeof(char),1,dataFile));
             res[0][i]->data[j] = (float)(*Cbuffer) / (float)255;
             j++;
         }
@@ -461,7 +462,7 @@ Network* LoadBestRecognitionModel()
     char path[1024];
     snprintf(path, sizeof(path), "./models/recognition/%s",bestModel);
 
-
+    printf("Loading model : %s\n",path);
     Network* network = N_Load(path);
     N_Compile(network,CE_Create());
     return network;

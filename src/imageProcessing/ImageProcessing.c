@@ -7,7 +7,7 @@
 #include <time.h>
 
 
-Image* SudokuImgProcessing(Image* image)
+Image* SudokuImgProcessing(const Image* image)
 {
     printf("Starting preprocessing\n");
     time_t start = clock();
@@ -23,7 +23,7 @@ Image* SudokuImgProcessing(Image* image)
     return surface;
 }
 
-Matrix** SplitCells(Matrix* image, size_t cellCount)
+Matrix** SplitCells(const Matrix* image, size_t cellCount)
 {
     Matrix** cells = malloc(sizeof(Matrix*) * cellCount * cellCount);
     size_t cellSize = image->rows / cellCount;
@@ -48,7 +48,7 @@ Matrix** SplitCells(Matrix* image, size_t cellCount)
 }
 
 
-Matrix* M_Grayscale(Matrix* image)
+Matrix* M_Grayscale(const Matrix* image)
 {
     Matrix* res = M_Create_2D(image->rows,image->cols);
     for (size_t i = 0; i < image->rows; i++)

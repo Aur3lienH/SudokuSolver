@@ -33,7 +33,6 @@ int GetNumber(Network* n,Matrix* matrix, size_t id, Matrix** finalMatrix)
     *finalMatrix = final;
     snprintf(path, sizeof(path), "images/export/step_%li.jpg", id+2);
     M_SaveImage(final, path);
-    
 
     final->rows = 784;
     final->cols = 1;
@@ -77,6 +76,9 @@ int** GetSudokuNumbers(Network* n, Matrix **img)
     return res;
 }
 
+
+//Old version to load the sudoku numbers
+/*
 int** GetSudokuNumbers_File(Network* n)
 {
     char* path;
@@ -97,19 +99,4 @@ int** GetSudokuNumbers_File(Network* n)
     free(img);
     return res;    
 }
-
-void ToSudoku()
-{
-    Network* n = LoadBestRecognitionModel();
-    int** sudoku = GetSudokuNumbers_File(n);
-    for (size_t i = 0; i < 9; i++)
-    {
-        printf("|");
-        for (size_t j = 0; j < 9; j++)
-        {
-            printf("%i|",sudoku[i][j]);
-        }
-        printf("\n");
-    }
-    N_Free(n);
-}
+*/

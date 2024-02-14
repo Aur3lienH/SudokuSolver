@@ -39,10 +39,13 @@ char* GetResolvedSudoku(char* path, int* success)
     Matrix* canny = Canny(grayscaled, 1);
 
     SquareDetectionResult sdr = GetSquareWithContour(canny);
-    S_Draw(resized, &sdr.square, Color_Create(0,0,255), 0);
-    printf("size of pointSet : %i\n",sdr.pointSet->size);
+    //S_Draw(resized, &sdr.square, Color_Create(0,0,255), 0);
 
-    M_AdjustBorder(resized, sdr);
+    //M_AdjustBorder(resized, sdr);
+
+
+    
+    //double* justToRotate = CalculateH(sdr.square, WidthToSquare(PERSPECTIVE_WIDTH));
 
     double* hForward = CalculateH(sdr.square, WidthToSquare(PERSPECTIVE_WIDTH));
 
@@ -115,8 +118,6 @@ char* GetResolvedSudoku(char* path, int* success)
     }
 
     return "images/export/final.jpg";
-    
-
     
 }
 

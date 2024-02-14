@@ -1,41 +1,43 @@
 #include "imageProcessing/Adjust.h"
+#include "geometry/Point.h"
 
 
-
-int AdjustLine(Matrix* img,Point* prevLeft, Point* newLeft, Point* prevRigth, Point* newRight)
+void AdjustLine(Matrix* img,Point* prevLeft, Point* newLeft, Point* prevRigth, Point* newRight)
 {
-    //Calculate the distance between the two points
-    int distance = P_Distance(prevLeft, prevRigth);
-    //Calculate the distance between the two new points
-    int newDistance = P_Distance(newLeft, newRight);
-    //Calculate the ratio between the two distances
-    float ratio = (float)newDistance / (float)distance;
-    //Change the pixels in between the two new points
-    
-    Point startPoint = *newLeft;
-    Point endPoint = *newRight;
-    float xDiff = endPoint.x - startPoint.x;
-    float yDiff = endPoint.y - startPoint.y;
-    int xDiffAbs = abs(xDiff);
-    int yDiffAbs = abs(yDiff);
-    int directionX = xDiff > yDiff ? 1 : 0;
-    int directionY = yDiff > xDiff ? 1 : 0;
-    
-    while(!P_Equals(&startPoint, &endPoint) && (startPoint.x < img->cols && startPoint.y < img->rows) && (startPoint.x >= 0 && startPoint.y >= 0))
+    Matrix* imgCopy = M_CopyI(img);
+    printf("prevLeft : %i %i\n",prevLeft->x,prevLeft->y);
+    printf("prevRigth : %i %i\n",prevRigth->x,prevRigth->y);
+    printf("newLeft : %i %i\n",newLeft->x,newLeft->y);
+    printf("newRight : %i %i\n",newRight->x,newRight->y);
+    float prevDistance = P_Distance(prevLeft, prevRigth);
+    float newDistance = P_Distance(newLeft, newRight);
+
+
+
+    printf("prevDistance : %f\n",prevDistance);
+    printf("newDistance : %f\n",newDistance);
+    float ratio = newDistance / prevDistance;
+    //Get the change need to be done 
+    size_t y = prevRigth->y;
+    for(size_t i = 0; i < imgCopy->cols; i++)
     {
-        int x = startPoint.x * ratio;
-        int y = startPoint.y * ratio;
-        P_DrawPixelFrom3D(img, startPoint.x, startPoint.y, x, y);
-        if(directionX)
+        if(i < newLeft->x)
         {
-            startPoint.x += 1;
+            P_DrawPixel(imgCopy, i, y, Color_Create(0,0,0));
+        }
+        else if(i > newRight->x)
+        {
+            P_DrawPixel(imgCopy, i, y, Color_Create(0,0,0));
         }
         else
         {
-            startPoint.y += 1;
+            float x = (i - newLeft->x) * ratio + prevLeft->x;
+
+            P_DrawPixel(imgCopy, x, y, P_GetColor(img, i ,y));
+            //P_DrawPixelFrom3D(imgCopy, i, y, (int)x, y);
         }
     }
-
+    M_Copy(imgCopy, img);
 }
 
 int ContainsPoint(Point* p, PointSet* pointSet)
@@ -44,7 +46,6 @@ int ContainsPoint(Point* p, PointSet* pointSet)
     {
         if (P_Equals(p, &pointSet->points[i]))
         {
-            printf("i : %i\n",i);
             return 1;
         }
     }
@@ -101,47 +102,114 @@ Point GetCorrespondingPoint(size_t x, PointSet pointSet)
     return (Point){0,0};
 }
 
-void M_AdjustBorder(Matrix* img, SquareDetectionResult sdr)
+
+void ExReImages(Matrix* img, PointSet* squarePointSet, PointSet* newPointSet)
+{
+
+    
+
+    for (size_t i = 0; i < img->rows; i++)
+    {
+        Point* points = malloc(sizeof(Point) * 4);
+        points[0] = points[1] = points[2] = points[3] = (Point){-1,-1}; // Initialize all points to (-1, -1)
+
+
+        
+            
+        for (size_t k = 0; k < squarePointSet->size; k++)
+        {
+            if (squarePointSet->points[k].y == i)
+            {
+                // Check for leftmost point
+                if (points[0].x == -1 || squarePointSet->points[k].x < points[0].x)
+                {
+                    points[0] = squarePointSet->points[k];
+                }
+                // Check for rightmost point
+                if (points[1].x == -1 || squarePointSet->points[k].x > points[1].x)
+                {
+                    points[1] = squarePointSet->points[k];
+                }
+            }
+        }
+
+        for (size_t k = 0; k < newPointSet->size; k++)
+        {
+            if (newPointSet->points[k].y == i)
+            {
+                // Check for leftmost point
+                if (points[2].x == -1 || newPointSet->points[k].x < points[2].x)
+                {
+                    points[2] = newPointSet->points[k];
+                }
+                // Check for rightmost point
+                if (points[3].x == -1 || newPointSet->points[k].x > points[3].x)
+                {
+                    points[3] = newPointSet->points[k];
+                }
+            }
+        }
+
+        int found = 0;
+        for (size_t k = 0; k < 4; k++)
+        {
+            if(points[k].x != -1)
+            {
+                found++;
+            }
+        }
+
+        if(points[0].x != -1 && points[1].x != -1 && points[2].x != -1 && points[3].x != -1)
+        {
+            if(points[0].x != points[1].x && points[2].x != points[3].x)
+            {
+                //printf("Adjusting line\n");
+                AdjustLine(img, &points[0], &points[2], &points[1], &points[3]);
+            }
+            //printf("Adjusting line\n");
+            //AdjustLine(img, &points[0], &points[2], &points[1], &points[3]);
+        }
+
+    }
+
+    
+}
+
+
+void M_AdjustBorder(Matrix* img, const SquareDetectionResult sdr)
 {
     Square square = sdr.square;
     PointSet* pointSet = sdr.pointSet;
-    printf("PointSet size : %i\n",pointSet->size);
+
+    //Draw all the points of the square
     P_PointSetDraw(img, pointSet, Color_Create(0,255,0),0);
-    PointSet* linesPointSet = malloc(sizeof(PointSet) * 4);
+
+    //Initialize the pointSet in which the points line will be
+    PointSet* linesPointSet = malloc(sizeof(PointSet));
+    linesPointSet->points = malloc(sizeof(Point) * 10);
+    linesPointSet->size = 0;
+    //This is the size of the pointSet in which the points line will be
+    size_t linesPointSetSize = 10;
     for (size_t i = 0; i < 4; i++)
     {
-        size_t linesPointSetSize = 1;
-        linesPointSet[i].points = malloc(sizeof(Point) * linesPointSetSize);
-        linesPointSet[i].size = 0;
-        printf("i : %i\n",i);
+        //Get the 2 points of the line and the direction of the line
         Point direction;
         size_t j = (i + 1) % 4;
+        //Point one of the line 
         Point p = square.points[i];
+        //Point two of the line 
         Point p2 = square.points[j];
-        PointSet* linePointSet = P_GetAllPointBetween(p, p2, &direction);
-        P_GetPerpendicular(&direction);
-        for (size_t j = 0; j < linePointSet->size; j++)
+
+        PointSet* poinBetween = P_GetAllPointBetween(img, &p, &p2);
+        linesPointSet->points = realloc(linesPointSet->points, sizeof(Point) * (linesPointSet->size + poinBetween->size));
+        for (size_t k = 0; k < poinBetween->size; k++)
         {
-            printf("j : %i\n",j);
-            if(linesPointSet[i].size + 2 >= linesPointSetSize)
-            {
-                printf("realloc\n");
-                linesPointSetSize *= 2;
-                linesPointSet[i].points = realloc(linesPointSet[i].points, sizeof(Point) * linesPointSetSize);
-            }
-            linesPointSet[i].points[j*2] = linePointSet->points[i];
-            linesPointSet[i].points[j*2+1] = GetPointFromSet(&p, pointSet, &direction);
-            linesPointSet[i].size += 2;
+            linesPointSet->points[linesPointSet->size] = poinBetween->points[k];
+            linesPointSet->size++;
         }
-    }
-    printf("heyhey\n");
-    for (size_t i = 0; i < linesPointSet[1].size; i++)
-    {
-        Point firstPoint = linesPointSet[1].points[i];
-        Point p = GetCorrespondingPoint(firstPoint.x, linesPointSet[3]);
-        printf("firstPoint : %i,%i\n",firstPoint.x,firstPoint.y);
-        printf("p : %i,%i\n",p.x,p.y);  
-        P_DrawSegment(img, &firstPoint, &p, Color_Create(255,0,0),0);
+
     }
     
+
+    ExReImages(img, pointSet, linesPointSet);
 }

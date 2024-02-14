@@ -8,8 +8,12 @@
 #include "deepLearning/Network.h"
 #include "deepLearning/Dataset.h"
 #include "imageProcessing/ImageProcessing.h"
+#include "imageProcessing/ImageTransformation.h"
 #include "tools/StringTools.h"
 #include "imageProcessing/DigitProcess.h"
+#include "imageProcessing/SdlConverter.h"
+#include "imageProcessing/ImageProcessing.h"
+#include "tools/FileTools.h"
 
 GtkWidget *darea;
 const char* READING_DIGIT_PATH = "datasets/unsure.data";
@@ -247,6 +251,13 @@ void NextDigit()
     padding++;
 }
 
+void SetTheNumber(GtkWidget* widget, gpointer data)
+{
+    size_t number = (size_t)data;
+    SaveDigit(input, number, outputFile);
+    NextDigit();
+}
+
 void validate_button(GtkWidget *widget, gpointer data) {
     //Get the label given by the network
     const Matrix* res = N_Process(network,input);
@@ -258,16 +269,10 @@ void validate_button(GtkWidget *widget, gpointer data) {
             maxIndex = i;
         }
     }
-    uint8_t byteIndex = (uint8_t)maxIndex;
+    long byteIndex = (long)(maxIndex);
     SetTheNumber(widget, (gpointer)byteIndex);
 }
 
-void SetTheNumber(GtkWidget* widget, gpointer data)
-{
-    size_t number = (size_t)data;
-    SaveDigit(input, number, outputFile);
-    NextDigit();
-}
 
 int DrawDigit(int argc, char *argv[], Network* n) {
 
@@ -314,7 +319,8 @@ int DrawDigit(int argc, char *argv[], Network* n) {
                 surface = IMG_Load("images/cells/cell_0.jpg");
             }
             int isBlank = 0;
-            temp = SurfaceToDigit(surface,&isBlank);
+            Matrix* matrix = SurfaceTo3DImage(surface);
+            temp = MatrixToDigit(matrix,&isBlank);
             input = M_Create_2D_Data(PixelsCount,1,Pixels);
             M_Copy(temp,input);
             M_Free(temp);
@@ -446,7 +452,7 @@ int DrawDigit(int argc, char *argv[], Network* n) {
             printf("Error opening the file !\n");
             exit(EXIT_FAILURE);
         }
-        if(outputFile == -1)
+        if(outputFile == NULL)
         {
             printf("Error opening the file !\n");
             exit(EXIT_FAILURE);
@@ -455,7 +461,7 @@ int DrawDigit(int argc, char *argv[], Network* n) {
         paddingFILE = fopen(PADDING,"rb");
         if(paddingFILE != NULL)
         {
-            fread(&padding,sizeof(size_t),1,paddingFILE);
+            CheckRead(fread(&padding,sizeof(size_t),1,paddingFILE));
             fclose(paddingFILE);
 
             size_t index = (M_SaveSizeDim(28,28,1)) * padding;

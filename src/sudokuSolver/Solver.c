@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "sudokuSolver/Solver.h"
+#include "tools/FileTools.h"
 
 /*
 *	Function : find_empty_cell
@@ -233,7 +234,7 @@ void load_grid(const char *filename, int grid[9][9])
 		for (int col = 0; col < 9; col++)
 		{
 			char ch;
-			fscanf(file, " %c", &ch);
+			CheckRead(fscanf(file, " %c", &ch));
 			grid[row][col] = (ch == '.') ? 0 : ch - '0';
 		}
 	}

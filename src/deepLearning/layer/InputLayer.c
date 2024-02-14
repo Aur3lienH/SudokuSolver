@@ -4,6 +4,7 @@
 #include "deepLearning/RandomInit.h"
 #include "deepLearning/LayerShape.h"
 #include "tools/ConsoleTools.h"
+#include "tools/FileTools.h"
 #include <err.h>
 
 
@@ -97,14 +98,14 @@ void I_Save(void* layerPtr, FILE* file)
 {
     InputLayer* inputLayer = (InputLayer*)layerPtr;
     LS_Save(inputLayer->layer->layerShape,file);
-    fwrite(&inputLayer->layer->layerType,sizeof(unsigned char),1,file);
+    CheckRead(fwrite(&inputLayer->layer->layerType,sizeof(unsigned char),1,file));
 }
 
 Layer* I_Load(FILE* file)
 {
     LayerShape* layerShape = LS_Load(file);
     unsigned char layerType;
-    fread(&layerType,sizeof(unsigned char),1,file);
+    CheckRead(fread(&layerType,sizeof(unsigned char),1,file));
 
     switch (layerType)
     {

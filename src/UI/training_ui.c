@@ -267,7 +267,12 @@ void training_init_accuracy_label(GtkWidget *vbox, float accuracy)
     // Style the text
     PangoFontDescription *font_desc = 
     pango_font_description_from_string("Sans 20");
-    gtk_widget_override_font(accuracy_label, font_desc);
+
+
+    //Deprecated function
+    //gtk_widget_override_font(accuracy_label, font_desc);
+
+    
     pango_font_description_free(font_desc);
 
     // Show the accuracy label

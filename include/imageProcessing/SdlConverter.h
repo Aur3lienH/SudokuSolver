@@ -19,8 +19,8 @@ void GrayscaleToMatrix_C(SDL_Surface* image, Matrix* res);
 Matrix* GrayscaleToMatrix(SDL_Surface* image);
 
 //Convert a matrix to a SDL_Surface
-SDL_Surface* MatrixToSurface(Matrix* matrix);
+SDL_Surface* MatrixToSurface(const Matrix* matrix);
 
-Matrix* SurfaceTo3DImage(SDL_Surface surface);
+Matrix* SurfaceTo3DImage(SDL_Surface* surface);
 
 #endif

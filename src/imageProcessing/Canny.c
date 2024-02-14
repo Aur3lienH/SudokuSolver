@@ -23,7 +23,7 @@ float normalizeAngle(float angle)
     return angle;
 }
 
-void comparePixels(Matrix* input, Matrix* output, size_t initialPoint, size_t point1, size_t point2)
+void comparePixels(const Matrix* input, Matrix* output, size_t initialPoint, size_t point1, size_t point2)
 {
     if(input->data[initialPoint] < input->data[point1] || input->data[initialPoint] < input->data[point2])
     {
@@ -158,7 +158,7 @@ void propagate(Matrix* input, size_t posX, size_t posY)
 }
 
 
-Matrix* Canny(Matrix* input, float sigma)
+Matrix* Canny(const Matrix* input, float sigma)
 {
 
     Matrix* blurred = M_GaussianBlur(input, sigma);

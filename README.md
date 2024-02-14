@@ -29,15 +29,29 @@ This program is a sudoku solver that takes a grid image, extract the digits, and
     - Block matrix operations
 - A solving algorithm that will finally solve the Sudoku, it uses a backpropagation algorithm
 
-## Compilation
+## How to use
 
-Prerequisites : make, gcc, gdk, sdl2, sld2-image
+### Installation
+
+To install the project, you need to clone the repository and then compile it.
+
+```git clone git@github.com:Aur3lienH/SudokuSolver.git ```
+
+#### Compilation
+
+Prerequisites : make, gcc, gdk, sdl2, sld2-image, gtk3
 
 To compile the project, run the following command in the root directory of the project:
 
-```make```
+```cmake -S . -B build```
 
-## Execution
+```cmake --build build```
+
+### Execution
+
+To enable the execution of the program, you need to give the execution rights to the executable. 
+
+```chmod +x build/solver```
 
 The executable is located in the build/ directory and is named solver. So to run it, in the root directory : 
 

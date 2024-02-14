@@ -267,6 +267,5 @@ SquareDetectionResult GetSquareWithContour(Matrix* img)
     }
     M_SaveImage(flag,"images/export/step_1.jpg");
     S_Sort(&result.square, img);
-    printf("pointSet size : %i\n",result.pointSet->size);
     return result;
 }

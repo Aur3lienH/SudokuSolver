@@ -24,7 +24,7 @@ Matrix* resize3D(const Matrix* input, size_t downSizeWidth)
     return DownScale3D(input,ratio);
 }
 
-Matrix* PreprocessToCanny(Image* input, size_t downSizeWidth)
+Matrix* PreprocessToCanny(const Image* input, size_t downSizeWidth)
 {
 	Matrix* grayscaled = ImageToMatrix(input);
 	Matrix* resized = resize(grayscaled, downSizeWidth);
@@ -41,7 +41,7 @@ Matrix* PreprocessSquare(Matrix* input)
 }
 
 
-Matrix* GaussianBlur(Matrix* input,float sigma)
+Matrix* GaussianBlur(const Matrix* input,float sigma)
 {
 	Matrix* kernel = M_Create_2D(5,5);
 

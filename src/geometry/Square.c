@@ -188,3 +188,52 @@ void S_Sort(Square* square, Matrix* img)
 
 }
 
+
+
+
+void S_Extend(Square* square, float factor, Matrix* img)
+{
+    // Calculate the center of the square
+    Point center = P_Center(square->points, 4);
+
+    // Calculate the vectors from the center to each point
+    Point vectors[4];
+    for (size_t i = 0; i < 4; i++)
+    {
+        P_Sub(&square->points[i], &center);
+    }
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        P_Mult(&vectors[i], factor);
+    }
+
+
+    // Assign the new points
+    for (size_t i = 0; i < 4; i++)
+    {
+        square->points[i] = P_Add(&center, &vectors[i]);
+    }
+
+    // Check if the new points are inside the image
+    for (size_t i = 0; i < 4; i++)
+    {
+        if (square->points[i].x < 0)
+        {
+            square->points[i].x = 0;
+        }
+        if (square->points[i].x >= img->cols)
+        {
+            square->points[i].x = img->cols - 1;
+        }
+        if (square->points[i].y < 0)
+        {
+            square->points[i].y = 0;
+        }
+        if (square->points[i].y >= img->rows)
+        {
+            square->points[i].y = img->rows - 1;
+        }
+    }
+}
+

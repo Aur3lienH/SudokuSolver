@@ -2,6 +2,7 @@
 #include "matrix/Matrix.h"
 #include "deepLearning/LayerShape.h"
 #include "tools/ConsoleTools.h"
+#include "tools/FileTools.h"
 
 Layer* MaxPool_Create(size_t size)
 {
@@ -115,7 +116,7 @@ void MaxPool_Save(void* layerPtr, FILE* file)
 Layer* MaxPool_Load(FILE* file)
 {
     size_t size;
-    fread(&size,sizeof(size_t),1,file);
+    CheckRead(fread(&size,sizeof(size_t),1,file));
     return MaxPool_Create(size);
 }
 
