@@ -9,6 +9,8 @@ THANX APPLE !
 
 #ifdef __ANDROID__
 #define CUSTOM_BARRIER 1
+#elif __APPLE__
+#define CUSTOM_BARRIER 1
 #else
 #define CUSTOM_BARRIER 0
 #endif
