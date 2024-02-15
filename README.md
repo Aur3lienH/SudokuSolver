@@ -2,32 +2,18 @@
 
 ## Description
 
-This program is a sudoku solver that takes a grid image, extract the digits, and solves the grid. To achieve that, we need to go through different steps :
-- A preprocessing of the image to make it easier to work with, for that, it will apply different filters:
-  - Grayscale
-  - Contrast
-  - Mediam
-  - Smoothing
-- A treatment of the image to extract the cells of the grid, again for that, it will go through different steps:
-  - Line detection
-  - Square Detection
-  - Perspective shifting
-  - Extract cells
-- A neural network that will take every cell and recognize the digit in it, here the work around the network and the method used was important:
-  - Creating a Network (Fully Connected Network)
-  - Backpropagation
-    - Loss function
-    - Backpropagation across Fully Connected Layer
-    - Activation Function
-  - Overfitting 
-    - L2 Regularization
-    - Dropout Layer
-    - Data augmentation
-  - Matrix operations optimization
-    - SMID instructions
-    - Multithreading
-    - Block matrix operations
-- A solving algorithm that will finally solve the Sudoku, it uses a backpropagation algorithm
+### Introduction 
+
+This project is a sudoku solver on images(OCR (Optical Character Recognition)).
+
+### Features
+
+The program can do several things : 
+
+* Train the neural network with Mnist dataset and a handmade dataset
+* Solve a sudoku grid from an image
+* Recognize errors in the grid of a "resolved" sudoku
+* Get back the digits from the grid to train the neural network afterwards
 
 ## How to use
 
@@ -78,16 +64,3 @@ The program has several flags for differents use and for testing and debugging p
 
 * --ui : run the program with the user interface
 
-### Usage with the UI
-
-The first window that appears will let you chose between the solver and the training part.
-
-#### Solving part
-
-Here, you will be able to load an image, process it, extract the digits and then finally solve the grid.
-Every step will be visible on the right of the window.
-
-#### Training part
-
-In this part, you can train and/or load a digit recognition model.
-After that, you will be able to test it as well as use the Drawdigit function that will display a new window and draw digits that the model will try to recognize.
