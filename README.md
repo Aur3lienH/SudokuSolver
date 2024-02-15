@@ -15,17 +15,20 @@ The program can do several things :
 * Recognize errors in the grid of a "resolved" sudoku
 * Get back the digits from the grid to train the neural network afterwards
 
+![Example](doc/images/solved.jpg)
+
 ## How to use
 
 ### Installation
 
-To install the project, you need to clone the repository and then compile it.
+To install the project, you need to clone the repository and then compile it(see the Compilation section).
 
 ```git clone git@github.com:Aur3lienH/SudokuSolver.git ```
 
 #### Compilation
 
-Prerequisites : make, gcc, gdk, sdl2, sld2-image, gtk3
+<span style="color:red">Prerequisites : make, gcc, gdk, sdl2, sld2-image, gtk3</span>
+
 
 To compile the project, run the following command in the root directory of the project:
 
