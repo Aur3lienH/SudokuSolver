@@ -37,7 +37,7 @@ void TestSudoku(char* folder)
         char* path = malloc(sizeof(char) * 300);
         sprintf(path,"%s/%s",folder,namelist[i]->d_name);
         int success = 0;
-        char* result = GetResolvedSudoku(path, &success);
+        int** result = GetResolvedSudoku(path, &success);
         PrintTestResult(namelist[i]->d_name,success);
         free(path);
     }

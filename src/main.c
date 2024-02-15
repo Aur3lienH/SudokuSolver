@@ -19,11 +19,33 @@
 #include "imageProcessing/SpeedTest.h"
 #include "TestSudoku.h"
 
+void PrintHelpFlag()
+{
+    printf("Usage: ./build/Solver [flags]\n");
+    printf("Flags:\n");
+    printf("\t-t, --train: Train the mnist model with Feed forward network\n");
+    printf("\t--test: Test the matrix operations \n");
+    printf("\t--test-AVX: Test the mnist model with AVX\n");
+    printf("\t--ui: Launch the UI app\n");
+    printf("\t--train-conv: Train the mnist model with convolutional layers\n");
+    printf("\t--dataset [folder] [output] [size]: Create a dataset from a folder\n");
+    printf("\t--train-grid [folder]: Train the grid recognition model\n");
+    printf("\t--test-image [folder]: Test multiple images\n");
+    printf("\t--draw-digit [image]: Draw a digit\n");
+    printf("\t--help: Print this message\n");
+}
+
+
 void HandleFlags(int argc, char* argv[])
 {
     int i = 1;
     while(i < argc)
     {
+        if(CompareStrings(argv[i],"--help"))
+        {
+            PrintHelpFlag();
+            break;
+        }
         if(CompareStrings(argv[i],"-t") || CompareStrings(argv[i],"--train"))
         {
             Mnist_Train();
@@ -58,24 +80,6 @@ void HandleFlags(int argc, char* argv[])
             break;
         }
 
-        if(CompareStrings(argv[i],"-r"))
-        {
-            Rotation_Train();
-            break;
-        }
-
-        if(CompareStrings(argv[i],"--test-net"))
-        {
-            NetworkTest();
-            break;
-        }
-
-        if(CompareStrings(argv[i],"--solver"))
-        {
-            solver_main(argc,argv);
-            break;
-        }
-
 
         if(CompareStrings(argv[i],"--train-conv"))
         {
@@ -87,17 +91,6 @@ void HandleFlags(int argc, char* argv[])
         //     DrawDigit(argc,argv);
         // }
 
-        if(CompareStrings(argv[i],"--num"))
-        {
-            if(argc >= 3)
-            {
-                ImageToSudoku(argv[i+1]);
-            }
-            else
-            {
-                printf("No file provided\n");
-            }
-        }
 
        
 
@@ -126,11 +119,7 @@ void HandleFlags(int argc, char* argv[])
             }
         }
 
-        if(CompareStrings(argv[i],"--speed"))
-        {
-            //TestSpeedDownscaleGrayscale();
-        }
-
+        //Test multiple images
         if(CompareStrings(argv[i], "--test-image"))
         {
             if(argc >= 3)

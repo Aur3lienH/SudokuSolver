@@ -449,12 +449,10 @@ int DrawDigit(int argc, char *argv[], Network* n) {
         readerFile = fopen(READING_DIGIT_PATH,"rb");
         if(readerFile == NULL)
         {
-            printf("Error opening the file !\n");
             exit(EXIT_FAILURE);
         }
         if(outputFile == NULL)
         {
-            printf("Error opening the file !\n");
             exit(EXIT_FAILURE);
         }
 
@@ -466,7 +464,6 @@ int DrawDigit(int argc, char *argv[], Network* n) {
 
             size_t index = (M_SaveSizeDim(28,28,1)) * padding;
             fseek(readerFile,index,SEEK_SET);
-            printf("padding : %ld\n",padding);
         }
         
     }

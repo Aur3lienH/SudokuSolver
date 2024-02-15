@@ -29,7 +29,6 @@ void SaveDigits(Matrix** matrix, unsigned char* supposedDigit, size_t matrixCoun
     }
     for (size_t i = 0; i < matrixCount; i++)
     {
-        M_Dim(matrix[i]);
         M_Save(matrix[i], file); 
     }
     fclose(file);

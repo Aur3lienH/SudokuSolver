@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(Solver VERSION 1.0)
 
-# Set the C++ compiler (though your source seems to be C, adjust as needed)
+# Set the c compiler
 set(CMAKE_C_COMPILER gcc)
 
-# Specify the C standard
+# c standard
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-# Compiler flags
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -mavx2 -march=native -ffast-math")
+# Add -03 and -ffast-math flags
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -ffast-math")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ")
 
 # Include directories

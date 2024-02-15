@@ -19,7 +19,7 @@
 
 const size_t PERSPECTIVE_WIDTH = 540;
 
-char* GetResolvedSudoku(char* path, int* success)
+int** GetResolvedSudoku(char* path, int* success)
 {
     //Load the model
     Network* n = LoadBestRecognitionModel();
@@ -49,12 +49,15 @@ char* GetResolvedSudoku(char* path, int* success)
 
     double* hForward = CalculateH(sdr.square, WidthToSquare(PERSPECTIVE_WIDTH));
 
-    M_SaveImage3D(resized, "images/export/resized.jpg");
+    M_SaveImage3D(resized, "images/export/preproc_0.jpg");
 
     Matrix* perspectiveCorrected = TransformPerspectiveColor_I(resized, PERSPECTIVE_WIDTH, hForward);
 
-    M_SaveImage3D(perspectiveCorrected, "images/export/corrected.jpg");
+    M_SaveImage3D(perspectiveCorrected, "images/export/step_3.jpg");
 
+    Matrix* copy = M_CopyI(resized);
+    S_Draw(copy, &sdr.square, Color_Create(0,0,255), 0);
+    M_SaveImage3D(copy, "images/export/step_2.jpg");
 
     Matrix* perspectiveCorrectedGrayscale = M_Grayscale(perspectiveCorrected);
 
@@ -103,7 +106,7 @@ char* GetResolvedSudoku(char* path, int* success)
 
     TransformPerspectiveColor(perspectiveCorrected, resized, hReverse);
 
-    M_SaveImage3D(resized, "images/export/final.jpg");
+    M_SaveImage3D(resized, "images/export/step_4.jpg");
 
     *success = 1;
     for (size_t i = 0; i < 9; i++)
@@ -117,7 +120,7 @@ char* GetResolvedSudoku(char* path, int* success)
         }
     }
 
-    return "images/export/final.jpg";
+    return sudoku;
     
 }
 
@@ -127,9 +130,8 @@ char* GetResolvedSudoku(char* path, int* success)
 int** ImageToSudoku(char* path)
 {
     int success = 0;
-    GetResolvedSudoku(path, &success);
+    return GetResolvedSudoku(path, &success);
 
-    return NULL;
     /*
     // Load the best model to recognize digits
     Network* n = LoadBestRecognitionModel();

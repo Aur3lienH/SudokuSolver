@@ -32,6 +32,8 @@ To install the project, you need to clone the repository and then compile it(see
 
 To compile the project, run the following command in the root directory of the project:
 
+```cd SudokuSolver```
+
 ```cmake -S . -B build```
 
 ```cmake --build build```
@@ -40,15 +42,19 @@ To compile the project, run the following command in the root directory of the p
 
 To enable the execution of the program, you need to give the execution rights to the executable. 
 
-```chmod +x build/solver```
+```chmod +x build/Solver```
 
 The executable is located in the build/ directory and is named solver. So to run it, in the root directory : 
 
-```./build/solver```
+```./build/solver --ui```
 
 ## Usage
 
 ### Basic usage 
+
+Get all the usage of the program :
+
+```./build/solver --help```
 
 Train the network with the Mnist dataset :
     

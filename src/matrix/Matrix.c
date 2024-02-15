@@ -13,8 +13,8 @@
 #elif defined(__aarch64__)
     #define SSE 0
 #else
-    #define SSE 1
-    #define AVX 1
+    #define SSE 0
+    #define AVX 0
     #include <immintrin.h>
     #include <emmintrin.h>
 #endif

@@ -43,7 +43,7 @@ char
 *filename;
 
 const size_t preproc_count = 4;
-const size_t treatment_count = 245;
+const size_t treatment_count = 4;
 
 /*
 *   Function: solver_is_valid_image_file
