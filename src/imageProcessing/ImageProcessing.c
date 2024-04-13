@@ -47,6 +47,29 @@ Matrix** SplitCells(const Matrix* image, size_t cellCount)
     return cells;
 }
 
+Matrix* ColorCells(const Matrix* image, const size_t cellCount)
+{
+    Matrix* res = M_Create_2D(image->rows,image->cols);
+    size_t cellSize = image->rows / cellCount;
+    int colorInt = 200;
+    for (size_t h = 0; h < cellCount; h++)
+    {
+        for (size_t i = 0; i < cellCount; i++)
+        {
+            for (size_t j = 0; j < cellSize; j++)
+            {
+                for (size_t k = 0; k < cellSize; k++)
+                {
+                    float color = (float)colorInt / 255;
+                    res->data[k + j * image->cols + cellSize * i + cellSize * cellSize * cellCount * h] = (color + 0.25f) * image->data[(h * cellSize + j) * image->cols + i * cellSize + k];
+                }
+            }
+            colorInt = ((colorInt + 50) % 255) + 50;   
+        }
+    }
+    return res;
+}
+
 
 Matrix* M_Grayscale(const Matrix* image)
 {

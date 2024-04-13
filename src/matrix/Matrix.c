@@ -2,6 +2,7 @@
 #include "matrix/BlockMatrix.h"
 #include "deepLearning/Allocator.h"
 #include "tools/FileTools.h"
+#include "geometry/Point.h"
 #include <stdlib.h>
 #include <math.h>
 #include <err.h>
@@ -270,6 +271,11 @@ float M_GetMax(const Matrix* m)
 float M_Get(const Matrix* m, size_t rows, size_t cols)
 {
     return m->data[cols + rows * m->cols];
+}
+
+float M_GetPoint(const Matrix* m, Point* p)
+{
+    return m->data[p->x + p->y * m->cols];
 }
 
 

@@ -30,6 +30,8 @@ int** GetResolvedSudoku(char* path, int* success)
 
     M_SaveImage3D(matrix, "images/export/initial.jpg");
 
+
+    //Resize the image to get a better result
     Matrix* resized = resize3D(matrix,540);
 
     M_SaveImage3D(resized, "images/export/resized1.jpg");
@@ -64,6 +66,9 @@ int** GetResolvedSudoku(char* path, int* success)
     M_SaveImage(perspectiveCorrectedGrayscale, "images/export/grayscale.jpg");
 
     Matrix** cells = SplitCells(perspectiveCorrectedGrayscale, 9);
+
+    Matrix* debugColoredCells = ColorCells(perspectiveCorrectedGrayscale, 9);
+    M_SaveImage(debugColoredCells, "images/export/coloredCells.jpg");
 
     int** sudoku = GetSudokuNumbers(n, cells);
     int grid[9][9];

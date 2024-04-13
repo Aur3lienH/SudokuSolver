@@ -1,0 +1,4 @@
+/home/aurelien/Projects/SudokuApp/sudokuSolver/build/CMakeFiles/Solver.dir
+/home/aurelien/Projects/SudokuApp/sudokuSolver/build/CMakeFiles/clean-all.dir
+/home/aurelien/Projects/SudokuApp/sudokuSolver/build/CMakeFiles/edit_cache.dir
+/home/aurelien/Projects/SudokuApp/sudokuSolver/build/CMakeFiles/rebuild_cache.dir
